@@ -1,0 +1,67 @@
+﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using FinalProjectBackEnd.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace FinalProjectBackEnd.Data;
+
+public class DbContext : IdentityDbContext<CustomUser>
+{
+    public DbContext(DbContextOptions<DbContext> options)
+        : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        this.SeedUsers(builder);
+        this.SeedRoles(builder);
+        this.SeedUserRoles(builder);
+        builder.Entity<CustomUser>().HasOne(u => u.UserInfo).WithOne(i => i.CustomUser).HasForeignKey<UserInfo>(e => e.UserId);
+    }
+
+    private void SeedUsers(ModelBuilder builder)
+    {
+        var passwordHasher = new PasswordHasher<CustomUser>();
+        CustomUser user = new CustomUser()
+        {
+            Id = "1",
+            UserName = "Principal",
+            Email = "principal@gmail.com",
+            NormalizedUserName = "principal",
+            PasswordHash = passwordHasher.HashPassword(null, "Abc@12345"),
+            LockoutEnabled = true,
+            EmailConfirmed = true,
+        };
+        CustomUser user2 = new CustomUser()
+        {
+            Id = "2",
+            UserName = "Vice-Principal",
+            Email = "vice-principal@gmail.com",
+            NormalizedUserName = "vice-principal",
+            PasswordHash = passwordHasher.HashPassword(null, "Abc@12345"),
+            LockoutEnabled = true,
+            EmailConfirmed = true,
+        };
+
+
+        builder.Entity<CustomUser>().HasData(user);
+        builder.Entity<CustomUser>().HasData(user2);
+    }
+
+    private void SeedRoles(ModelBuilder builder)
+    {
+        builder.Entity<IdentityRole>().HasData(
+            new IdentityRole() { Id = "1", Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "admin" },
+            new IdentityRole() { Id = "2", Name = "Teacher", ConcurrencyStamp = "2", NormalizedName = "teacher" },
+            new IdentityRole() { Id = "3", Name = "Student", ConcurrencyStamp = "3", NormalizedName = "student" }
+            );
+    }
+    private void SeedUserRoles(ModelBuilder builder)
+    {
+        builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>() { RoleId = "1", UserId = "1" });
+        builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>() { RoleId = "1", UserId = "2" });
+    }
+}
