@@ -1,4 +1,5 @@
 ﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinalProjectBackEnd.Models
 {
@@ -8,12 +9,15 @@ namespace FinalProjectBackEnd.Models
 
         public string UserId { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DoB { get; set; }
 
         public string Address { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? StartDate  { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? EndDate { get; set; }
 
         public int? SchoolYear { get; set; }

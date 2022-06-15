@@ -13,6 +13,38 @@ public class DbContext : IdentityDbContext<CustomUser>
     {
     }
 
+    public DbSet<Blog> Blogs { get; set; }
+
+    public DbSet<Classroom> Classrooms { get; set; }
+
+    public DbSet<ClassTeacherSubject> ClassTeacherSubjects { get; set;}
+
+    public DbSet<Comment> Comments { get; set; }
+
+    public DbSet<GroupChat> GroupChats { get; set; }
+
+    public DbSet<Marks> Marks { get; set; }
+
+    public DbSet<Message> Messages { get; set; }
+
+    public DbSet<Post> Posts { get; set; }
+
+    public DbSet<ReplyComment> ReplyComments { get; set; }
+
+    public DbSet<StudentClass> StudentClasses { get; set; }
+
+    public DbSet<Subject> Subjects { get; set; }
+
+    public DbSet<TeacherSubject> TeacherSubjects { get; set; }
+
+    public DbSet<UserGroupChat> UserGroupChats { get; set; }
+
+    public DbSet<UserInfo> UserInfos { get; set; }
+
+    public DbSet<UserLikeComment> UserLikeComments { get; set; }
+
+    public DbSet<UserLikePost> UserLikePosts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
