@@ -1,6 +1,257 @@
-﻿namespace FinalProjectBackEnd.Repositories.Implementations
+﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using FinalProjectBackEnd.Controllers;
+using FinalProjectBackEnd.Data;
+using FinalProjectBackEnd.Helpers;
+using FinalProjectBackEnd.Models;
+using FinalProjectBackEnd.Models.DTO;
+using FinalProjectBackEnd.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
+
+namespace FinalProjectBackEnd.Repositories.Implementations
 {
-    public class UserRepository
+    public class UserRepository: IUserRepository
     {
+        private readonly UserManager<CustomUser> userManager;
+        private readonly DbContext context;
+
+        public UserRepository(UserManager<CustomUser> _userManager, DbContext _context)
+        {
+            userManager = _userManager;
+            context = _context;
+        }
+
+        public async Task<bool> AddStudent(UserDTO userDTO)
+        {
+            string userName = HelperFuction.handleUserName(userDTO.FullName, userDTO.SchoolYear);
+            var account = new CustomUser
+            {
+                Email = userDTO.Email,
+                UserName = userName,
+                PhoneNumber = userDTO.PhoneNumber,
+            };
+            var result = await userManager.CreateAsync(account, Account.DefaultPassword);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(account, Roles.Student);
+                var userInfo = new UserInfo
+                {
+                    UserId = account.Id,
+                    FullName = userDTO.FullName,
+                    DoB = userDTO.DoB,
+                    SchoolYear = userDTO.SchoolYear,
+                    GraduateYear = userDTO.GraduateYear,
+                    Status = userDTO.Status,
+                    StudentRole = StudentRole.Normal,
+                };
+                context.UserInfos.Add(userInfo);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> AddTeacher(UserDTO userDTO)
+        {
+            var account = new CustomUser
+            {
+                Email = userDTO.Email,
+                UserName = userDTO.UserName,
+                PhoneNumber = userDTO.PhoneNumber,
+            };
+            var result = await userManager.CreateAsync(account, Account.DefaultPassword);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(account, Roles.Teacher);
+                var userInfo = new UserInfo
+                {
+                    UserId = account.Id,
+                    FullName = userDTO.FullName,
+                    DoB = userDTO.DoB,
+                    Address = userDTO.Address,
+                    StartDate = userDTO.StartDate,
+                    EndDate = userDTO.EndDate,
+                    IsDeleted = false,
+                };
+                context.UserInfos.Add(userInfo);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool DeleteStudent(string id)
+        {
+            var student = context.UserInfos.FirstOrDefault(x => x.UserId == id);
+            if (student != null)
+            {
+                student.Status = StudentStatus.DroppedOut;
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool DeleteTeacher(string id)
+        {
+            var teacher = context.UserInfos.FirstOrDefault(x => x.UserId == id);
+            if (teacher != null)
+            {
+                teacher.IsDeleted = true;
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool EditStudent(UserDTO userDTO)
+        {
+            var student = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
+            var studentInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
+            if(student != null && studentInfo != null)
+            {
+                student.Email = userDTO.Email;
+                student.PhoneNumber = userDTO.PhoneNumber;
+                studentInfo.DoB = userDTO.DoB;
+                studentInfo.GraduateYear = userDTO.GraduateYear;
+                studentInfo.Status = userDTO.Status;
+                studentInfo.Avatar = userDTO.Avatar;
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool EditTeacher(UserDTO userDTO)
+        {
+            var teacher = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
+            var teacherInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
+            if (teacher != null && teacherInfo != null)
+            {
+                teacher.Email = userDTO.Email;
+                teacher.PhoneNumber = userDTO.PhoneNumber;
+                teacherInfo.DoB = userDTO.DoB;
+                teacherInfo.Address = userDTO.Address;
+                teacherInfo.StartDate = userDTO.StartDate;
+                teacherInfo.EndDate = userDTO.EndDate;
+                teacherInfo.Avatar = userDTO.Avatar;
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public IQueryable<UserDTO> GetAllStudents(string keyword, int? filter, int? sy)
+        {
+            var students = GetUSerWithRole(Roles.Student, null, null);
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                students = students.Where(x => x.FullName == keyword);
+            }
+            if(sy != null)
+            {
+                students = students.Where(x => x.SchoolYear == sy);
+            }
+            if (filter != null)
+            {
+                students = students.Where(x => x.Status == filter);
+            }
+
+            return students;
+        }
+
+        public IQueryable<UserDTO> GetAllTeachers(string keyword, bool? filter)
+        {
+            var teachers = GetUSerWithRole(Roles.Teacher, null, null);
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                teachers = teachers.Where(x => x.FullName == keyword);
+            }
+            if(filter != null)
+            {
+                teachers = teachers.Where(x => x.IsDeleted == filter);
+            }
+            return teachers;
+        }
+
+        public IQueryable<UserDTO> GetStudentDetail(string id)
+        {
+            var student = GetUSerWithRole(Roles.Student, id, null);
+            return student;
+        }
+
+        public IQueryable<UserDTO> GetTeacherDetail(string id)
+        {
+            var teacher = GetUSerWithRole(Roles.Teacher, id, null);
+            return teacher;
+        }
+
+        public bool CheckUserNameExisted(string userName)
+        {
+            return context.Users.Any(x => x.UserName == userName);
+        }
+
+        public IQueryable<UserDTO> GetUSerWithRole(string role, string id, int? studentRole)
+        {
+            var users = from u in context.Users
+                        join ur in context.UserRoles on u.Id equals ur.UserId
+                        join r in context.Roles on ur.RoleId equals r.Id
+                        join ui in context.UserInfos on u.Id equals ui.UserId
+                        join sc in context.StudentClasses on u.Id equals sc.StudentId into studentClass
+                        from sc in studentClass.DefaultIfEmpty()
+                        join c in context.Classrooms on sc.ClassId equals c.Id into classroom
+                        from c in classroom.DefaultIfEmpty()
+                        where r.Name.Equals(role)
+                        select new UserDTO
+                        {
+                            Id = u.Id,
+                            UserName = u.UserName,
+                            Email = u.Email,
+                            FullName = ui.FullName,
+                            DoB = ui.DoB,
+                            PhoneNumber = u.PhoneNumber,
+                            SchoolYear = ui.SchoolYear,
+                            GraduateYear = ui.GraduateYear,
+                            Avatar = ui.Avatar,
+                            Status = ui.Status,
+                            StudentRole = ui.StudentRole,
+                            StartDate = ui.StartDate,
+                            EndDate = ui.EndDate,
+                            IsDeleted = ui.IsDeleted,
+                            ClassName = c.Name
+                        };
+            if (!String.IsNullOrEmpty(id))
+            {
+                users = users.Where(x => x.Id.Equals(id));
+            }
+            if(studentRole != null)
+            {
+                users = users.Where(x => x.StudentRole == studentRole);
+            }
+            return users;
+        }
+
+        public IQueryable<UserDTO> GetAllSecretaryStudents()
+        {
+            var secretary = GetUSerWithRole(Roles.Student, null, StudentRole.Secretary);
+            return secretary;
+        }
+
+        public IQueryable<UserDTO> GetAllMonitorStudents()
+        {
+            var monitor = GetUSerWithRole(Roles.Student, null, StudentRole.Monitor);
+            return monitor;
+        }
+
+        public bool UpdateStudentRole (string id, int role)
+        {
+            var student = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(id));
+            if(student != null)
+            {
+                student.StudentRole = role;
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }

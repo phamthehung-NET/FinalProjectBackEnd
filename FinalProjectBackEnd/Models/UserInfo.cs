@@ -9,6 +9,8 @@ namespace FinalProjectBackEnd.Models
 
         public string UserId { get; set; }
 
+        public string FullName { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? DoB { get; set; }
 
@@ -30,7 +32,7 @@ namespace FinalProjectBackEnd.Models
 
         public bool? IsDeleted { get; set; }
 
-        public bool? IsRedStar { get; set; }
+        public int? StudentRole { get; set; }
 
         public CustomUser CustomUser { get; set; }
     }

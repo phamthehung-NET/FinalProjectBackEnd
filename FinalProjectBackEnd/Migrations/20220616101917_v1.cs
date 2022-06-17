@@ -326,8 +326,8 @@ namespace FinalProjectBackEnd.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -371,8 +371,8 @@ namespace FinalProjectBackEnd.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -393,6 +393,7 @@ namespace FinalProjectBackEnd.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DoB = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -429,8 +430,8 @@ namespace FinalProjectBackEnd.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "1", 0, "d84972cc-74fc-46cb-a62a-8cd3adcce855", "principal@gmail.com", true, true, null, null, "principal", "AQAAAAEAACcQAAAAEBWqwu9LtU/h3sIm1gL7vww1E2p5iWmY16NrnX4WBUSWe3uKc891mUzBXbCYHGYrtA==", null, false, "e3a3d0e3-7d04-4cac-bf31-15c14caf593a", false, "Principal" },
-                    { "2", 0, "5106ae87-fc8a-4db8-9825-87cd314d00a4", "vice-principal@gmail.com", true, true, null, null, "vice-principal", "AQAAAAEAACcQAAAAEBCMgg8ze3atuTUt+zlaA1HTIF/XrDRWDhbKkyASBKaPK2Y42If+Qp0sDEwRCRp/rw==", null, false, "098fa0ad-7dce-4635-bb8f-956b28f9e42c", false, "Vice-Principal" }
+                    { "1", 0, "3b1ac964-21f8-4912-a870-d963f704db36", "principal@gmail.com", true, true, null, null, "principal", "AQAAAAEAACcQAAAAEERChIy6tqlOLecgxpdUi02YBPUZSrPL8nbeUy9UWvw4CazlHJh1jHWD+NDKTMqraQ==", null, false, "f3659d39-f0f9-4d49-b0f6-40bb68e16b7b", false, "Principal" },
+                    { "2", 0, "3e5b29e2-741b-439c-9771-0f6d102ef7d0", "vice-principal@gmail.com", true, true, null, null, "vice-principal", "AQAAAAEAACcQAAAAEDj9JX6lysq/j8GifnpMBBLNvcdLFxTLIyuG1D2B5RagkJAnan7THZaU76n+X02/Vw==", null, false, "14acbdfd-80bb-4a43-8923-7e6d21ee35af", false, "Vice-Principal" }
                 });
 
             migrationBuilder.InsertData(

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalProjectBackEnd.Migrations
 {
     [DbContext(typeof(Data.DbContext))]
-    [Migration("20220615074710_v1")]
+    [Migration("20220616101917_v1")]
     partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,14 +93,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d84972cc-74fc-46cb-a62a-8cd3adcce855",
+                            ConcurrencyStamp = "3b1ac964-21f8-4912-a870-d963f704db36",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBWqwu9LtU/h3sIm1gL7vww1E2p5iWmY16NrnX4WBUSWe3uKc891mUzBXbCYHGYrtA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEERChIy6tqlOLecgxpdUi02YBPUZSrPL8nbeUy9UWvw4CazlHJh1jHWD+NDKTMqraQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e3a3d0e3-7d04-4cac-bf31-15c14caf593a",
+                            SecurityStamp = "f3659d39-f0f9-4d49-b0f6-40bb68e16b7b",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -108,14 +108,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5106ae87-fc8a-4db8-9825-87cd314d00a4",
+                            ConcurrencyStamp = "3e5b29e2-741b-439c-9771-0f6d102ef7d0",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBCMgg8ze3atuTUt+zlaA1HTIF/XrDRWDhbKkyASBKaPK2Y42If+Qp0sDEwRCRp/rw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDj9JX6lysq/j8GifnpMBBLNvcdLFxTLIyuG1D2B5RagkJAnan7THZaU76n+X02/Vw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "098fa0ad-7dce-4635-bb8f-956b28f9e42c",
+                            SecurityStamp = "14acbdfd-80bb-4a43-8923-7e6d21ee35af",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -448,6 +448,9 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("GraduateYear")
                         .HasColumnType("nvarchar(max)");
 
@@ -625,12 +628,10 @@ namespace FinalProjectBackEnd.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -679,12 +680,10 @@ namespace FinalProjectBackEnd.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
