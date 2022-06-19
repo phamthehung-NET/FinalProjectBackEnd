@@ -140,12 +140,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return false;
         }
 
-        public IQueryable<UserDTO> GetAllStudents(string keyword, int? filter, int? sy)
+        public Pagination<UserDTO> GetAllStudents(string keyword, int? filter, int? sy, int? padeIndex, int? itemPerPage)
         {
             var students = GetUSerWithRole(Roles.Student, null, null);
             if (!String.IsNullOrEmpty(keyword))
             {
-                students = students.Where(x => x.FullName == keyword);
+                students = students.Where(x => x.FullName.Contains(keyword));
             }
             if(sy != null)
             {
@@ -156,21 +156,26 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 students = students.Where(x => x.Status == filter);
             }
 
-            return students;
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, students.ToList());
+
+            return paginateItem;
         }
 
-        public IQueryable<UserDTO> GetAllTeachers(string keyword, bool? filter)
+        public Pagination<UserDTO> GetAllTeachers(string keyword, bool? filter, int? padeIndex, int? itemPerPage)
         {
             var teachers = GetUSerWithRole(Roles.Teacher, null, null);
             if (!String.IsNullOrEmpty(keyword))
             {
-                teachers = teachers.Where(x => x.FullName == keyword);
+                teachers = teachers.Where(x => x.FullName.Contains(keyword));
             }
             if(filter != null)
             {
                 teachers = teachers.Where(x => x.IsDeleted == filter);
             }
-            return teachers;
+
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, teachers.ToList());
+
+            return paginateItem;
         }
 
         public IQueryable<UserDTO> GetStudentDetail(string id)
@@ -230,16 +235,22 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return users;
         }
 
-        public IQueryable<UserDTO> GetAllSecretaryStudents()
+        public Pagination<UserDTO> GetAllSecretaryStudents(int? padeIndex, int? itemPerPage)
         {
             var secretary = GetUSerWithRole(Roles.Student, null, StudentRole.Secretary);
-            return secretary;
+
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, secretary.ToList());
+
+            return paginateItem;
         }
 
-        public IQueryable<UserDTO> GetAllMonitorStudents()
+        public Pagination<UserDTO> GetAllMonitorStudents(int? padeIndex, int? itemPerPage)
         {
             var monitor = GetUSerWithRole(Roles.Student, null, StudentRole.Monitor);
-            return monitor;
+
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, monitor.ToList());
+
+            return paginateItem;
         }
 
         public bool UpdateStudentRole (string id, int role)
