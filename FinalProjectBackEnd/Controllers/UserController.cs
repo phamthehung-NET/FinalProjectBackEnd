@@ -21,6 +21,9 @@ namespace FinalProjectBackEnd.Controllers
             keyword = keyword ?? "";
             filter = filter ?? 0;
             sy = sy ?? DateTime.Now.Year;
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
             try
             {
                 var students = userService.GetAllStudents(keyword, filter, sy, padeIndex, itemPerPage);
@@ -94,6 +97,9 @@ namespace FinalProjectBackEnd.Controllers
         {
             keyword = keyword ?? "";
             filter = filter ?? false;
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
             try
             {
                 var teachers = userService.GetAllTeachers(keyword, filter, padeIndex, itemPerPage);
@@ -165,6 +171,9 @@ namespace FinalProjectBackEnd.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<UserDTO>> GetAllMonitorStudent(int? padeIndex, int? itemPerPage)
         {
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
             try
             {
                 var monitor = userService.GetAllMonitorStudents(padeIndex, itemPerPage);
@@ -179,6 +188,8 @@ namespace FinalProjectBackEnd.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<UserDTO>> GetAllSecretaryStudent(int? padeIndex, int? itemPerPage)
         {
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
             try
             {
                 var secretary = userService.GetAllSecretaryStudents(padeIndex, itemPerPage);
