@@ -26,23 +26,20 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             };
             context.Subjects.Add(newSubject);
             context.SaveChanges();
-            if(newSubject.Id != 0)
-            {
-                return true;
-            }
-            return false;
-        }
 
-        public bool AddTeacherToSubject(TeacherSubjectDTO teacherSubject)
-        {
-            var ts = new TeacherSubject
+            subject.TeacherIds.ForEach(x =>
             {
-                TeacherId = teacherSubject.TeacherId,
-                SubjectId = teacherSubject.SubjectId,
-            };
-            context.TeacherSubjects.Add(ts);
+                var teacherSubject = new TeacherSubject
+                {
+                    SubjectId = newSubject.Id,
+                    TeacherId = x,
+                };
+                context.TeacherSubjects.Add(teacherSubject);
+            });
+
             context.SaveChanges();
-            if(ts.Id != 0)
+
+            if(newSubject.Id != 0)
             {
                 return true;
             }
@@ -66,9 +63,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public bool DeleteSubject(int id)
         {
             var subjectDb = context.Subjects.FirstOrDefault(x => x.Id == id);
+            var teacherSubjects = GetTeacherSubjectsBySubject(id);
             if (subjectDb != null)
             {
                 context.Subjects.Remove(subjectDb);
+                context.TeacherSubjects.RemoveRange(teacherSubjects);
                 context.SaveChanges();
                 return true;
             }
@@ -78,9 +77,35 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public bool EditSubject(SubjectDTO subject)
         {
             var subjectDb = context.Subjects.FirstOrDefault(x => x.Id == subject.Id);
+            var teacherSubjects = GetTeacherSubjectsBySubject(subject.Id);
             if (subjectDb != null)
             {
                 subjectDb.Name = subject.Name;
+                if (!teacherSubjects.Any())
+                {
+                    subject.TeacherIds.ForEach(x =>
+                    {
+                        var teacherSubject = new TeacherSubject
+                        {
+                            SubjectId = subject.Id,
+                            TeacherId = x,
+                        };
+                        context.TeacherSubjects.Add(teacherSubject);
+                    });
+                }
+                else
+                {
+                    context.TeacherSubjects.RemoveRange(teacherSubjects);
+                    subject.TeacherIds.ForEach(x =>
+                    {
+                        var teacherSubject = new TeacherSubject
+                        {
+                            SubjectId = subject.Id,
+                            TeacherId = x,
+                        };
+                        context.TeacherSubjects.Add(teacherSubject);
+                    });
+                }
                 context.SaveChanges();
                 return true;
             }
@@ -89,7 +114,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public Pagination<SubjectDTO> GetAllSubjects(string keyword, int? pageIndex, int? itemPerPage)
         {
-            var subjects = context.Subjects.Select(x => new SubjectDTO { Id = x.Id, Name = x.Name });
+            var subjects = context.Subjects.Select(x => new SubjectDTO
+            {
+                Id = x.Id,
+                Name = x.Name,
+                TeacherIds = context.TeacherSubjects.Where(z => z.SubjectId == x.Id).Select(z => z.TeacherId).ToList(),
+            });
 
             if (!String.IsNullOrEmpty(keyword))
             {
@@ -127,6 +157,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 return true;
             }
             return false;
+        }
+
+        private IQueryable<TeacherSubject> GetTeacherSubjectsBySubject(int? subjectId)
+        {
+            var teacherSubjects = context.TeacherSubjects.Where(x => x.SubjectId == subjectId);
+            return teacherSubjects;
         }
     }
 }

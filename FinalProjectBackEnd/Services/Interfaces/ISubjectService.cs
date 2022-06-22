@@ -17,8 +17,6 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public IQueryable<UserDTO> GetTeacherForSubject();
 
-        public bool AddTeacherToSubject(TeacherSubjectDTO teacherSubject);
-
         public bool RemoveTeacherFromSubject(TeacherSubjectDTO teacherSubject);
     }
 }

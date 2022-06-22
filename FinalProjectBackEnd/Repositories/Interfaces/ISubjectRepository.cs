@@ -19,8 +19,6 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public IQueryable<UserDTO> GetTeacherForSubject();
 
-        public bool AddTeacherToSubject(TeacherSubjectDTO teacherSubject);
-
         public bool RemoveTeacherFromSubject(TeacherSubjectDTO teacherSubject);
     }
 }

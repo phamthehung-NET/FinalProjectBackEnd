@@ -11,6 +11,7 @@ using FinalProjectBackEnd.Repositories.Interfaces;
 using FinalProjectBackEnd.Services.Interfaces;
 using FinalProjectBackEnd.Services.Implementations;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DbContextConnection") ?? throw new InvalidOperationException("Connection string 'DbContextConnection' not found.");
@@ -61,10 +62,14 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
     builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IClassService, ClassService>();
 
 var app = builder.Build();
 

@@ -28,16 +28,6 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Subject name is Existed");
         }
 
-        public bool AddTeacherToSubject(TeacherSubjectDTO teacherSubject)
-        {
-            var result = subjectRepository.AddTeacherToSubject(teacherSubject);
-            if (!result)
-            {
-                throw new Exception("Cannot add teacher to subject");
-            }
-            return result;
-        }
-
         public bool DeleteSubject(int id)
         {
             var result = subjectRepository.DeleteSubject(id);

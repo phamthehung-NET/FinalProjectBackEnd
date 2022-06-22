@@ -90,20 +90,6 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult AddTeacherToSubject(TeacherSubjectDTO teacherSubject)
-        {
-            try
-            {
-                var result = subjectService.AddTeacherToSubject(teacherSubject);
-                return Ok("Add teacher to subject successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpGet]
         public ActionResult GetTeacherForSubject()
         {
