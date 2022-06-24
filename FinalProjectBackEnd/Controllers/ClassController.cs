@@ -74,7 +74,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var classData = classService.GetClassDetail(id);
-                return Ok(classData);
+                return Ok(classData.FirstOrDefault());
             }
             catch (Exception ex)
             {

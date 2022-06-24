@@ -26,7 +26,7 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var subjects = subjectService.GetAllSubjects(keyword, pageIndex, itemPerPage);
 
-                return Ok(new { subjects = subjects });
+                return Ok(subjects);
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var subject = subjectService.GetSubjectDetail(id);
-                return Ok(new { subject = subject.FirstOrDefault() });
+                return Ok(subject.FirstOrDefault());
             }
             catch(Exception e)
             {

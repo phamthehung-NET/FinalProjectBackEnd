@@ -37,5 +37,10 @@ namespace FinalProjectBackEnd.Models.DTO
         public int? StudentRole { get; set; }
 
         public string ClassName { get; set; }
+
+        public string Image { get; set; }
+
+        public string FileName { get; set; }
+
     }
 }

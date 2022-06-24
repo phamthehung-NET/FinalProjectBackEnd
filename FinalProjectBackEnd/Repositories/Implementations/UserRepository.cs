@@ -40,6 +40,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     DoB = userDTO.DoB,
                     SchoolYear = userDTO.SchoolYear,
                     GraduateYear = userDTO.GraduateYear,
+                    //Avatar = HelperFuction.UploadFile(userDTO.Image, "Images/StudentAvatars"),
                     Status = userDTO.Status,
                     StudentRole = StudentRole.Normal,
                 };
@@ -70,6 +71,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Address = userDTO.Address,
                     StartDate = userDTO.StartDate,
                     EndDate = userDTO.EndDate,
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Image, userDTO.FileName, "Images/TeacherAvatars"),
                     IsDeleted = false,
                 };
                 context.UserInfos.Add(userInfo);
@@ -114,7 +116,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 studentInfo.DoB = userDTO.DoB;
                 studentInfo.GraduateYear = userDTO.GraduateYear;
                 studentInfo.Status = userDTO.Status;
-                studentInfo.Avatar = userDTO.Avatar;
+                //studentInfo.Avatar = HelperFuction.UploadFile(userDTO.Image, "Images/StudentAvatars");
                 context.SaveChanges();
                 return true;
             }
@@ -133,7 +135,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 teacherInfo.Address = userDTO.Address;
                 teacherInfo.StartDate = userDTO.StartDate;
                 teacherInfo.EndDate = userDTO.EndDate;
-                teacherInfo.Avatar = userDTO.Avatar;
+                //teacherInfo.Avatar = HelperFuction.UploadFile(userDTO.Image, "Images/TeacherAvatars");
                 context.SaveChanges();
                 return true;
             }
@@ -197,6 +199,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public IQueryable<UserDTO> GetUSerWithRole(string role, string id, int? studentRole)
         {
+
             var users = from u in context.Users
                         join ur in context.UserRoles on u.Id equals ur.UserId
                         join r in context.Roles on ur.RoleId equals r.Id
