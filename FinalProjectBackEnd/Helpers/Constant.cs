@@ -4,7 +4,11 @@
     {
         public static string Student = "Student";
 
+        public static int StudentRoleId = 3;
+
         public static string Teacher = "Teacher";
+
+        public static int TeacherRoleId = 2;
 
     }
 
