@@ -13,9 +13,14 @@ namespace FinalProjectBackEnd.Controllers
 
         public static Pagination<T> GetPaging<T>(int? pageIndex, int? itemPerPage, List<T> items)
         {
+            var count = items.Count();
+            if (pageIndex > count)
+            {
+                pageIndex = count;
+            }
             var pagingItems = items.Skip((int)((pageIndex - 1) * itemPerPage)).Take((int)itemPerPage).ToList();
 
-            return new Pagination<T>(items.Count(), pageIndex, itemPerPage, pagingItems);
+            return new Pagination<T>(count, pageIndex, itemPerPage, pagingItems);
         }
 
         public static string UploadFile(IFormFile file, string directory)

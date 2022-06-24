@@ -28,10 +28,11 @@
             if (pageIndex < 1 || totalPages == 0)
             {
                 pageIndex = 1;
+                prevPage = pageIndex;
             }
-            else if (pageIndex > totalPages)
+            else if (pageIndex == totalPages)
             {
-                pageIndex = totalPages;
+                nextPage = pageIndex;
             }
             else if (pageIndex == 1)
             {

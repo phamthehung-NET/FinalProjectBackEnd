@@ -38,8 +38,6 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string ClassName { get; set; }
 
-        public string Image { get; set; }
-
         public string FileName { get; set; }
 
     }

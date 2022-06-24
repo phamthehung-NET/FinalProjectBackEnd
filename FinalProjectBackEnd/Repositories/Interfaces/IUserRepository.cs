@@ -35,5 +35,7 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public bool UpdateStudentRole(string id, int role);
 
+        public bool CheckUserRole(string userId, int roleId);
+
     }
 }

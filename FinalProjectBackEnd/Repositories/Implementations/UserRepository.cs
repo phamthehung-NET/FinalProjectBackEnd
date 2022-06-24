@@ -40,7 +40,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     DoB = userDTO.DoB,
                     SchoolYear = userDTO.SchoolYear,
                     GraduateYear = userDTO.GraduateYear,
-                    //Avatar = HelperFuction.UploadFile(userDTO.Image, "Images/StudentAvatars"),
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName "Images/StudentAvatars"),
                     Status = userDTO.Status,
                     StudentRole = StudentRole.Normal,
                 };
@@ -71,7 +71,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Address = userDTO.Address,
                     StartDate = userDTO.StartDate,
                     EndDate = userDTO.EndDate,
-                    Avatar = HelperFuction.UploadBase64File(userDTO.Image, userDTO.FileName, "Images/TeacherAvatars"),
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars"),
                     IsDeleted = false,
                 };
                 context.UserInfos.Add(userInfo);
@@ -107,37 +107,43 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public bool EditStudent(UserDTO userDTO)
         {
-            var student = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
-            var studentInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
-            if(student != null && studentInfo != null)
+            if(CheckUserRole(userDTO.Id, Roles.StudentRoleId))
             {
-                student.Email = userDTO.Email;
-                student.PhoneNumber = userDTO.PhoneNumber;
-                studentInfo.DoB = userDTO.DoB;
-                studentInfo.GraduateYear = userDTO.GraduateYear;
-                studentInfo.Status = userDTO.Status;
-                //studentInfo.Avatar = HelperFuction.UploadFile(userDTO.Image, "Images/StudentAvatars");
-                context.SaveChanges();
-                return true;
+                var student = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
+                var studentInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
+                if (student != null && studentInfo != null)
+                {
+                    student.Email = userDTO.Email;
+                    student.PhoneNumber = userDTO.PhoneNumber;
+                    studentInfo.DoB = userDTO.DoB;
+                    studentInfo.GraduateYear = userDTO.GraduateYear;
+                    studentInfo.Status = userDTO.Status;
+                    studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars");
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
         }
 
         public bool EditTeacher(UserDTO userDTO)
         {
-            var teacher = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
-            var teacherInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
-            if (teacher != null && teacherInfo != null)
+            if(CheckUserRole(userDTO.Id, Roles.TeacherRoleId))
             {
-                teacher.Email = userDTO.Email;
-                teacher.PhoneNumber = userDTO.PhoneNumber;
-                teacherInfo.DoB = userDTO.DoB;
-                teacherInfo.Address = userDTO.Address;
-                teacherInfo.StartDate = userDTO.StartDate;
-                teacherInfo.EndDate = userDTO.EndDate;
-                //teacherInfo.Avatar = HelperFuction.UploadFile(userDTO.Image, "Images/TeacherAvatars");
-                context.SaveChanges();
-                return true;
+                var teacher = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
+                var teacherInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
+                if (teacher != null && teacherInfo != null)
+                {
+                    teacher.Email = userDTO.Email;
+                    teacher.PhoneNumber = userDTO.PhoneNumber;
+                    teacherInfo.DoB = userDTO.DoB;
+                    teacherInfo.Address = userDTO.Address;
+                    teacherInfo.StartDate = userDTO.StartDate;
+                    teacherInfo.EndDate = userDTO.EndDate;
+                    teacherInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars");
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
         }
@@ -258,14 +264,23 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public bool UpdateStudentRole (string id, int role)
         {
-            var student = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(id));
-            if(student != null)
+            if(CheckUserRole(id, Roles.StudentRoleId))
             {
-                student.StudentRole = role;
-                context.SaveChanges();
-                return true;
+                var student = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(id));
+                if (student != null)
+                {
+                    student.StudentRole = role;
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
+        }
+
+        public bool CheckUserRole(string userId, int roleId)
+        {
+            var user = context.UserRoles.Where(x => x.UserId.Equals(userId) && x.RoleId == roleId.ToString());
+            return user.Any();
         }
     }
 }

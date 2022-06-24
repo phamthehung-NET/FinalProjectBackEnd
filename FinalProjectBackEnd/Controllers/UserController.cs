@@ -190,6 +190,7 @@ namespace FinalProjectBackEnd.Controllers
         {
             padeIndex = padeIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
+
             try
             {
                 var secretary = userService.GetAllSecretaryStudents(padeIndex, itemPerPage);
