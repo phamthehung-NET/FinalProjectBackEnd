@@ -40,7 +40,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     DoB = userDTO.DoB,
                     SchoolYear = userDTO.SchoolYear,
                     GraduateYear = userDTO.GraduateYear,
-                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName "Images/StudentAvatars"),
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/StudentAvatars"),
                     Status = userDTO.Status,
                     StudentRole = StudentRole.Normal,
                 };
