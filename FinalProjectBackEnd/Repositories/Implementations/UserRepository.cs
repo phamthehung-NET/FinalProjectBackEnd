@@ -40,6 +40,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     DoB = userDTO.DoB,
                     SchoolYear = userDTO.SchoolYear,
                     GraduateYear = userDTO.GraduateYear,
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/StudentAvatars"),
                     Status = userDTO.Status,
                     StudentRole = StudentRole.Normal,
                 };
@@ -70,6 +71,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Address = userDTO.Address,
                     StartDate = userDTO.StartDate,
                     EndDate = userDTO.EndDate,
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars"),
                     IsDeleted = false,
                 };
                 context.UserInfos.Add(userInfo);
@@ -105,47 +107,53 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public bool EditStudent(UserDTO userDTO)
         {
-            var student = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
-            var studentInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
-            if(student != null && studentInfo != null)
+            if(CheckUserRole(userDTO.Id, Roles.StudentRoleId))
             {
-                student.Email = userDTO.Email;
-                student.PhoneNumber = userDTO.PhoneNumber;
-                studentInfo.DoB = userDTO.DoB;
-                studentInfo.GraduateYear = userDTO.GraduateYear;
-                studentInfo.Status = userDTO.Status;
-                studentInfo.Avatar = userDTO.Avatar;
-                context.SaveChanges();
-                return true;
+                var student = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
+                var studentInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
+                if (student != null && studentInfo != null)
+                {
+                    student.Email = userDTO.Email;
+                    student.PhoneNumber = userDTO.PhoneNumber;
+                    studentInfo.DoB = userDTO.DoB;
+                    studentInfo.GraduateYear = userDTO.GraduateYear;
+                    studentInfo.Status = userDTO.Status;
+                    studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars");
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
         }
 
         public bool EditTeacher(UserDTO userDTO)
         {
-            var teacher = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
-            var teacherInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
-            if (teacher != null && teacherInfo != null)
+            if(CheckUserRole(userDTO.Id, Roles.TeacherRoleId))
             {
-                teacher.Email = userDTO.Email;
-                teacher.PhoneNumber = userDTO.PhoneNumber;
-                teacherInfo.DoB = userDTO.DoB;
-                teacherInfo.Address = userDTO.Address;
-                teacherInfo.StartDate = userDTO.StartDate;
-                teacherInfo.EndDate = userDTO.EndDate;
-                teacherInfo.Avatar = userDTO.Avatar;
-                context.SaveChanges();
-                return true;
+                var teacher = context.Users.FirstOrDefault(x => x.Id == userDTO.Id);
+                var teacherInfo = context.UserInfos.FirstOrDefault(x => x.UserId == userDTO.Id);
+                if (teacher != null && teacherInfo != null)
+                {
+                    teacher.Email = userDTO.Email;
+                    teacher.PhoneNumber = userDTO.PhoneNumber;
+                    teacherInfo.DoB = userDTO.DoB;
+                    teacherInfo.Address = userDTO.Address;
+                    teacherInfo.StartDate = userDTO.StartDate;
+                    teacherInfo.EndDate = userDTO.EndDate;
+                    teacherInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars");
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
         }
 
-        public IQueryable<UserDTO> GetAllStudents(string keyword, int? filter, int? sy)
+        public Pagination<UserDTO> GetAllStudents(string keyword, int? filter, int? sy, int? padeIndex, int? itemPerPage)
         {
             var students = GetUSerWithRole(Roles.Student, null, null);
             if (!String.IsNullOrEmpty(keyword))
             {
-                students = students.Where(x => x.FullName == keyword);
+                students = students.Where(x => x.FullName.Contains(keyword));
             }
             if(sy != null)
             {
@@ -156,21 +164,26 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 students = students.Where(x => x.Status == filter);
             }
 
-            return students;
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, students.ToList());
+
+            return paginateItem;
         }
 
-        public IQueryable<UserDTO> GetAllTeachers(string keyword, bool? filter)
+        public Pagination<UserDTO> GetAllTeachers(string keyword, bool? filter, int? padeIndex, int? itemPerPage)
         {
             var teachers = GetUSerWithRole(Roles.Teacher, null, null);
             if (!String.IsNullOrEmpty(keyword))
             {
-                teachers = teachers.Where(x => x.FullName == keyword);
+                teachers = teachers.Where(x => x.FullName.Contains(keyword));
             }
             if(filter != null)
             {
                 teachers = teachers.Where(x => x.IsDeleted == filter);
             }
-            return teachers;
+
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, teachers.ToList());
+
+            return paginateItem;
         }
 
         public IQueryable<UserDTO> GetStudentDetail(string id)
@@ -192,6 +205,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public IQueryable<UserDTO> GetUSerWithRole(string role, string id, int? studentRole)
         {
+
             var users = from u in context.Users
                         join ur in context.UserRoles on u.Id equals ur.UserId
                         join r in context.Roles on ur.RoleId equals r.Id
@@ -230,28 +244,43 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return users;
         }
 
-        public IQueryable<UserDTO> GetAllSecretaryStudents()
+        public Pagination<UserDTO> GetAllSecretaryStudents(int? padeIndex, int? itemPerPage)
         {
             var secretary = GetUSerWithRole(Roles.Student, null, StudentRole.Secretary);
-            return secretary;
+
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, secretary.ToList());
+
+            return paginateItem;
         }
 
-        public IQueryable<UserDTO> GetAllMonitorStudents()
+        public Pagination<UserDTO> GetAllMonitorStudents(int? padeIndex, int? itemPerPage)
         {
             var monitor = GetUSerWithRole(Roles.Student, null, StudentRole.Monitor);
-            return monitor;
+
+            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, monitor.ToList());
+
+            return paginateItem;
         }
 
         public bool UpdateStudentRole (string id, int role)
         {
-            var student = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(id));
-            if(student != null)
+            if(CheckUserRole(id, Roles.StudentRoleId))
             {
-                student.StudentRole = role;
-                context.SaveChanges();
-                return true;
+                var student = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(id));
+                if (student != null)
+                {
+                    student.StudentRole = role;
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
+        }
+
+        public bool CheckUserRole(string userId, int roleId)
+        {
+            var user = context.UserRoles.Where(x => x.UserId.Equals(userId) && x.RoleId == roleId.ToString());
+            return user.Any();
         }
     }
 }

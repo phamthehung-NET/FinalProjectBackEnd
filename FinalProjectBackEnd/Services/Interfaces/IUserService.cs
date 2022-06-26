@@ -1,10 +1,11 @@
-﻿using FinalProjectBackEnd.Models.DTO;
+﻿using FinalProjectBackEnd.Helpers;
+using FinalProjectBackEnd.Models.DTO;
 
 namespace FinalProjectBackEnd.Services.Interfaces
 {
     public interface IUserService
     {
-        public IQueryable<UserDTO> GetAllTeachers(string keyword, bool? filter);
+        public Pagination<UserDTO> GetAllTeachers(string keyword, bool? filter, int? padeIndex, int? itemPerPage);
 
         public Task<bool> AddTeacher(UserDTO userDTO);
 
@@ -14,7 +15,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public IQueryable<UserDTO> GetTeacherDetail(string id);
 
-        public IQueryable<UserDTO> GetAllStudents(string keyword, int? filter, int? sy);
+        public Pagination<UserDTO> GetAllStudents(string keyword, int? filter, int? sy, int? padeIndex, int? itemPerPage);
 
         public Task<bool> AddStudent(UserDTO userDTO);
 
@@ -24,9 +25,9 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public IQueryable<UserDTO> GetStudentDetail(string id);
 
-        public IQueryable<UserDTO> GetAllSecretaryStudents();
+        public Pagination<UserDTO> GetAllSecretaryStudents(int? padeIndex, int? itemPerPage);
 
-        public IQueryable<UserDTO> GetAllMonitorStudents();
+        public Pagination<UserDTO> GetAllMonitorStudents(int? padeIndex, int? itemPerPage);
 
         public bool UpdateStudentRole(string id, int role);
     }

@@ -1,4 +1,5 @@
-﻿using FinalProjectBackEnd.Models.DTO;
+﻿using FinalProjectBackEnd.Helpers;
+using FinalProjectBackEnd.Models.DTO;
 using FinalProjectBackEnd.Repositories.Interfaces;
 using FinalProjectBackEnd.Services.Interfaces;
 
@@ -81,40 +82,40 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Cannot edit Teacher");
         }
 
-        public IQueryable<UserDTO> GetAllMonitorStudents()
+        public Pagination<UserDTO> GetAllMonitorStudents(int? padeIndex, int? itemPerPage)
         {
-            var monitor = userRepository.GetAllMonitorStudents();
-            if (monitor.Any())
+            var monitor = userRepository.GetAllMonitorStudents(padeIndex, itemPerPage);
+            if (monitor != null)
             {
                 return monitor;
             }
             throw new Exception("Student not Found");
         }
 
-        public IQueryable<UserDTO> GetAllSecretaryStudents()
+        public Pagination<UserDTO> GetAllSecretaryStudents(int? padeIndex, int? itemPerPage)
         {
-            var secretary = userRepository.GetAllSecretaryStudents();
-            if (secretary.Any())
+            var secretary = userRepository.GetAllSecretaryStudents(padeIndex, itemPerPage);
+            if (secretary != null)
             {
                 return secretary;
             }
             throw new Exception("Student not Found");
         }
 
-        public IQueryable<UserDTO> GetAllStudents(string keyword, int? filter, int? sy)
+        public Pagination<UserDTO> GetAllStudents(string keyword, int? filter, int? sy, int? padeIndex, int? itemPerPage)
         {
-            var students = userRepository.GetAllStudents(keyword, filter, sy);
-            if (students.Any())
+            var students = userRepository.GetAllStudents(keyword, filter, sy, padeIndex, itemPerPage);
+            if (students != null)
             {
                 return students;
             }
             throw new Exception("Students List is null");
         }
 
-        public IQueryable<UserDTO> GetAllTeachers(string keyword, bool? filter)
+        public Pagination<UserDTO> GetAllTeachers(string keyword, bool? filter, int? padeIndex, int? itemPerPage)
         {
-            var teachers = userRepository.GetAllTeachers(keyword, filter);
-            if (teachers.Any())
+            var teachers = userRepository.GetAllTeachers(keyword, filter, padeIndex, itemPerPage);
+            if (teachers != null)
             {
                 return teachers;
             }

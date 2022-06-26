@@ -16,16 +16,19 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllStudent(string keyword, int? filter, int? sy)
+        public ActionResult<IEnumerable<UserDTO>> GetAllStudent(string keyword, int? filter, int? sy, int? padeIndex, int? itemPerPage)
         {
             keyword = keyword ?? "";
             filter = filter ?? 0;
             sy = sy ?? DateTime.Now.Year;
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
             try
             {
-                var students = userService.GetAllStudents(keyword, filter, sy);
+                var students = userService.GetAllStudents(keyword, filter, sy, padeIndex, itemPerPage);
 
-                return Ok(new {students = students.ToList()});
+                return Ok(students);
             }
             catch (Exception ex)
             {
@@ -67,7 +70,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var student = userService.GetStudentDetail(id);
-                return Ok(student);
+                return Ok(student.FirstOrDefault());
             }
             catch(Exception e)
             {
@@ -90,15 +93,18 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllTeacher(string keyword, bool? filter)
+        public ActionResult<IEnumerable<UserDTO>> GetAllTeacher(string keyword, bool? filter, int? padeIndex, int? itemPerPage)
         {
             keyword = keyword ?? "";
             filter = filter ?? false;
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
             try
             {
-                var teachers = userService.GetAllTeachers(keyword, filter);
+                var teachers = userService.GetAllTeachers(keyword, filter, padeIndex, itemPerPage);
 
-                return Ok(new { teachers = teachers.ToList() });
+                return Ok(teachers);
             }
             catch (Exception ex)
             {
@@ -140,7 +146,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var teacher = userService.GetTeacherDetail(id);
-                return Ok(teacher);
+                return Ok(teacher.FirstOrDefault());
             }
             catch (Exception e)
             {
@@ -163,11 +169,14 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllMonitorStudent()
+        public ActionResult<IEnumerable<UserDTO>> GetAllMonitorStudent(int? padeIndex, int? itemPerPage)
         {
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
             try
             {
-                var monitor = userService.GetAllMonitorStudents();
+                var monitor = userService.GetAllMonitorStudents(padeIndex, itemPerPage);
                 return Ok(monitor);
             }
             catch(Exception ex)
@@ -177,11 +186,14 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllSecretaryStudent()
+        public ActionResult<IEnumerable<UserDTO>> GetAllSecretaryStudent(int? padeIndex, int? itemPerPage)
         {
+            padeIndex = padeIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
             try
             {
-                var secretary = userService.GetAllSecretaryStudents();
+                var secretary = userService.GetAllSecretaryStudents(padeIndex, itemPerPage);
                 return Ok(secretary);
             }
             catch (Exception ex)

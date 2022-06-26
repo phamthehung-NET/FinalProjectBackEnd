@@ -1,0 +1,237 @@
+﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using FinalProjectBackEnd.Controllers;
+using FinalProjectBackEnd.Data;
+using FinalProjectBackEnd.Helpers;
+using FinalProjectBackEnd.Models;
+using FinalProjectBackEnd.Models.DTO;
+using FinalProjectBackEnd.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
+
+namespace FinalProjectBackEnd.Repositories.Implementations
+{
+    public class ClassRepository : IClassRepository
+    {
+        private readonly DbContext context;
+        private readonly UserManager<CustomUser> userManager;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public ClassRepository(DbContext _context, UserManager<CustomUser> _userManager, IHttpContextAccessor _httpContextAccessor)
+        {
+            context = _context;
+            userManager = _userManager;
+            httpContextAccessor = _httpContextAccessor;
+        }
+
+        public bool AddClass(ClassDTO classReq)
+        {
+            var classroom = new Classroom
+            {
+                Name = classReq.ClassName,
+                Grade = classReq.Grade,
+                CreatedAt = DateTime.Now,
+                SchoolYear = classReq.SchoolYear,
+                HomeroomTeacher = classReq.HomeRoomTeacherId,
+            };
+            context.Classrooms.Add(classroom);
+            context.SaveChanges();
+            if (classroom.Id != 0)
+            {
+                classReq.TeacherSubjects.ToList().ForEach(ts =>
+                {
+                    var tsdb = context.TeacherSubjects.FirstOrDefault(x => x.SubjectId == ts.SubjectId && x.TeacherId.Equals(ts.TeacherId));
+                    var cts = new ClassTeacherSubject
+                    {
+                        ClassId = classroom.Id,
+                        TeacherSubjectId = tsdb.Id,
+                    };
+                    context.ClassTeacherSubjects.Add(cts);
+                });
+                classReq.Students.ToList().ForEach(student =>
+                {
+                    var sc = new StudentClass
+                    {
+                        StudentId = student.Id,
+                        ClassId = classroom.Id,
+                    };
+                    context.StudentClasses.Add(sc);
+                });
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool DeleteClass(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> EditClass(ClassDTO classReq)
+        {
+            var editor = await userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name);
+            var classDb = context.Classrooms.FirstOrDefault(x => x.Id == classReq.Id);
+            if(classDb != null)
+            {
+                var classTeacherSubjects = context.ClassTeacherSubjects.Where(x => x.ClassId == classReq.Id);
+                var studentClasses = context.StudentClasses.Where(x => x.ClassId == classReq.Id);
+                classDb.Name = classReq.ClassName;
+                classDb.SchoolYear = classReq.SchoolYear;
+                classDb.Grade = classReq.Grade;
+                classDb.UpdatedAt = DateTime.Now;
+                classDb.UpdatedBy = editor.Id;
+                context.ClassTeacherSubjects.RemoveRange(classTeacherSubjects);
+                context.StudentClasses.RemoveRange(studentClasses);
+                classReq.TeacherSubjects.ToList().ForEach(ts =>
+                {
+                    var tsdb = context.TeacherSubjects.FirstOrDefault(x => x.SubjectId == ts.SubjectId && x.TeacherId.Equals(ts.TeacherId));
+                    var cts = new ClassTeacherSubject
+                    {
+                        ClassId = classReq.Id,
+                        TeacherSubjectId = tsdb.Id,
+                    };
+                    context.ClassTeacherSubjects.Add(cts);
+                });
+                classReq.Students.ToList().ForEach(student =>
+                {
+                    var sc = new StudentClass
+                    {
+                        StudentId = student.Id,
+                        ClassId = classReq.Id,
+                    };
+                    context.StudentClasses.Add(sc);
+                });
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public Pagination<ClassDTO> GetAllClasses(string keyword, int? pageIndex, int? itemPerPage, int? sy, int? grade)
+        {
+            var classes = GetClassData(null);
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                classes = classes.Where(x => x.ClassName.Contains(keyword));
+            }
+            if(sy != null)
+            {
+                classes = classes.Where(x => x.SchoolYear == sy);
+            }
+            if(grade != null)
+            {
+                classes = classes.Where(x => x.Grade == grade);
+            }
+
+            var pagination = HelperFuction.GetPaging<ClassDTO>(pageIndex, itemPerPage, classes.ToList());
+
+            return pagination;
+        }
+
+        public IQueryable<ClassDTO> GetClassDetail(int? id)
+        {
+            var classData = GetClassData(id);
+            return classData;
+        }
+
+        public IQueryable<SubjectDTO> GetTeacherSubject()
+        {
+            var subjects = (from s in context.Subjects
+                           join ts in context.TeacherSubjects on s.Id equals ts.SubjectId
+                           join t in context.UserInfos on ts.TeacherId equals t.UserId
+                           select new
+                           {
+                               SubjectId = ts.SubjectId,
+                               SubjectName = s.Name,
+                               TeacherName = t.FullName,
+                               TeacherId = t.UserId,
+                           }).GroupBy(x => new { x.SubjectId, x.SubjectName })
+                          .Select(x => new SubjectDTO
+                          {
+                              Id = x.Key.SubjectId,
+                              Name = x.Key.SubjectName,
+                              Teacher = x.Select(x => new { Id = x.TeacherId, FullName = x.TeacherName })
+                          });
+            return subjects;
+        }
+
+        public bool IsClassExisted(ClassDTO classReq)
+        {
+            var classDb = context.Classrooms.FirstOrDefault(x => x.Name.Equals(classReq.ClassName) && x.SchoolYear == classReq.SchoolYear && x.Grade == classReq.Grade);
+            if (classDb != null)
+            {
+                if (classReq.Id != null && classDb.Id == classReq.Id)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private IQueryable<ClassDTO> GetClassData(int? id)
+        {
+            var classes = (from c in context.Classrooms
+                           join ui in context.UserInfos on c.HomeroomTeacher equals ui.UserId
+                           join cts in context.ClassTeacherSubjects on c.Id equals cts.ClassId into classTeacherSubjects
+                           from cts in classTeacherSubjects.DefaultIfEmpty()
+                           join ts in context.TeacherSubjects on cts.TeacherSubjectId equals ts.Id
+                           join tc in context.UserInfos on ts.TeacherId equals tc.UserId
+                           join s in context.Subjects on ts.SubjectId equals s.Id
+                           join sc in context.StudentClasses on c.Id equals sc.ClassId
+                           join st in context.UserInfos on sc.StudentId equals st.UserId
+                           join u in context.Users on sc.StudentId equals u.Id
+                           select new
+                           {
+                               Id = c.Id,
+                               ClassName = c.Name,
+                               HomeRomeTeacherName = ui.FullName,
+                               HomeRoomTeacherId = ui.UserId,
+                               Grade = c.Grade,
+                               CreatedAt = c.CreatedAt,
+                               SchoolYear = c.SchoolYear,
+                               UpdatedAt = c.UpdatedAt,
+                               UpdatedBy = c.UpdatedBy,
+                               TeacherId = tc.UserId,
+                               TeacherName = tc.FullName,
+                               SubjectId = s.Id,
+                               SubjectName = s.Name,
+                               StudentName = ui.FullName,
+                               UseName = u,
+                               Dob = ui.DoB,
+                               Status = ui.Status,
+                           }).GroupBy(x => new { x.Id, x.ClassName, x.HomeRomeTeacherName, x.HomeRoomTeacherId, x.Grade, x.CreatedAt, x.SchoolYear, x.UpdatedAt, x.UpdatedBy })
+                            .Select(x => new ClassDTO
+                            {
+                                Id = x.Key.Id,
+                                ClassName = x.Key.ClassName,
+                                HomeRomeTeacherName = x.Key.HomeRomeTeacherName,
+                                HomeRoomTeacherId = x.Key.HomeRoomTeacherId,
+                                Grade = x.Key.Grade,
+                                CreatedAt = x.Key.CreatedAt,
+                                SchoolYear = x.Key.SchoolYear,
+                                UpdatedAt = x.Key.UpdatedAt,
+                                UpdatedBy = x.Key.UpdatedBy,
+                                TeacherSubjects = x.Select(j => new TeacherSubjectDTO
+                                {
+                                    SubjectId = j.SubjectId,
+                                    SubjectName = j.SubjectName,
+                                    TeacherId = j.TeacherId,
+                                    TeacherName = j.TeacherName
+                                }).Distinct(),
+                                Students = x.Select(j => new UserDTO
+                                {
+                                    Id = j.UseName.Id,
+                                    UserName = j.UseName.UserName,
+                                    DoB = j.Dob,
+                                    Status = j.Status,
+                                    FullName = j.StudentName
+                                }).Distinct()
+                            });
+            if(id != null)
+            {
+                classes = classes.Where(x => x.Id == id);
+            }
+            return classes;
+        }
+    }
+}
