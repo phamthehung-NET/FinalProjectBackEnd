@@ -118,7 +118,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     studentInfo.DoB = userDTO.DoB;
                     studentInfo.GraduateYear = userDTO.GraduateYear;
                     studentInfo.Status = userDTO.Status;
-                    studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars");
+                    studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/StudentAvatars");
                     context.SaveChanges();
                     return true;
                 }

@@ -1,8 +1,10 @@
 ﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using FinalProjectBackEnd.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,12 +20,16 @@ namespace FinalProjectBackEnd.Controllers
         private readonly UserManager<CustomUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration configuration;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IHubContext<SignalR> hubContext;
 
-        public AuthenticationController(UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration _configuration)
+        public AuthenticationController(UserManager<CustomUser> _userManager, RoleManager<IdentityRole> _roleManager, IConfiguration _configuration, IHttpContextAccessor _httpContextAccessor, IHubContext<SignalR> _hubContext)
         {
-            this.userManager = userManager;
-            this.roleManager = roleManager;
+            userManager = _userManager;
+            roleManager = _roleManager;
             configuration = _configuration;
+            httpContextAccessor = _httpContextAccessor;
+            hubContext = _hubContext;
         }
 
         [HttpPost]
@@ -66,14 +72,16 @@ namespace FinalProjectBackEnd.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetUserInfo()
+        public async Task<IActionResult> GetUserInfo()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var currentUser = await userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name);
 
             return Ok(new
             {
-                userName = identity?.FindFirst(ClaimTypes.Name)?.Value,
-                userRole = identity?.FindFirst(ClaimTypes.Role)?.Value,
+                userId = currentUser.Id,
+                userName = currentUser.UserName,
+                userRole = identity.FindFirst(ClaimTypes.Role).Value
             });
         }
     }
