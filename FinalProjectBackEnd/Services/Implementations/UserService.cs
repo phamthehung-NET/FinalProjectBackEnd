@@ -151,5 +151,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("Cannot update Student Role");
         }
+
+        public IQueryable<UserDTO> GetCurrentUser(string id)
+        {
+            var user = userRepository.GetUSerWithRole(null, id, null);
+            if (user.Any())
+            {
+                return user;
+            }
+            throw new Exception("Cannot Get current UserInfo");
+        }
     }
 }

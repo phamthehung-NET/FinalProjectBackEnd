@@ -1,0 +1,67 @@
+﻿using FinalProjectBackEnd.Helpers;
+using FinalProjectBackEnd.Models.DTO;
+using FinalProjectBackEnd.Repositories.Interfaces;
+using FinalProjectBackEnd.Services.Interfaces;
+
+namespace FinalProjectBackEnd.Services.Implementations
+{
+    public class PostService : IPostService
+    {
+        private readonly IPostRepository postRepository;
+
+        public PostService(IPostRepository _postRepository)
+        {
+            postRepository = _postRepository;
+        }
+
+        public bool AddPost(PostDTO postReq)
+        {
+            var result = postRepository.AddPost(postReq);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Add fail");
+        }
+
+        public bool DeletePost(int id)
+        {
+            var result = postRepository.DeletePost(id);
+            if (result)
+            {
+                return result;
+            }
+            throw new Exception("Delete fail");
+        }
+
+        public bool EditPost(PostDTO postReq)
+        {
+            var result = postRepository.EditPost(postReq);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Edit fail");
+        }
+
+        public Pagination<PostDTO> GetAllPosts(string keyword, int? pageIndex, int? pageSize)
+        {
+            var pagination = postRepository.GetAllPosts(keyword, pageIndex, pageSize);
+            if(pagination != null)
+            {
+                return pagination;
+            }
+            throw new Exception("Post List is null");
+        }
+
+        public IQueryable<PostDTO> GetPostDetail(int id)
+        {
+            var post = postRepository.GetPostDetail(id);
+            if(post == null)
+            {
+                throw new Exception("Post Not Found");
+            }
+            return post;
+        }
+    }
+}

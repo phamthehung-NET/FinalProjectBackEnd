@@ -4,17 +4,18 @@ using FinalProjectBackEnd.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using DbContext = FinalProjectBackEnd.Data.DbContext;
 
 #nullable disable
 
 namespace FinalProjectBackEnd.Migrations
 {
-    [DbContext(typeof(DbContext))]
-    partial class DbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20220629074032_v1")]
+    partial class v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,14 +93,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8374e823-7b96-4870-9602-e99455913cc3",
+                            ConcurrencyStamp = "abef532a-786c-4ec4-856b-c286df0d7c59",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDvpxe9TZMBJ8wCWBm/4sPP6HN54BNuiSv0vlxXKP0ehfJqPR/aO1PcHVJS/VWQbOw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEALrq9Zc1wNSpctAsT1IUobNvu4rTHUGIqcWQWJ8rwaWNy0sZHyfm2cA1UkMu2yc9A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "46a46775-1d32-4f0e-9431-09228a5d45c6",
+                            SecurityStamp = "b44b495d-4f74-4790-be3b-42dd0ffd1462",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -107,14 +108,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "36ab8853-9fcc-4f8a-93ec-7a7ec9a7b784",
+                            ConcurrencyStamp = "2a244981-d923-46d8-85c3-8b5c364874b1",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIGbNmFrdIlhI0DdTpPHrPuFV4LbCwz4E+yp3Enjd2+MmpBq61ArngXm+zNUSVlrrw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMaj0j9DTS2kPJWSS5tyMKdPLPeXgdnmttNxlt8PylPPMnBexquIJ97Sq1DY0E58cw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d49d3041-1ece-461f-9aa4-ebbfff2ba5b5",
+                            SecurityStamp = "b234a01e-9b0f-4fa7-8928-e797bc8d7cd8",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -317,6 +318,9 @@ namespace FinalProjectBackEnd.Migrations
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");

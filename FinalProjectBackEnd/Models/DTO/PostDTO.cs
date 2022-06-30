@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinalProjectBackEnd.Models
+namespace FinalProjectBackEnd.Models.DTO
 {
-    public class Post
+    public class PostDTO
     {
         public int Id { get; set; }
 
@@ -13,9 +13,21 @@ namespace FinalProjectBackEnd.Models
 
         public string AuthorId { get; set; }
 
+        public string AuthorName { get; set; }
+
+        public string AuthorUserName { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? UpdatedDate { get; set; }
 
         public string Image { get; set; }
+
+        public string FileName { get; set; }
+
+        public IEnumerable<dynamic> UserLikePosts { get; set; }
+
+        public IEnumerable<dynamic> Comments { get; set; }
+
+        public string AuthorAvatar { get; set; }
     }
 }

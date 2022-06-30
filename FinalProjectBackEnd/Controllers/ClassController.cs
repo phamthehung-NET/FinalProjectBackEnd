@@ -14,12 +14,10 @@ namespace FinalProjectBackEnd.Controllers
     public class ClassController : ControllerBase
     {
         private readonly IClassService classService;
-        private readonly DbContext context;
 
-        public ClassController(IClassService _classService, DbContext _context)
+        public ClassController(IClassService _classService)
         {
             classService = _classService;
-            context = _context;
         }
 
         [HttpGet]

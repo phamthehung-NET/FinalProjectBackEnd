@@ -8,10 +8,5 @@ namespace FinalProjectBackEnd.Services
         {
             await Clients.All.SendAsync("ReceiveMsg", "haha", message);
         }
-
-        public async Task ReceiveMsg(string user, string message)
-        {
-            await Clients.All.SendAsync("ReceiveMsg", "test", "test message");
-        }
     }
 }

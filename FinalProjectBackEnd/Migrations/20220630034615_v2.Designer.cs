@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FinalProjectBackEnd.Migrations
 {
-    [DbContext(typeof(Data.DbContext))]
-    [Migration("20220616101917_v1")]
-    partial class v1
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20220630034615_v2")]
+    partial class v2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -93,14 +93,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3b1ac964-21f8-4912-a870-d963f704db36",
+                            ConcurrencyStamp = "764fe516-d0d0-4079-9a9a-4898d657072c",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEERChIy6tqlOLecgxpdUi02YBPUZSrPL8nbeUy9UWvw4CazlHJh1jHWD+NDKTMqraQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAP4IW7J0xMjeyyhfGby8ReX01t1Xc3wVDg/gJEV7Q1fInx/hDun73oZyN0iUjkIow==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f3659d39-f0f9-4d49-b0f6-40bb68e16b7b",
+                            SecurityStamp = "c72d47e3-66f3-41a8-a3f4-ba7beabfdcfd",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -108,14 +108,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3e5b29e2-741b-439c-9771-0f6d102ef7d0",
+                            ConcurrencyStamp = "95316c6a-06a1-4eb0-bb39-0fc9db358515",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDj9JX6lysq/j8GifnpMBBLNvcdLFxTLIyuG1D2B5RagkJAnan7THZaU76n+X02/Vw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKkCi7/SFkYnMZrgOPICTW8B4iqAMwaYUc14IYw45ePahrXoRAJogVbQR8Br3iIKBg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "14acbdfd-80bb-4a43-8923-7e6d21ee35af",
+                            SecurityStamp = "b562ae9a-1da6-4b05-abd1-c9757f1f4877",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -319,6 +319,9 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -457,9 +460,6 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsRedStar")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("SchoolYear")
                         .HasColumnType("int");
 
@@ -467,6 +467,9 @@ namespace FinalProjectBackEnd.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StudentRole")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -479,6 +482,18 @@ namespace FinalProjectBackEnd.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("UserInfos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            UserId = "1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            UserId = "2"
+                        });
                 });
 
             modelBuilder.Entity("FinalProjectBackEnd.Models.UserLikeComment", b =>

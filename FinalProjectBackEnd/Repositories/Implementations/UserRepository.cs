@@ -12,9 +12,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
     public class UserRepository: IUserRepository
     {
         private readonly UserManager<CustomUser> userManager;
-        private readonly DbContext context;
+        private readonly ApplicationDbContext context;
 
-        public UserRepository(UserManager<CustomUser> _userManager, DbContext _context)
+        public UserRepository(UserManager<CustomUser> _userManager, ApplicationDbContext _context)
         {
             userManager = _userManager;
             context = _context;
@@ -40,7 +40,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     DoB = userDTO.DoB,
                     SchoolYear = userDTO.SchoolYear,
                     GraduateYear = userDTO.GraduateYear,
-                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/StudentAvatars"),
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student),
                     Status = userDTO.Status,
                     StudentRole = StudentRole.Normal,
                 };
@@ -71,7 +71,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Address = userDTO.Address,
                     StartDate = userDTO.StartDate,
                     EndDate = userDTO.EndDate,
-                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars"),
+                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher),
                     IsDeleted = false,
                 };
                 context.UserInfos.Add(userInfo);
@@ -118,7 +118,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     studentInfo.DoB = userDTO.DoB;
                     studentInfo.GraduateYear = userDTO.GraduateYear;
                     studentInfo.Status = userDTO.Status;
-                    studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/StudentAvatars");
+                    studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student);
                     context.SaveChanges();
                     return true;
                 }
@@ -140,7 +140,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     teacherInfo.Address = userDTO.Address;
                     teacherInfo.StartDate = userDTO.StartDate;
                     teacherInfo.EndDate = userDTO.EndDate;
-                    teacherInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, "Images/TeacherAvatars");
+                    teacherInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher);
                     context.SaveChanges();
                     return true;
                 }
@@ -164,7 +164,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 students = students.Where(x => x.Status == filter);
             }
 
-            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, students.ToList());
+            var paginateItem = HelperFuction.GetPaging(padeIndex, itemPerPage, students.ToList());
 
             return paginateItem;
         }
@@ -214,7 +214,6 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                         from sc in studentClass.DefaultIfEmpty()
                         join c in context.Classrooms on sc.ClassId equals c.Id into classroom
                         from c in classroom.DefaultIfEmpty()
-                        where r.Name.Equals(role)
                         select new UserDTO
                         {
                             Id = u.Id,
@@ -231,8 +230,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             StartDate = ui.StartDate,
                             EndDate = ui.EndDate,
                             IsDeleted = ui.IsDeleted,
-                            ClassName = c.Name
+                            ClassName = c.Name,
+                            Role = r.Name
                         };
+            if (!String.IsNullOrEmpty(role))
+            {
+                users = users.Where(x => x.Role.Equals(role));
+            }
             if (!String.IsNullOrEmpty(id))
             {
                 users = users.Where(x => x.Id.Equals(id));
