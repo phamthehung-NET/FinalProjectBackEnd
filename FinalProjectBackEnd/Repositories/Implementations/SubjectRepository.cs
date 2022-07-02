@@ -9,10 +9,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 {
     public class SubjectRepository : ISubjectRepository
     {
-        private readonly DbContext context;
+        private readonly ApplicationDbContext context;
         private readonly IUserRepository userRepository;
 
-        public SubjectRepository(DbContext _context, IUserRepository _userRepository)
+        public SubjectRepository(ApplicationDbContext _context, IUserRepository _userRepository)
         {
             context = _context;
             userRepository = _userRepository;

@@ -34,4 +34,13 @@
 
         public static int Secretary = 2;
     }
+
+    public class ImageDirectories
+    {
+        public static string Student = "Images/StudentAvatars";
+
+        public static string Teacher = "Images/TeacherAvatars";
+
+        public static string Post = "Images/Posts";
+    }
 }

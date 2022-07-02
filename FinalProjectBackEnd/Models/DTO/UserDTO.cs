@@ -40,5 +40,7 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string FileName { get; set; }
 
+        public string Role { get; set; }
+
     }
 }

@@ -58,14 +58,13 @@ namespace FinalProjectBackEnd.Controllers
         {
             FileInfo rootpath = new FileInfo(@"wwwroot\" + directory);
 
-            byte[] imageBytes = Convert.FromBase64String(file);
-
             if (!Directory.Exists(rootpath.FullName))
             {
                 Directory.CreateDirectory(rootpath.FullName);
             }
             try
             {
+                byte[] imageBytes = Convert.FromBase64String(file);
                 if (file != null && file.Length > 0)
                 {
                     var fileNameWE = Path.GetFileNameWithoutExtension(fileName);
@@ -86,6 +85,11 @@ namespace FinalProjectBackEnd.Controllers
             {
                 return null;
             }
+        }
+
+        internal static string UploadBase64File(string image, string fileName, object imageDirectory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using FinalProjectBackEnd.Data;
 using FinalProjectBackEnd.Services;
+using FinalProjectBackEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,18 +20,22 @@ namespace FinalProjectBackEnd.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly UserManager<CustomUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration configuration;
+        private readonly IUserService userService;
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly IHubContext<SignalR> hubContext;
+        //private readonly IHubContext<SignalR> hubContext;
 
-        public AuthenticationController(UserManager<CustomUser> _userManager, RoleManager<IdentityRole> _roleManager, IConfiguration _configuration, IHttpContextAccessor _httpContextAccessor, IHubContext<SignalR> _hubContext)
+        public AuthenticationController(UserManager<CustomUser> _userManager, 
+            IConfiguration _configuration, 
+            IHttpContextAccessor _httpContextAccessor,
+            //IHubContext<SignalR> _hubContext,
+            IUserService _userService)
         {
             userManager = _userManager;
-            roleManager = _roleManager;
+            //hubContext = _hubContext;
             configuration = _configuration;
             httpContextAccessor = _httpContextAccessor;
-            hubContext = _hubContext;
+            userService = _userService;
         }
 
         [HttpPost]
@@ -74,14 +80,16 @@ namespace FinalProjectBackEnd.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUserInfo()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var currentUser = await userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name);
-
+            var userId = httpContextAccessor.HttpContext.User.Claims.ElementAt(1).Value;
+            var currentUser = userService.GetCurrentUser(userId).FirstOrDefault();
             return Ok(new
             {
-                userId = currentUser.Id,
+                userId = userId,
                 userName = currentUser.UserName,
-                userRole = identity.FindFirst(ClaimTypes.Role).Value
+                fullName = currentUser.FullName,
+                email = currentUser.Email,
+                userRole = currentUser.Role,
+                avatar = currentUser.Avatar,
             });
         }
     }

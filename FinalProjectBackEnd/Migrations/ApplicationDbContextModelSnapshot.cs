@@ -4,19 +4,16 @@ using FinalProjectBackEnd.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using DbContext = FinalProjectBackEnd.Data.DbContext;
 
 #nullable disable
 
 namespace FinalProjectBackEnd.Migrations
 {
-    [DbContext(typeof(DbContext))]
-    [Migration("20220617083711_v2")]
-    partial class v2
+    [DbContext(typeof(ApplicationDbContext))]
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,14 +91,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8374e823-7b96-4870-9602-e99455913cc3",
+                            ConcurrencyStamp = "764fe516-d0d0-4079-9a9a-4898d657072c",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDvpxe9TZMBJ8wCWBm/4sPP6HN54BNuiSv0vlxXKP0ehfJqPR/aO1PcHVJS/VWQbOw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAP4IW7J0xMjeyyhfGby8ReX01t1Xc3wVDg/gJEV7Q1fInx/hDun73oZyN0iUjkIow==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "46a46775-1d32-4f0e-9431-09228a5d45c6",
+                            SecurityStamp = "c72d47e3-66f3-41a8-a3f4-ba7beabfdcfd",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -109,14 +106,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "36ab8853-9fcc-4f8a-93ec-7a7ec9a7b784",
+                            ConcurrencyStamp = "95316c6a-06a1-4eb0-bb39-0fc9db358515",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIGbNmFrdIlhI0DdTpPHrPuFV4LbCwz4E+yp3Enjd2+MmpBq61ArngXm+zNUSVlrrw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKkCi7/SFkYnMZrgOPICTW8B4iqAMwaYUc14IYw45ePahrXoRAJogVbQR8Br3iIKBg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d49d3041-1ece-461f-9aa4-ebbfff2ba5b5",
+                            SecurityStamp = "b562ae9a-1da6-4b05-abd1-c9757f1f4877",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -320,6 +317,9 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -480,6 +480,18 @@ namespace FinalProjectBackEnd.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("UserInfos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            UserId = "1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            UserId = "2"
+                        });
                 });
 
             modelBuilder.Entity("FinalProjectBackEnd.Models.UserLikeComment", b =>

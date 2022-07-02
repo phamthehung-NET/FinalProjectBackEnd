@@ -11,11 +11,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 {
     public class ClassRepository : IClassRepository
     {
-        private readonly DbContext context;
+        private readonly ApplicationDbContext context;
         private readonly UserManager<CustomUser> userManager;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public ClassRepository(DbContext _context, UserManager<CustomUser> _userManager, IHttpContextAccessor _httpContextAccessor)
+        public ClassRepository(ApplicationDbContext _context, UserManager<CustomUser> _userManager, IHttpContextAccessor _httpContextAccessor)
         {
             context = _context;
             userManager = _userManager;
@@ -171,15 +171,22 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         private IQueryable<ClassDTO> GetClassData(int? id)
         {
             var classes = (from c in context.Classrooms
-                           join ui in context.UserInfos on c.HomeroomTeacher equals ui.UserId
+                           join ui in context.UserInfos on c.HomeroomTeacher equals ui.UserId into homeRoomTeacher
+                           from ui in homeRoomTeacher.DefaultIfEmpty()
                            join cts in context.ClassTeacherSubjects on c.Id equals cts.ClassId into classTeacherSubjects
                            from cts in classTeacherSubjects.DefaultIfEmpty()
-                           join ts in context.TeacherSubjects on cts.TeacherSubjectId equals ts.Id
-                           join tc in context.UserInfos on ts.TeacherId equals tc.UserId
-                           join s in context.Subjects on ts.SubjectId equals s.Id
-                           join sc in context.StudentClasses on c.Id equals sc.ClassId
-                           join st in context.UserInfos on sc.StudentId equals st.UserId
-                           join u in context.Users on sc.StudentId equals u.Id
+                           join ts in context.TeacherSubjects on cts.TeacherSubjectId equals ts.Id into teacherSubjects
+                           from ts in teacherSubjects.DefaultIfEmpty()
+                           join tc in context.UserInfos on ts.TeacherId equals tc.UserId into teachersInSubject
+                           from tc in teachersInSubject.DefaultIfEmpty()
+                           join s in context.Subjects on ts.SubjectId equals s.Id into subjects
+                           from s in subjects.DefaultIfEmpty()
+                           join sc in context.StudentClasses on c.Id equals sc.ClassId into studentClasses
+                           from sc in studentClasses.DefaultIfEmpty()
+                           join st in context.UserInfos on sc.StudentId equals st.UserId into students
+                           from st in students.DefaultIfEmpty()
+                           join u in context.Users on sc.StudentId equals u.Id into studentAccounts
+                           from u in studentAccounts.DefaultIfEmpty()
                            select new
                            {
                                Id = c.Id,

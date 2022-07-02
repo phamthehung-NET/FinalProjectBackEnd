@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinalProjectBackEnd.Data;
 
-public class DbContext : IdentityDbContext<CustomUser>
+public class ApplicationDbContext : IdentityDbContext<CustomUser>
 {
-    public DbContext(DbContextOptions<DbContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
@@ -51,6 +51,7 @@ public class DbContext : IdentityDbContext<CustomUser>
         this.SeedUsers(builder);
         this.SeedRoles(builder);
         this.SeedUserRoles(builder);
+        this.SeedUserInfos(builder);
         builder.Entity<CustomUser>().HasOne(u => u.UserInfo).WithOne(i => i.CustomUser).HasForeignKey<UserInfo>(e => e.UserId);
     }
 
@@ -95,5 +96,13 @@ public class DbContext : IdentityDbContext<CustomUser>
     {
         builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>() { RoleId = "1", UserId = "1" });
         builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>() { RoleId = "1", UserId = "2" });
+    }
+
+    private void SeedUserInfos(ModelBuilder builder)
+    {
+        builder.Entity<UserInfo>().HasData(
+            new UserInfo() { Id = 1, UserId = "1", },
+            new UserInfo() { Id = 2, UserId = "2", }
+            );
     }
 }

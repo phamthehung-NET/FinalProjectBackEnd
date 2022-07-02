@@ -171,7 +171,8 @@ namespace FinalProjectBackEnd.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AuthorId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -403,7 +404,7 @@ namespace FinalProjectBackEnd.Migrations
                     Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: true),
-                    IsRedStar = table.Column<bool>(type: "bit", nullable: true)
+                    StudentRole = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -430,8 +431,8 @@ namespace FinalProjectBackEnd.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "1", 0, "3b1ac964-21f8-4912-a870-d963f704db36", "principal@gmail.com", true, true, null, null, "principal", "AQAAAAEAACcQAAAAEERChIy6tqlOLecgxpdUi02YBPUZSrPL8nbeUy9UWvw4CazlHJh1jHWD+NDKTMqraQ==", null, false, "f3659d39-f0f9-4d49-b0f6-40bb68e16b7b", false, "Principal" },
-                    { "2", 0, "3e5b29e2-741b-439c-9771-0f6d102ef7d0", "vice-principal@gmail.com", true, true, null, null, "vice-principal", "AQAAAAEAACcQAAAAEDj9JX6lysq/j8GifnpMBBLNvcdLFxTLIyuG1D2B5RagkJAnan7THZaU76n+X02/Vw==", null, false, "14acbdfd-80bb-4a43-8923-7e6d21ee35af", false, "Vice-Principal" }
+                    { "1", 0, "abef532a-786c-4ec4-856b-c286df0d7c59", "principal@gmail.com", true, true, null, null, "principal", "AQAAAAEAACcQAAAAEALrq9Zc1wNSpctAsT1IUobNvu4rTHUGIqcWQWJ8rwaWNy0sZHyfm2cA1UkMu2yc9A==", null, false, "b44b495d-4f74-4790-be3b-42dd0ffd1462", false, "Principal" },
+                    { "2", 0, "2a244981-d923-46d8-85c3-8b5c364874b1", "vice-principal@gmail.com", true, true, null, null, "vice-principal", "AQAAAAEAACcQAAAAEMaj0j9DTS2kPJWSS5tyMKdPLPeXgdnmttNxlt8PylPPMnBexquIJ97Sq1DY0E58cw==", null, false, "b234a01e-9b0f-4fa7-8928-e797bc8d7cd8", false, "Vice-Principal" }
                 });
 
             migrationBuilder.InsertData(
