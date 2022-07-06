@@ -46,7 +46,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     AuthorId = userId,
                     Title = userInfo.FullName + " has commented to your post",
                     PostId = commentReq.PostId,
-                    Link = NotificationLinks.CommentDetail + comment.Id
+                    Link = NotificationLinks.CommentDetail + comment.Id,
+                    Type = NotificationTypes.CommentPost
                 };
                 notificationRepository.AddNotification(notification);
             }
@@ -110,12 +111,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                UpdatedAt = c.UpdatedAt,
                                ReplyCommentId = rc.Id,
                                ReplyCommentContent = rc.Content,
+                               ReplyCommentAuthorId = rui.UserId,
                                ReplyCommentAuthorName = rui.FullName,
                                ReplyCommentAuthorAvatar = rui.Avatar,
                                ReplyCommentUserName = ru.UserName,
                                ReplyCommentCreateAt = rc.CreatedAt,
                                ReplyCommentUpdatedAt = rc.UpdatedAt,
                                UserLikeCommentId = ulc.Id,
+                               UserLikeCommentAuthorId = ulcui.UserId,
                                UserLikeCommentAuthorName = ulcui.FullName,
                                UserLikeCommentAuthorUserName = ulcu.UserName,
                                UserLikeCommentAvatar = ulcui.Avatar,
@@ -136,6 +139,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                   UserName = a.UserLikeCommentAuthorUserName,
                                   Status = a.UserLikeCommentStatus,
                                   Avatar = a.UserLikeCommentAvatar,
+                                  AuthorId = a.UserLikeCommentAuthorId
                               }),
                               ReplyComments = x.Select(b => new
                               {
@@ -146,6 +150,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                   AuthorName = b.ReplyCommentAuthorName,
                                   AuthorUserName = b.ReplyCommentUserName,
                                   AuthorAvatar = b.ReplyCommentAuthorAvatar,
+                                  AuthorId = b.ReplyCommentAuthorId,
                               })
                           });
             comment = comment.Where(x => x.Id == id);
@@ -178,7 +183,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                         AuthorId = userId,
                         CommentId = userLikeCommentReq.CommentId,
                         Status = userLikeCommentReq.Status,
-                        Link = NotificationLinks.CommentDetail + userLikeCommentReq.CommentId
+                        Link = NotificationLinks.CommentDetail + userLikeCommentReq.CommentId,
+                        Type = NotificationTypes.LikeComment
                     };
                     notificationRepository.AddNotification(notification);
                 }
@@ -186,13 +192,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             else if (userLikeCommentReq.Status != null && userLikCommentDb.Status != userLikeCommentReq.Status)
             {
                 context.UserLikeComments.Remove(userLikCommentDb);
-                var userLikePost = new UserLikePost
+                var userLikeComment = new UserLikeComment
                 {
-                    PostId = userLikeCommentReq.CommentId,
+                    CommentId = userLikeCommentReq.CommentId,
                     UserId = userId,
                     Status = userLikeCommentReq.Status,
                 };
-                context.UserLikePosts.Add(userLikePost);
+                context.UserLikeComments.Add(userLikeComment);
             }
             else
             {
@@ -229,7 +235,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 AuthorId = userId,
                 Title = userInfo.FullName + " has replied to your comment",
                 CommentId = replyCommentReq.CommentId,
-                Link = NotificationLinks.CommentDetail + replyCommentReq.CommentId
+                Link = NotificationLinks.CommentDetail + replyCommentReq.CommentId,
+                Type = NotificationTypes.ReplyComment
             };
             notificationRepository.AddNotification(notification);
 

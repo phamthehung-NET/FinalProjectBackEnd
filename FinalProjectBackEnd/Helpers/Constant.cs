@@ -50,4 +50,17 @@
 
         public static string CommentDetail = "/Comment/GetCommentDetail?id=";
     }
+
+    public class NotificationTypes
+    {
+        public static int AddPost = 0;
+
+        public static int LikePost = 1;
+
+        public static int CommentPost = 2;
+
+        public static int LikeComment = 3;
+
+        public static int ReplyComment = 4;
+    }
 }

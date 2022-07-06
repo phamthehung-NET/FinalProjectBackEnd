@@ -20,5 +20,7 @@ namespace FinalProjectBackEnd.Models
         public int? Status { get; set; }
 
         public string Link { get; set; }
+
+        public int? Type { get; set; }
     }
 }

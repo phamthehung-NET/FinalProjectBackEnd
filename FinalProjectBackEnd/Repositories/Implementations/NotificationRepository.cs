@@ -1,5 +1,6 @@
 ﻿using FinalProjectBackEnd.Areas.Identity.Data;
 using FinalProjectBackEnd.Data;
+using FinalProjectBackEnd.Helpers;
 using FinalProjectBackEnd.Models;
 using FinalProjectBackEnd.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     CommentId = notification.CommentId,
                     Link = notification.Link,
                     Status = notification.Status,
+                    Type = notification.Type,
                 };
                 context.Notifications.Add(noti);
                 context.SaveChanges();
@@ -63,15 +65,18 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 notifications.AddRange(commentLikeAndReply);
             }
 
+            notifications = notifications.OrderByDescending(x => x.CreateAt).ToList();
+
             return notifications;
         }
 
         private IQueryable<Notification> GetAllAddPostNotification()
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-            var notification = from uf in context.UserFollows
-                                join n in context.Notifications on uf.FolloweeId equals n.AuthorId
-                                where uf.FollowerId.Equals(userId)
+            var notification = (from uf in context.UserFollows
+                                join n in context.Notifications on uf.FolloweeId equals n.AuthorId into notifications
+                                from n in notifications.DefaultIfEmpty()
+                                where uf.FollowerId.Equals(userId) && n.Type == NotificationTypes.AddPost
                                 select new Notification
                                 {
                                     Id = n.Id,
@@ -79,41 +84,41 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     Title = n.Title,
                                     Link = n.Link,
                                     Status = n.Status,
-                                };
+                                }).Distinct();
             return notification;
         }
 
         private IQueryable<Notification> GetLikeAndCommentPostNotifications()
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-            var notification = from p in context.Posts
+            var notification = (from p in context.Posts
                                 join n in context.Notifications on p.Id equals n.PostId
-                                where p.AuthorId.Equals(userId)
+                                where p.AuthorId.Equals(userId) && (n.Type == NotificationTypes.LikePost || n.Type == NotificationTypes.CommentPost)
                                 select new Notification
                                 {
                                     Title = n.Title,
                                     CreateAt = n.CreateAt,
                                     Id = n.Id,
                                     Link = n.Link,
-                                    Status= n.Status,
-                                };
+                                    Status = n.Status,
+                                }).Distinct();
             return notification;
         }
 
         private IQueryable<Notification> GetAllLikeAndReplyCommentNotification()
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-            var notification = from c in context.Comments
-                               join n in context.Notifications on c.Id equals n.CommentId
-                               where c.AuthorId.Equals(userId)
-                               select new Notification
-                               {
-                                   Title = n.Title,
-                                   CreateAt = n.CreateAt,
-                                   Id = n.Id,
-                                   Link = n.Link,
-                                   Status = n.Status,
-                               };
+            var notification = (from c in context.Comments
+                                join n in context.Notifications on c.Id equals n.CommentId
+                                where c.AuthorId.Equals(userId) && (n.Type == NotificationTypes.ReplyComment || n.Type == NotificationTypes.LikeComment)
+                                select new Notification
+                                {
+                                    Title = n.Title,
+                                    CreateAt = n.CreateAt,
+                                    Id = n.Id,
+                                    Link = n.Link,
+                                    Status = n.Status,
+                                }).Distinct();
             return notification;
         }
 

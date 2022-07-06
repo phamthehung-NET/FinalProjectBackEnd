@@ -44,8 +44,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 var notification = new Notification
                 {
                     AuthorId = userId,
+                    PostId = post.Id,
                     Title = userInfo.FullName + " added a new post",
-                    Link = NotificationLinks.PostDetail + post.Id
+                    Link = NotificationLinks.PostDetail + post.Id,
+                    Type = NotificationTypes.AddPost
                 };
                 notificationRepository.AddNotification(notification);
 
@@ -166,14 +168,17 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              CommentContent = c.Content,
                              CommentCreateTime = c.UpdatedAt,
                              CommentUpdateAt = c.UpdatedAt,
+                             AuthorCommentId = cui.UserId,
                              AuthorCommentName = cui.FullName,
                              AuthorCommentUserName = cu.UserName,
                              AuthorCommentAvatar = cui.Avatar,
+                             UserLikeCommentId = uilc.UserId,
                              UserLikeCommentName = uilc.FullName,
                              UserLikeCommentUserName = lcu.UserName,
                              UserLikeCommentStatus = ulc.Status,
                              UserLikeCommentAvatar = uilc.Avatar,
                              RepLyCommentId = rc.Id,
+                             UserReplyCommentId = rcui.UserId,
                              ReplyCommentContent = rc.Content,
                              ReplyCommentCreateAt = rc.CreatedAt,
                              ReplyCommentUpdateAt = rc.UpdatedAt,
@@ -198,7 +203,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 UserName = y.UserLikeUserName,
                                 //PostId = y.Id,
                                 Status = y.LikeStatus,
-                                Avatar = y.UserLikeAvatar
+                                Avatar = y.UserLikeAvatar,
+                                AuthorId = y.UserLikeId
                             }),
                             Comments = x.GroupBy(z => new
                             {
@@ -209,6 +215,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 AuthorName = z.AuthorCommentName,
                                 AuthorUserName = z.AuthorCommentUserName,
                                 Avatar = z.AuthorCommentAvatar,
+                                AuthorId = z.AuthorCommentId,
                             }).Select(z => new
                             {
                                 Id = z.Key.Id,
@@ -218,12 +225,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 AuthorName = z.Key.AuthorName,
                                 AuthorUserName = z.Key.AuthorUserName,
                                 Avatar = z.Key.Avatar,
+                                AuthorId = z.Key.AuthorId,
                                 UserLikeComments = z.Select(a => new
                                 {
                                     Name = a.UserLikeCommentName,
                                     UserName = a.UserLikeCommentUserName,
                                     Status = a.UserLikeCommentStatus,
                                     Avatar = a.UserLikeCommentAvatar,
+                                    AuthorId = a.UserLikeCommentId
                                 }),
                                 ReplyComments = z.Select(b => new
                                 {
@@ -234,6 +243,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     AuthorName = b.AuthorReplyCommentName,
                                     AuthorUserName = b.AuthorReplyCommentUserName,
                                     AuthorAvatar = b.AuthorReplyCommentAvatar,
+                                    AuthorId = b.UserReplyCommentId
                                 })
                             }),
                         });
@@ -273,6 +283,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                         PostId = userLikePostReq.PostId,
                         Status = userLikePostReq.Status,
                         Link = NotificationLinks.PostDetail + userLikePostReq.PostId,
+                        Type = NotificationTypes.LikePost
                     };
                     notificationRepository.AddNotification(notification);
                 }
