@@ -63,5 +63,25 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             return post;
         }
+
+        public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq)
+        {
+            var result = postRepository.UserLikeAndDisLike(userLikePostReq);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Cannot Like Post");
+        }
+
+        public IQueryable<dynamic> GetAllUserLikePost(int postId)
+        {
+            var like = postRepository.GetAllUserLikePost(postId);
+            if (like.Any())
+            {
+                return like;
+            }
+            throw new Exception("Post has no reaction");
+        }
     }
 }

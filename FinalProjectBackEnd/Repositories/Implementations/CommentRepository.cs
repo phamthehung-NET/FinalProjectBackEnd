@@ -1,0 +1,273 @@
+﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using FinalProjectBackEnd.Data;
+using FinalProjectBackEnd.Helpers;
+using FinalProjectBackEnd.Models;
+using FinalProjectBackEnd.Models.DTO;
+using FinalProjectBackEnd.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
+
+namespace FinalProjectBackEnd.Repositories.Implementations
+{
+    public class CommentRepository : ICommentRepository
+    {
+        private readonly UserManager<CustomUser> userManager;
+        private readonly ApplicationDbContext context;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly INotificationRepository notificationRepository;
+
+        public CommentRepository(UserManager<CustomUser> _userManager, ApplicationDbContext _context, IHttpContextAccessor _httpContextAccessor, INotificationRepository _notificationRepository)
+        {
+            userManager = _userManager;
+            context = _context;
+            httpContextAccessor = _httpContextAccessor;
+            notificationRepository = _notificationRepository;
+        }
+
+        public bool CommentPost(CommentDTO commentReq)
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+
+            Comment comment = new Comment
+            {
+                Content = commentReq.Content,
+                AuthorId = userId,
+                PostId = commentReq.PostId,
+                CreatedAt = DateTime.Now,
+            };
+            context.Comments.Add(comment);
+            context.SaveChanges();
+
+            var notification = new Notification
+            {
+                AuthorId = userId,
+                Title = userInfo.FullName + " has commented to your post",
+                PostId = commentReq.PostId,
+                Link = NotificationLinks.CommentDetail + comment.Id
+            };
+            notificationRepository.AddNotification(notification);
+
+            return comment.Id > 0 ? true : false;
+        }
+
+        public bool EditComment(CommentDTO commentReq)
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var commentDb = context.Comments.FirstOrDefault(x => x.Id == commentReq.Id);
+            if (commentDb != null && commentDb.AuthorId == userId)
+            {
+                commentDb.Content = commentReq.Content;
+                commentDb.UpdatedAt = DateTime.Now;
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool DeleteComment(int id)
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var commentDb = context.Comments.FirstOrDefault(x => x.Id == id);
+            if (commentDb != null && commentDb.AuthorId == userId)
+            {
+                context.Comments.Remove(commentDb);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public IQueryable<CommentDTO> GetCommentDetail(int? id)
+        {
+            var comment = (from c in context.Comments
+                           join ui in context.UserInfos on c.AuthorId equals ui.UserId
+                           join u in context.Users on ui.UserId equals u.Id
+                           join rc in context.ReplyComments on c.Id equals rc.CommentId into replyComments
+                           from rc in replyComments
+                           join rui in context.UserInfos on rc.AuthorId equals rui.UserId
+                           join ru in context.Users on rui.UserId equals ru.Id
+                           join ulc in context.UserLikeComments on c.Id equals ulc.CommentId into userLikeComments
+                           from ulc in userLikeComments
+                           join ulcui in context.UserInfos on ulc.UserId equals ulcui.UserId
+                           join ulcu in context.Users on ulcui.UserId equals ulcu.Id
+                           select new
+                           {
+                               Id = c.Id,
+                               Content = c.Content,
+                               AuthorName = ui.FullName,
+                               AuthorUserName = u.UserName,
+                               AuthorAvatar = ui.Avatar,
+                               CreateDate = c.CreatedAt,
+                               UpdatedAt = c.UpdatedAt,
+                               ReplyCommentId = rc.Id,
+                               ReplyCommentContent = rc.Content,
+                               ReplyCommentAuthorName = rui.FullName,
+                               ReplyCommentAuthorAvatar = rui.Avatar,
+                               ReplyCommentUserName = ru.UserName,
+                               ReplyCommentCreateAt = rc.CreatedAt,
+                               ReplyCommentUpdatedAt = rc.UpdatedAt,
+                               UserLikeCommentId = ulc.Id,
+                               UserLikeCommentAuthorName = ulcui.FullName,
+                               UserLikeCommentAuthorUserName = ulcu.UserName,
+                               UserLikeCommentAvatar = ulcui.Avatar,
+                               UserLikeCommentStatus = ulc.Status,
+                           }).GroupBy(x => new { x.Id, x.Content, x.AuthorUserName, x.AuthorName, x.CreateDate, x.UpdatedAt, x.AuthorAvatar })
+                          .Select(x => new CommentDTO
+                          {
+                              Id = x.Key.Id,
+                              Content = x.Key.Content,
+                              AuthorName = x.Key.AuthorName,
+                              CreatedAt = x.Key.CreateDate,
+                              UpdatedAt = x.Key.UpdatedAt,
+                              AuthorAvatar = x.Key.AuthorAvatar,
+                              UserLikeComments = x.Select(a => new
+                              {
+                                  Name = a.UserLikeCommentAuthorName,
+                                  UserName = a.UserLikeCommentAuthorUserName,
+                                  Status = a.UserLikeCommentStatus,
+                                  Avatar = a.UserLikeCommentAvatar,
+                              }),
+                              ReplyComments = x.Select(b => new
+                              {
+                                  Id = b.ReplyCommentId,
+                                  Content = b.ReplyCommentContent,
+                                  CreateAt = b.ReplyCommentCreateAt,
+                                  UpdateAt = b.ReplyCommentUpdatedAt,
+                                  AuthorName = b.ReplyCommentAuthorName,
+                                  AuthorUserName = b.ReplyCommentUserName,
+                                  AuthorAvatar = b.ReplyCommentAuthorAvatar,
+                              })
+                          });
+            comment = comment.Where(x => x.Id == id);
+
+            return comment;
+        }
+
+        public bool UserLikeAndDisLikeComment(UserLikeCommentDTO userLikeCommentReq)
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var comment = GetCommentDetail(userLikeCommentReq.CommentId).FirstOrDefault();
+            var userLikCommentDb = context.UserLikeComments.FirstOrDefault(x => x.CommentId == userLikeCommentReq.CommentId && x.UserId.Equals(userId));
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+
+            if (userLikCommentDb == null)
+            {
+                var userLikeComment = new UserLikeComment
+                {
+                    CommentId = userLikeCommentReq.CommentId,
+                    UserId = userId,
+                    Status = userLikeCommentReq.Status,
+                };
+                context.UserLikeComments.Add(userLikeComment);
+
+                if (!comment.AuthorId.Equals(userId))
+                {
+                    var notification = new Notification
+                    {
+                        Title = userInfo.FullName + " has given reaction to yoour comment",
+                        AuthorId = userId,
+                        CommentId = userLikeCommentReq.CommentId,
+                        Status = userLikeCommentReq.Status,
+                        Link = NotificationLinks.CommentDetail + userLikeCommentReq.CommentId
+                    };
+                    notificationRepository.AddNotification(notification);
+                }
+            }
+            else if (userLikeCommentReq.Status != null && userLikCommentDb.Status != userLikeCommentReq.Status)
+            {
+                context.UserLikeComments.Remove(userLikCommentDb);
+                var userLikePost = new UserLikePost
+                {
+                    PostId = userLikeCommentReq.CommentId,
+                    UserId = userId,
+                    Status = userLikeCommentReq.Status,
+                };
+                context.UserLikePosts.Add(userLikePost);
+            }
+            else
+            {
+                context.UserLikeComments.Remove(userLikCommentDb);
+
+                var notification = context.Notifications.FirstOrDefault(x => x.AuthorId.Equals(userId)
+                    && x.CommentId == comment.Id && x.Status == userLikeCommentReq.Status
+                    && x.Link.Equals(NotificationLinks.CommentDetail + comment.Id));
+
+                notificationRepository.RemoveNotification(notification);
+            }
+            var status = context.SaveChanges();
+
+            return status == 0 || status == 1 || status == 2 ? true : false;
+        }
+
+        public bool ReplyComment(ReplyCommentDTO replyCommentReq)
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+
+            var replyComment = new ReplyComment
+            {
+                Content = replyCommentReq.Content,
+                AuthorId = userId,
+                CommentId = replyCommentReq.CommentId,
+                CreatedAt = DateTime.Now,
+            };
+            context.ReplyComments.Add(replyComment);
+            context.SaveChanges();
+
+            var notification = new Notification
+            {
+                AuthorId = userId,
+                Title = userInfo.FullName + " has replied to your comment",
+                CommentId = replyCommentReq.CommentId,
+                Link = NotificationLinks.CommentDetail + replyCommentReq.CommentId
+            };
+            notificationRepository.AddNotification(notification);
+
+            return replyComment.Id > 0 ? true : false;
+        }
+
+        public bool EditReplyComment(ReplyCommentDTO replyCommentReq)
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var replyCommentDb = context.ReplyComments.FirstOrDefault(x => x.Id == replyCommentReq.Id);
+            if (replyCommentDb != null && replyCommentDb.AuthorId == userId)
+            {
+                replyCommentDb.Content = replyCommentDb.Content;
+                replyCommentDb.UpdatedAt = DateTime.Now;
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool DeleteReplyComment(int id)
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var replyCommentDb = context.ReplyComments.FirstOrDefault(x => x.Id == id);
+            if (replyCommentDb != null && replyCommentDb.AuthorId == userId)
+            {
+                context.ReplyComments.Remove(replyCommentDb);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public IQueryable<dynamic> GetAllCommentLike(int commentId)
+        {
+            var userLikeComments = from c in context.Comments
+                                   join ulc in context.UserLikeComments on c.Id equals ulc.CommentId
+                                   join u in context.Users on ulc.UserId equals u.Id
+                                   join ui in context.UserInfos on u.Id equals ui.UserId
+                                   where c.Id == commentId
+                                   select new
+                                   {
+                                       CommentId = c.Id,
+                                       UserName = u.UserName,
+                                       FullName = ui.FullName,
+                                       Status = ulc.Status,
+                                   };
+            return userLikeComments;
+        }
+    }
+}

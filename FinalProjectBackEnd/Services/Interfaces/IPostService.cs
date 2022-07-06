@@ -14,5 +14,10 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public bool EditPost(PostDTO postReq);
 
         public bool DeletePost(int id);
+
+        public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq);
+
+        public IQueryable<dynamic> GetAllUserLikePost(int postId);
+
     }
 }

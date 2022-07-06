@@ -43,4 +43,11 @@
 
         public static string Post = "Images/Posts";
     }
+
+    public class NotificationLinks
+    {
+        public static string PostDetail = "/Post/GetPostDetail/";
+
+        public static string CommentDetail = "/Comment/GetCommentDetail/";
+    }
 }

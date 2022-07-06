@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinalProjectBackEnd.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -108,7 +108,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(ex);
             }
         }
 
@@ -122,7 +122,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -136,11 +136,11 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetTeacherDetail(string id)
         {
             try
@@ -150,11 +150,11 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return NotFound(e.Message);
+                return NotFound(e);
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public ActionResult DeleteTeacher(string id)
         {
             try
@@ -164,7 +164,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -181,7 +181,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -198,7 +198,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -212,7 +212,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
     }

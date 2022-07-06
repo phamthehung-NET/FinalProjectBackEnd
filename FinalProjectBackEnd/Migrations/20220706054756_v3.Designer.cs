@@ -4,6 +4,7 @@ using FinalProjectBackEnd.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalProjectBackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220706054756_v3")]
+    partial class v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,14 +93,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b1625f29-121d-456b-a4be-5e3035fcedee",
+                            ConcurrencyStamp = "d58d9783-b1e2-46c5-be40-977f68fd15af",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJwzrdY3q1KfM6KeQNXdpHdkmL4PNK2cuLi+ST7ra3xlYoLkpsXObwmKFNLMjKtqvQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENQA1AjXWz869Evt9rMW9By7ULMKDhk+c4sBd4B61WQke6XRLbWCWDIo+0pD4yj0/Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d98cc223-411e-4e12-b121-e005891369db",
+                            SecurityStamp = "8ca6c483-1d53-4c5a-99db-3ed933e4308a",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -106,14 +108,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9e6714d8-d462-4159-b01b-3ca1a043732b",
+                            ConcurrencyStamp = "ac7c8450-4c3f-4353-9000-d88b9175ab1a",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKCvA5rbPaUMxkYrMkWHHf/2tbXOlzXrljjQrlAKs0H2EIe/nTm3M6ySDMvplbseEA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEI2lxmXVS4hkX037RflmJzvbBQaMvvIVFts1w33CKZiYGsJM/3v2xyXnYaNFfol53w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9596cc84-b4b5-464d-9756-80634772c249",
+                            SecurityStamp = "8c1d01e1-844d-4842-971e-720a1d17c900",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -538,13 +540,11 @@ namespace FinalProjectBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            FullName = "Principal",
                             UserId = "1"
                         },
                         new
                         {
                             Id = 2,
-                            FullName = "Vice-principal",
                             UserId = "2"
                         });
                 });

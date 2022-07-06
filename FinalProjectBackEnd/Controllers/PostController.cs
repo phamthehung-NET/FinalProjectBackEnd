@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinalProjectBackEnd.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class PostController : ControllerBase
     {
@@ -29,7 +29,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -43,7 +43,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -57,11 +57,11 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public ActionResult DeletePost(int id)
         {
             try
@@ -71,7 +71,49 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult GetPostDetail(int id)
+        {
+            try
+            {
+                var post = postService.GetPostDetail(id);
+                return Ok(post.FirstOrDefault());
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult LikePost(UserLikePostDTO userLikePostReq)
+        {
+            try
+            {
+                postService.UserLikeAndDisLike(userLikePostReq);
+                return Ok("Like Successfully");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("{postId}")]
+        public ActionResult GetUserLikePosts(int postId)
+        {
+            try
+            {
+                var userLikePost = postService.GetAllUserLikePost(postId);
+                return Ok(userLikePost.ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
             }
         }
     }

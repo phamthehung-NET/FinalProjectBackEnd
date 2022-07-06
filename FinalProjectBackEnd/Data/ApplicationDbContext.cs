@@ -45,6 +45,10 @@ public class ApplicationDbContext : IdentityDbContext<CustomUser>
 
     public DbSet<UserLikePost> UserLikePosts { get; set; }
 
+    public DbSet<Notification> Notifications { get; set; }
+
+    public DbSet<UserFollow> UserFollows { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -101,8 +105,8 @@ public class ApplicationDbContext : IdentityDbContext<CustomUser>
     private void SeedUserInfos(ModelBuilder builder)
     {
         builder.Entity<UserInfo>().HasData(
-            new UserInfo() { Id = 1, UserId = "1", },
-            new UserInfo() { Id = 2, UserId = "2", }
+            new UserInfo() { Id = 1, UserId = "1", FullName = "Principal" },
+            new UserInfo() { Id = 2, UserId = "2", FullName = "Vice-principal" }
             );
     }
 }

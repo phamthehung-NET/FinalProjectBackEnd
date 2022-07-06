@@ -14,20 +14,21 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         private readonly ApplicationDbContext context;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly UserManager<CustomUser> userManager;
+        private readonly INotificationRepository notificationRepository;
 
-        public PostRepository(ApplicationDbContext _context, IHttpContextAccessor _httpContextAccessor, UserManager<CustomUser> _userManager)
+        public PostRepository(ApplicationDbContext _context, IHttpContextAccessor _httpContextAccessor, UserManager<CustomUser> _userManager, INotificationRepository _notificationRepository)
         {
             context = _context;
             httpContextAccessor = _httpContextAccessor;
             userManager = _userManager;
+            notificationRepository = _notificationRepository;
         }
 
         public bool AddPost(PostDTO postReq)
         {
-            int state = 0;
-            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
 
-            var userId = user.Id;
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
             if (!String.IsNullOrEmpty(userId))
             {
                 var post = new Post
@@ -39,10 +40,18 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 };
 
                 context.Posts.Add(post);
-                state = context.SaveChanges();
-            }
+                context.SaveChanges();
+                var notification = new Notification
+                {
+                    AuthorId = userId,
+                    Title = userInfo.FullName + " added a new post",
+                    Link = NotificationLinks.PostDetail + post.Id
+                };
+                notificationRepository.AddNotification(notification);
 
-            return state > 0;
+                return post.Id > 0 ? true : false;
+            }
+            return false;
         }
 
         public bool DeletePost(int id)
@@ -100,7 +109,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return paginateItems;
         }
 
-        public IQueryable<PostDTO> GetPostDetail(int id)
+        public IQueryable<PostDTO> GetPostDetail(int? id)
         {
             var post = GetPosts(id);
             return post;
@@ -187,7 +196,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             {
                                 Name = y.UserLikeName,
                                 UserName = y.UserLikeUserName,
-                                PostId = y.Id,
+                                //PostId = y.Id,
                                 Status = y.LikeStatus,
                                 Avatar = y.UserLikeAvatar
                             }),
@@ -218,7 +227,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 }),
                                 ReplyComments = z.Select(b => new
                                 {
-                                    Id = b.RepLyCommentId,
+                                    //Id = b.RepLyCommentId,
                                     Content = b.ReplyCommentContent,
                                     CreateAt = b.ReplyCommentCreateAt,
                                     UpdateAt = b.ReplyCommentUpdateAt,
@@ -235,6 +244,80 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             }
 
             return posts;
+        }
+
+        public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq)
+        {
+            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var userId = user.Id;
+            var post = GetPostDetail(userLikePostReq.PostId).FirstOrDefault();
+            var userLikPostDb = context.UserLikePosts.FirstOrDefault(x => x.PostId == userLikePostReq.PostId && x.UserId.Equals(userId));
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+
+            if (userLikPostDb == null)
+            {
+                var userLikePost = new UserLikePost
+                {
+                    PostId = userLikePostReq.PostId,
+                    UserId = userId,
+                    Status = userLikePostReq.Status,
+                };
+                context.UserLikePosts.Add(userLikePost);
+
+                if (!post.AuthorId.Equals(userId))
+                {
+                    var notification = new Notification
+                    {
+                        Title = userInfo.FullName + " has given reaction to yoour post",
+                        AuthorId = userId,
+                        PostId = userLikePostReq.PostId,
+                        Status = userLikePostReq.Status,
+                        Link = NotificationLinks.PostDetail + userLikePostReq.PostId,
+                    };
+                    notificationRepository.AddNotification(notification);
+                }
+            }
+                else if (userLikePostReq.Status != null && userLikPostDb.Status != userLikePostReq.Status)
+            {
+                context.UserLikePosts.Remove(userLikPostDb);
+                var userLikePost = new UserLikePost
+                {
+                    PostId = userLikePostReq.PostId,
+                    UserId = userId,
+                    Status = userLikePostReq.Status,
+                };
+                context.UserLikePosts.Add(userLikePost);
+            }
+            else
+            {
+                context.UserLikePosts.Remove(userLikPostDb);
+
+                var notification = context.Notifications.FirstOrDefault(x => x.AuthorId.Equals(userId) 
+                    && x.PostId == post.Id && x.Status == userLikePostReq.Status 
+                    && x.Link.Equals(NotificationLinks.PostDetail + post.Id));
+
+                notificationRepository.RemoveNotification(notification);
+            }
+            var status = context.SaveChanges();
+
+            return status == 0 || status == 1 || status == 2 ? true : false;
+        }
+
+        public IQueryable<dynamic> GetAllUserLikePost(int postId)
+        {
+            var userLikePosts = from p in context.Posts
+                                join ulp in context.UserLikePosts on p.Id equals ulp.PostId
+                                join u in context.Users on ulp.UserId equals u.Id
+                                join ui in context.UserInfos on u.Id equals ui.UserId
+                                where p.Id == postId
+                                select new
+                                {
+                                    PostId = p.Id,
+                                    UserName = u.UserName,
+                                    FullName = ui.FullName,
+                                    Status = ulp.Status,
+                                };
+            return userLikePosts;
         }
     }
 }
