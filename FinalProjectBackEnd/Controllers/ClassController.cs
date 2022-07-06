@@ -66,7 +66,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public ActionResult GetClassDetail(int id)
         {
             try

@@ -43,7 +43,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public ActionResult DeleteComment(int id)
         {
             try
@@ -57,7 +57,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public ActionResult GetCommentDetail(int id)
         {
             try
@@ -99,7 +99,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public ActionResult DeleteReplyComment(int id)
         {
             try
@@ -113,7 +113,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public ActionResult GetAllCommentLike(int id)
         {
             try

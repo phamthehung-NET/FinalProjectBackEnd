@@ -62,7 +62,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public ActionResult GetSubjectDetail(int id)
         {
             try
@@ -76,7 +76,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public ActionResult DeleteSubject(int id)
         {
             try

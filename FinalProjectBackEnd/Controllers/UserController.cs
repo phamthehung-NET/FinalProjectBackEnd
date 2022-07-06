@@ -140,7 +140,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public ActionResult GetTeacherDetail(string id)
         {
             try
@@ -154,7 +154,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public ActionResult DeleteTeacher(string id)
         {
             try

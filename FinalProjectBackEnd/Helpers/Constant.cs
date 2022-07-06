@@ -46,8 +46,8 @@
 
     public class NotificationLinks
     {
-        public static string PostDetail = "/Post/GetPostDetail/";
+        public static string PostDetail = "/Post/GetPostDetail?id=";
 
-        public static string CommentDetail = "/Comment/GetCommentDetail/";
+        public static string CommentDetail = "/Comment/GetCommentDetail?id=";
     }
 }

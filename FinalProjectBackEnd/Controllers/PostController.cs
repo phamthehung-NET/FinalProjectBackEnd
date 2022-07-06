@@ -61,7 +61,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public ActionResult DeletePost(int id)
         {
             try
@@ -75,7 +75,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         public ActionResult GetPostDetail(int id)
         {
             try
@@ -103,7 +103,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{postId}")]
+        [HttpGet]
         public ActionResult GetUserLikePosts(int postId)
         {
             try
