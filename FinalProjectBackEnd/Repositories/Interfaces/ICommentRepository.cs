@@ -12,6 +12,8 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public IQueryable<CommentDTO> GetCommentDetail(int? id);
 
+        public bool UserLikeAndDisLikeComment(UserLikeCommentDTO userLikeCommentReq);
+
         public bool ReplyComment(ReplyCommentDTO replyCommentReq);
 
         public bool EditReplyComment(ReplyCommentDTO replyCommentReq);

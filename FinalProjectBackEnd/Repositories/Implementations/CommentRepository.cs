@@ -27,6 +27,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+            var post = context.Posts.FirstOrDefault(x => x.Id == commentReq.PostId);
 
             Comment comment = new Comment
             {
@@ -38,14 +39,17 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             context.Comments.Add(comment);
             context.SaveChanges();
 
-            var notification = new Notification
+            if (!post.AuthorId.Equals(userId))
             {
-                AuthorId = userId,
-                Title = userInfo.FullName + " has commented to your post",
-                PostId = commentReq.PostId,
-                Link = NotificationLinks.CommentDetail + comment.Id
-            };
-            notificationRepository.AddNotification(notification);
+                var notification = new Notification
+                {
+                    AuthorId = userId,
+                    Title = userInfo.FullName + " has commented to your post",
+                    PostId = commentReq.PostId,
+                    Link = NotificationLinks.CommentDetail + comment.Id
+                };
+                notificationRepository.AddNotification(notification);
+            }
 
             return comment.Id > 0 ? true : false;
         }
@@ -83,18 +87,23 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                            join ui in context.UserInfos on c.AuthorId equals ui.UserId
                            join u in context.Users on ui.UserId equals u.Id
                            join rc in context.ReplyComments on c.Id equals rc.CommentId into replyComments
-                           from rc in replyComments
-                           join rui in context.UserInfos on rc.AuthorId equals rui.UserId
-                           join ru in context.Users on rui.UserId equals ru.Id
+                           from rc in replyComments.DefaultIfEmpty()
+                           join rui in context.UserInfos on rc.AuthorId equals rui.UserId into replyAuthorInfo
+                           from rui in replyAuthorInfo.DefaultIfEmpty()
+                           join ru in context.Users on rui.UserId equals ru.Id into replyAuthor
+                           from ru in replyAuthor.DefaultIfEmpty()
                            join ulc in context.UserLikeComments on c.Id equals ulc.CommentId into userLikeComments
-                           from ulc in userLikeComments
-                           join ulcui in context.UserInfos on ulc.UserId equals ulcui.UserId
-                           join ulcu in context.Users on ulcui.UserId equals ulcu.Id
+                           from ulc in userLikeComments.DefaultIfEmpty()
+                           join ulcui in context.UserInfos on ulc.UserId equals ulcui.UserId into userlikeInfo
+                           from ulcui in userlikeInfo.DefaultIfEmpty()
+                           join ulcu in context.Users on ulcui.UserId equals ulcu.Id into userlikeUser
+                           from ulcu in userlikeUser.DefaultIfEmpty()
                            select new
                            {
                                Id = c.Id,
                                Content = c.Content,
                                AuthorName = ui.FullName,
+                               AuthorId = ui.UserId,
                                AuthorUserName = u.UserName,
                                AuthorAvatar = ui.Avatar,
                                CreateDate = c.CreatedAt,
@@ -111,13 +120,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                UserLikeCommentAuthorUserName = ulcu.UserName,
                                UserLikeCommentAvatar = ulcui.Avatar,
                                UserLikeCommentStatus = ulc.Status,
-                           }).GroupBy(x => new { x.Id, x.Content, x.AuthorUserName, x.AuthorName, x.CreateDate, x.UpdatedAt, x.AuthorAvatar })
+                           }).GroupBy(x => new { x.Id, x.Content, x.AuthorUserName, x.AuthorName, x.CreateDate, x.UpdatedAt, x.AuthorAvatar, x.AuthorId })
                           .Select(x => new CommentDTO
                           {
                               Id = x.Key.Id,
                               Content = x.Key.Content,
                               AuthorName = x.Key.AuthorName,
                               CreatedAt = x.Key.CreateDate,
+                              AuthorId = x.Key.AuthorId,
                               UpdatedAt = x.Key.UpdatedAt,
                               AuthorAvatar = x.Key.AuthorAvatar,
                               UserLikeComments = x.Select(a => new
@@ -129,7 +139,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                               }),
                               ReplyComments = x.Select(b => new
                               {
-                                  Id = b.ReplyCommentId,
+                                  //Id = b.ReplyCommentId,
                                   Content = b.ReplyCommentContent,
                                   CreateAt = b.ReplyCommentCreateAt,
                                   UpdateAt = b.ReplyCommentUpdatedAt,

@@ -72,6 +72,20 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpPost]
+        public ActionResult LikeComment(UserLikeCommentDTO userLikeCommentReq)
+        {
+            try
+            {
+                commentService.UserLikeAndDisLikeComment(userLikeCommentReq);
+                return Ok("Like Successfully");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPost]
         public ActionResult ReplyComment(ReplyCommentDTO replyCommentReq)
         {
             try

@@ -268,7 +268,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     var notification = new Notification
                     {
-                        Title = userInfo.FullName + " has given reaction to yoour post",
+                        Title = userInfo.FullName + " has given reaction to your post",
                         AuthorId = userId,
                         PostId = userLikePostReq.PostId,
                         Status = userLikePostReq.Status,

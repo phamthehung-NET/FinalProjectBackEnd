@@ -92,5 +92,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("Cannot Reply Comment");
         }
+
+        public bool UserLikeAndDisLikeComment(UserLikeCommentDTO userLikeCommentReq)
+        {
+            var result = commentRepository.UserLikeAndDisLikeComment(userLikeCommentReq);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Cannot Like Post");
+        }
     }
 }
