@@ -48,10 +48,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public List<Notification> GetAllNotifications()
         {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var notifications = new List<Notification>();
-            var addPost = GetAllAddPostNotification();
-            var postLikeAndComment = GetLikeAndCommentPostNotifications();
-            var commentLikeAndReply = GetAllLikeAndReplyCommentNotification();
+            var addPost = GetAllAddPostNotification(userId);
+            var postLikeAndComment = GetLikeAndCommentPostNotifications(userId);
+            var commentLikeAndReply = GetAllLikeAndReplyCommentNotification(userId);
             if (addPost.Any())
             {
                 notifications.AddRange(addPost);
@@ -70,12 +71,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return notifications;
         }
 
-        private IQueryable<Notification> GetAllAddPostNotification()
+        private IQueryable<Notification> GetAllAddPostNotification(string userId)
         {
-            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var notification = (from uf in context.UserFollows
                                 join n in context.Notifications on uf.FolloweeId equals n.AuthorId into notifications
                                 from n in notifications.DefaultIfEmpty()
+                                join p in context.Posts on n.PostId equals p.Id
                                 where uf.FollowerId.Equals(userId) && n.Type == NotificationTypes.AddPost
                                 select new Notification
                                 {
@@ -88,9 +89,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return notification;
         }
 
-        private IQueryable<Notification> GetLikeAndCommentPostNotifications()
+        private IQueryable<Notification> GetLikeAndCommentPostNotifications(string userId)
         {
-            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var notification = (from p in context.Posts
                                 join n in context.Notifications on p.Id equals n.PostId
                                 where p.AuthorId.Equals(userId) && (n.Type == NotificationTypes.LikePost || n.Type == NotificationTypes.CommentPost)
@@ -105,9 +105,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return notification;
         }
 
-        private IQueryable<Notification> GetAllLikeAndReplyCommentNotification()
+        private IQueryable<Notification> GetAllLikeAndReplyCommentNotification(string userId)
         {
-            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var notification = (from c in context.Comments
                                 join n in context.Notifications on c.Id equals n.CommentId
                                 where c.AuthorId.Equals(userId) && (n.Type == NotificationTypes.ReplyComment || n.Type == NotificationTypes.LikeComment)

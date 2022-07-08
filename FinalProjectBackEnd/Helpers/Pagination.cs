@@ -34,6 +34,10 @@
             {
                 nextPage = pageIndex;
             }
+            else if(pageIndex > totalPages)
+            {
+                pageIndex = totalPages;
+            }
             else if (pageIndex == 1)
             {
                 prevPage = pageIndex;

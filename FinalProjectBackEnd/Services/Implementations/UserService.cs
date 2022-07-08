@@ -142,9 +142,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Teacher not Found");
         }
 
-        public bool UpdateStudentRole(string id, int role)
+        public bool UpdateStudentRole(StudentRoleDTO req)
         {
-            var result = userRepository.UpdateStudentRole(id, role);
+            var result = userRepository.UpdateStudentRole(req);
             if (result)
             {
                 return true;

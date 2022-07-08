@@ -104,11 +104,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetUserLikePosts(int postId)
+        public ActionResult GetUserLikePosts(int id)
         {
             try
             {
-                var userLikePost = postService.GetAllUserLikePost(postId);
+                var userLikePost = postService.GetAllUserLikePost(id);
                 return Ok(userLikePost.ToList());
             }
             catch (Exception e)

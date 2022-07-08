@@ -63,4 +63,11 @@
 
         public static int ReplyComment = 4;
     }
+
+    public class PostVisibility
+    {
+        public static bool Private = false;
+        
+        public static bool Public = true;
+    }
 }

@@ -179,7 +179,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     var notification = new Notification
                     {
-                        Title = userInfo.FullName + " has given reaction to yoour comment",
+                        Title = userInfo.FullName + " has given reaction to your comment",
                         AuthorId = userId,
                         CommentId = userLikeCommentReq.CommentId,
                         Status = userLikeCommentReq.Status,

@@ -16,23 +16,23 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllStudent(string keyword, int? filter, int? sy, int? padeIndex, int? itemPerPage)
+        public ActionResult<IEnumerable<UserDTO>> GetAllStudent(string keyword, int? filter, int? sy, int? pageIndex, int? itemPerPage)
         {
             keyword = keyword ?? "";
             filter = filter ?? 0;
             sy = sy ?? DateTime.Now.Year;
-            padeIndex = padeIndex ?? 1;
+            pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
             try
             {
-                var students = userService.GetAllStudents(keyword, filter, sy, padeIndex, itemPerPage);
+                var students = userService.GetAllStudents(keyword, filter, sy, pageIndex, itemPerPage);
 
                 return Ok(students);
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(ex);
             }
         }
 
@@ -46,7 +46,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -60,7 +60,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -74,7 +74,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return NotFound(e.Message);
+                return NotFound(e);
             }
         }
 
@@ -88,21 +88,21 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllTeacher(string keyword, bool? filter, int? padeIndex, int? itemPerPage)
+        public ActionResult<IEnumerable<UserDTO>> GetAllTeacher(string keyword, bool? filter, int? pageIndex, int? itemPerPage)
         {
             keyword = keyword ?? "";
             filter = filter ?? false;
-            padeIndex = padeIndex ?? 1;
+            pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
             try
             {
-                var teachers = userService.GetAllTeachers(keyword, filter, padeIndex, itemPerPage);
+                var teachers = userService.GetAllTeachers(keyword, filter, pageIndex, itemPerPage);
 
                 return Ok(teachers);
             }
@@ -169,14 +169,14 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllMonitorStudent(int? padeIndex, int? itemPerPage)
+        public ActionResult<IEnumerable<UserDTO>> GetAllMonitorStudent(int? pageIndex, int? itemPerPage)
         {
-            padeIndex = padeIndex ?? 1;
+            pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
             try
             {
-                var monitor = userService.GetAllMonitorStudents(padeIndex, itemPerPage);
+                var monitor = userService.GetAllMonitorStudents(pageIndex, itemPerPage);
                 return Ok(monitor);
             }
             catch(Exception ex)
@@ -186,14 +186,14 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllSecretaryStudent(int? padeIndex, int? itemPerPage)
+        public ActionResult<IEnumerable<UserDTO>> GetAllSecretaryStudent(int? pageIndex, int? itemPerPage)
         {
-            padeIndex = padeIndex ?? 1;
+            pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
             try
             {
-                var secretary = userService.GetAllSecretaryStudents(padeIndex, itemPerPage);
+                var secretary = userService.GetAllSecretaryStudents(pageIndex, itemPerPage);
                 return Ok(secretary);
             }
             catch (Exception ex)
@@ -203,11 +203,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<UserDTO>> UpdateStudentRoles(string id, int role)
+        public ActionResult UpdateStudentRoles(StudentRoleDTO req)
         {
             try
             {
-                var result = userService.UpdateStudentRole(id, role);
+                var result = userService.UpdateStudentRole(req);
                 return Ok("Update successfully");
             }
             catch (Exception ex)
