@@ -1,6 +1,4 @@
-﻿using FinalProjectBackEnd.Helpers;
-
-namespace FinalProjectBackEnd.Controllers
+﻿namespace FinalProjectBackEnd.Helpers
 {
     public class HelperFuction
     {

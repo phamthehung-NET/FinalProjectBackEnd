@@ -16,7 +16,7 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllStudent(string keyword, int? filter, int? sy, int? pageIndex, int? itemPerPage)
+        public ActionResult GetAllStudent(string keyword, int? filter, int? sy, int? pageIndex, int? itemPerPage)
         {
             keyword = keyword ?? "";
             filter = filter ?? 0;
@@ -93,7 +93,7 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAllTeacher(string keyword, bool? filter, int? pageIndex, int? itemPerPage)
+        public ActionResult GetAllTeacher(string keyword, bool? filter, int? pageIndex, int? itemPerPage)
         {
             keyword = keyword ?? "";
             filter = filter ?? false;

@@ -24,10 +24,14 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string FileName { get; set; }
 
-        public IEnumerable<dynamic> UserLikePosts { get; set; }
+        //public IEnumerable<dynamic> UserLikePosts { get; set; }
 
-        public IEnumerable<dynamic> Comments { get; set; }
+        //public IEnumerable<dynamic> Comments { get; set; }
 
         public string AuthorAvatar { get; set; }
+
+        public int? UserLikePostsCount { get; set; }
+
+        public int? CommentCount { get; set; }
     }
 }

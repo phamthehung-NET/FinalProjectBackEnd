@@ -83,5 +83,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("Post has no reaction");
         }
+
+        public IQueryable<dynamic> GetAllComments(int postId)
+        {
+            var comments = postRepository.GetAllComments(postId);
+            if (comments.Any())
+            {
+                return comments;
+            }
+            throw new Exception("This post has no Comment");
+        }
     }
 }

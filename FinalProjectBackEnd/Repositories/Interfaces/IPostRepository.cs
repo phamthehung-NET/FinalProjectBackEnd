@@ -18,5 +18,7 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
         public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq);
 
         public IQueryable<dynamic> GetAllUserLikePost(int postId);
+
+        public IQueryable<dynamic> GetAllComments(int postId);
     }
 }

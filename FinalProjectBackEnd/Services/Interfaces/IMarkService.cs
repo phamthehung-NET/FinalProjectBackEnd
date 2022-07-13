@@ -1,0 +1,16 @@
+﻿using FinalProjectBackEnd.Helpers;
+using FinalProjectBackEnd.Models.DTO;
+
+namespace FinalProjectBackEnd.Services.Interfaces
+{
+    public interface IMarkService
+    {
+        public Pagination<MarkDTO> GetAllMarks(int? from, int? to, int? pageIndex, int? pageSize);
+
+        public bool AddMark(MarkDTO markReq);
+
+        public bool EditMark(MarkDTO markReq);
+
+        public IQueryable<MarkDTO> GetMarkDetail(int? id);
+    }
+}

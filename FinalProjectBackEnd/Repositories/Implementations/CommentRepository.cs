@@ -149,7 +149,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                   UpdateAt = b.ReplyCommentUpdatedAt,
                                   AuthorName = b.ReplyCommentAuthorName,
                                   AuthorUserName = b.ReplyCommentUserName,
-                                  AuthorAvatar = b.ReplyCommentAuthorAvatar,
+                                  Avatar = b.ReplyCommentAuthorAvatar,
                                   AuthorId = b.ReplyCommentAuthorId,
                               })
                           });
@@ -283,6 +283,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                        UserName = u.UserName,
                                        FullName = ui.FullName,
                                        Status = ulc.Status,
+                                       Avatar = ui.Avatar,
                                    };
             return userLikeComments;
         }

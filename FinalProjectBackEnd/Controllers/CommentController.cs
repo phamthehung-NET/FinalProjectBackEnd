@@ -30,7 +30,7 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpPost]
-        public ActionResult EidtComment(CommentDTO commentReq)
+        public ActionResult EditComment(CommentDTO commentReq)
         {
             try
             {

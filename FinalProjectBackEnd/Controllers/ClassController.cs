@@ -23,6 +23,7 @@ namespace FinalProjectBackEnd.Controllers
         [HttpGet]
         public ActionResult GetAllClass(string keyword, int? pageIndex, int? itemPerPage, int? sy, int? grade)
         {
+            keyword = keyword ?? "";
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
             sy = sy ?? DateTime.Now.Year;

@@ -19,6 +19,7 @@ namespace FinalProjectBackEnd.Controllers
         [HttpGet]
         public ActionResult GetAllPosts(string keyword, int? pageIndex, int? itemPerPage)
         {
+            keyword = keyword ?? "";
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
@@ -109,7 +110,21 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var userLikePost = postService.GetAllUserLikePost(id);
-                return Ok(userLikePost.ToList());
+                return Ok(userLikePost);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetAllComments(int id)
+        {
+            try
+            {
+                var comments = postService.GetAllComments(id);
+                return Ok(comments);
             }
             catch (Exception e)
             {

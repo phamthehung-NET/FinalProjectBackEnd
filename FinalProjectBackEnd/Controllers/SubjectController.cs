@@ -17,8 +17,9 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<SubjectDTO>> GetAllSubjects(string keyword, int? pageIndex, int? itemPerPage)
+        public ActionResult GetAllSubjects(string keyword, int? pageIndex, int? itemPerPage)
         {
+            keyword = keyword ?? "";
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
