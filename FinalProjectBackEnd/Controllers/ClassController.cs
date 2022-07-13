@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace FinalProjectBackEnd.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class ClassController : ControllerBase
     {
@@ -23,6 +23,7 @@ namespace FinalProjectBackEnd.Controllers
         [HttpGet]
         public ActionResult GetAllClass(string keyword, int? pageIndex, int? itemPerPage, int? sy, int? grade)
         {
+            keyword = keyword ?? "";
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
             sy = sy ?? DateTime.Now.Year;
@@ -34,7 +35,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -48,7 +49,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
         
@@ -62,7 +63,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -76,7 +77,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(ex);
             }
         }
 
@@ -90,7 +91,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return NotFound(e.Message);
+                return NotFound(e);
             }
         }
     }

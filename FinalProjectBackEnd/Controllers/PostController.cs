@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinalProjectBackEnd.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class PostController : ControllerBase
     {
@@ -19,6 +19,7 @@ namespace FinalProjectBackEnd.Controllers
         [HttpGet]
         public ActionResult GetAllPosts(string keyword, int? pageIndex, int? itemPerPage)
         {
+            keyword = keyword ?? "";
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
@@ -29,7 +30,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -43,7 +44,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -57,7 +58,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -71,7 +72,63 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetPostDetail(int id)
+        {
+            try
+            {
+                var post = postService.GetPostDetail(id);
+                return Ok(post.FirstOrDefault());
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult LikePost(UserLikePostDTO userLikePostReq)
+        {
+            try
+            {
+                postService.UserLikeAndDisLike(userLikePostReq);
+                return Ok("Like Successfully");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetUserLikePosts(int id)
+        {
+            try
+            {
+                var userLikePost = postService.GetAllUserLikePost(id);
+                return Ok(userLikePost);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetAllComments(int id)
+        {
+            try
+            {
+                var comments = postService.GetAllComments(id);
+                return Ok(comments);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
             }
         }
     }

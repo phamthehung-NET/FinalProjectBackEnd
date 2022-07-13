@@ -29,7 +29,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public Pagination<UserDTO> GetAllMonitorStudents(int? padeIndex, int? itemPerPage);
 
-        public bool UpdateStudentRole(string id, int role);
+        public bool UpdateStudentRole(StudentRoleDTO req);
 
         public IQueryable<UserDTO> GetCurrentUser(string id);
     }

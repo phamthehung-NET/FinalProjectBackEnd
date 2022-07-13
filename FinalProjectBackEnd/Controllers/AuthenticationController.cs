@@ -1,12 +1,8 @@
 ﻿using FinalProjectBackEnd.Areas.Identity.Data;
-using FinalProjectBackEnd.Data;
-using FinalProjectBackEnd.Services;
 using FinalProjectBackEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,7 +11,7 @@ using WebAPI.Model.DTO;
 
 namespace FinalProjectBackEnd.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -73,12 +69,12 @@ namespace FinalProjectBackEnd.Controllers
                     expration = token.ValidTo
                 });
             }
-            return Unauthorized();
+            return Unauthorized("UserName and Password is not correct");
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetUserInfo()
+        public IActionResult GetUserInfo()
         {
             var userId = httpContextAccessor.HttpContext.User.Claims.ElementAt(1).Value;
             var currentUser = userService.GetCurrentUser(userId).FirstOrDefault();

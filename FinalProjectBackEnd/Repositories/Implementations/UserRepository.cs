@@ -266,14 +266,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return paginateItem;
         }
 
-        public bool UpdateStudentRole (string id, int role)
+        public bool UpdateStudentRole (StudentRoleDTO req)
         {
-            if(CheckUserRole(id, Roles.StudentRoleId))
+            if(CheckUserRole(req.Id, Roles.StudentRoleId))
             {
-                var student = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(id));
+                var student = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(req.Id));
                 if (student != null)
                 {
-                    student.StudentRole = role;
+                    student.StudentRole = req.Role;
                     context.SaveChanges();
                     return true;
                 }

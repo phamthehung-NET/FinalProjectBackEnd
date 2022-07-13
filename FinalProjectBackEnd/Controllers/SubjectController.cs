@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinalProjectBackEnd.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class SubjectController : ControllerBase
     {
@@ -17,8 +17,9 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<SubjectDTO>> GetAllSubjects(string keyword, int? pageIndex, int? itemPerPage)
+        public ActionResult GetAllSubjects(string keyword, int? pageIndex, int? itemPerPage)
         {
+            keyword = keyword ?? "";
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
 
@@ -30,7 +31,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -44,7 +45,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -58,7 +59,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -72,7 +73,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -86,7 +87,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -100,7 +101,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
 
@@ -114,7 +115,7 @@ namespace FinalProjectBackEnd.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(e);
             }
         }
     }

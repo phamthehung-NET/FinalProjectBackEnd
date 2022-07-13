@@ -39,7 +39,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             context.SaveChanges();
 
-            if(newSubject.Id != 0)
+            if (newSubject.Id != 0)
             {
                 return true;
             }
@@ -133,7 +133,19 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public IQueryable<SubjectDTO> GetSubjectDetail(int id)
         {
-            var subject = context.Subjects.Where(x => x.Id == id).Select(x => new SubjectDTO { Id = x.Id, Name = x.Name });
+            var subject = context.Subjects.Where(x => x.Id == id).Select(x => new SubjectDTO
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Teacher = (from ts in context.TeacherSubjects
+                          join ui in context.UserInfos on ts.TeacherId equals ui.UserId
+                          where ts.SubjectId == id
+                          select new
+                          {
+                              Id= ui.UserId,
+                              Name = ui.FullName,
+                          }).ToList(),
+            });
 
             return subject;
         }

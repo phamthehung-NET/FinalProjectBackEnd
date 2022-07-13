@@ -7,12 +7,18 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
     {
         public Pagination<PostDTO> GetAllPosts(string keyword, int? pageIndex, int? pageSize);
 
-        public IQueryable<PostDTO> GetPostDetail(int id);
+        public IQueryable<PostDTO> GetPostDetail(int? id);
 
         public bool AddPost(PostDTO postReq);
 
         public bool EditPost(PostDTO postReq);
 
         public bool DeletePost(int id);
+
+        public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq);
+
+        public IQueryable<dynamic> GetAllUserLikePost(int postId);
+
+        public IQueryable<dynamic> GetAllComments(int postId);
     }
 }

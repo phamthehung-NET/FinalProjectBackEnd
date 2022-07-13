@@ -43,4 +43,31 @@
 
         public static string Post = "Images/Posts";
     }
+
+    public class NotificationLinks
+    {
+        public static string PostDetail = "/Post/GetPostDetail?id=";
+
+        public static string CommentDetail = "/Comment/GetCommentDetail?id=";
+    }
+
+    public class NotificationTypes
+    {
+        public static int AddPost = 0;
+
+        public static int LikePost = 1;
+
+        public static int CommentPost = 2;
+
+        public static int LikeComment = 3;
+
+        public static int ReplyComment = 4;
+    }
+
+    public class PostVisibility
+    {
+        public static bool Private = false;
+        
+        public static bool Public = true;
+    }
 }

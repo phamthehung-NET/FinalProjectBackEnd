@@ -14,20 +14,21 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         private readonly ApplicationDbContext context;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly UserManager<CustomUser> userManager;
+        private readonly INotificationRepository notificationRepository;
 
-        public PostRepository(ApplicationDbContext _context, IHttpContextAccessor _httpContextAccessor, UserManager<CustomUser> _userManager)
+        public PostRepository(ApplicationDbContext _context, IHttpContextAccessor _httpContextAccessor, UserManager<CustomUser> _userManager, INotificationRepository _notificationRepository)
         {
             context = _context;
             httpContextAccessor = _httpContextAccessor;
             userManager = _userManager;
+            notificationRepository = _notificationRepository;
         }
 
         public bool AddPost(PostDTO postReq)
         {
-            int state = 0;
-            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
 
-            var userId = user.Id;
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
             if (!String.IsNullOrEmpty(userId))
             {
                 var post = new Post
@@ -35,14 +36,24 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Content = postReq.Content,
                     AuthorId = userId,
                     CreatedAt = DateTime.Now,
-                    Image = postReq.Image,
+                    Image = HelperFuction.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post),
                 };
 
                 context.Posts.Add(post);
-                state = context.SaveChanges();
-            }
+                context.SaveChanges();
+                var notification = new Notification
+                {
+                    AuthorId = userId,
+                    PostId = post.Id,
+                    Title = userInfo.FullName + " added a new post",
+                    Link = NotificationLinks.PostDetail + post.Id,
+                    Type = NotificationTypes.AddPost
+                };
+                notificationRepository.AddNotification(notification);
 
-            return state > 0;
+                return post.Id > 0 ? true : false;
+            }
+            return false;
         }
 
         public bool DeletePost(int id)
@@ -100,7 +111,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return paginateItems;
         }
 
-        public IQueryable<PostDTO> GetPostDetail(int id)
+        public IQueryable<PostDTO> GetPostDetail(int? id)
         {
             var post = GetPosts(id);
             return post;
@@ -115,28 +126,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                          from ui in postAuthorInfo.DefaultIfEmpty()
                          join ulp in context.UserLikePosts on p.Id equals ulp.PostId into userLikePosts
                          from ulp in userLikePosts.DefaultIfEmpty()
-                         join lu in context.Users on ulp.UserId equals lu.Id into userLikePostAccounts
-                         from lu in userLikePostAccounts.DefaultIfEmpty()
-                         join lui in context.UserInfos on lu.Id equals lui.UserId into userLikePostInfo
-                         from lui in userLikePostInfo.DefaultIfEmpty()
                          join c in context.Comments on p.Id equals c.PostId into postComments
                          from c in postComments.DefaultIfEmpty()
-                         join cu in context.Users on c.AuthorId equals cu.Id into authorComments
-                         from cu in authorComments.DefaultIfEmpty()
-                         join cui in context.UserInfos on cu.Id equals cui.UserId into commentAuthorInfo
-                         from cui in commentAuthorInfo.DefaultIfEmpty()
-                         join ulc in context.UserLikeComments on c.Id equals ulc.CommentId into userLikeComments
-                         from ulc in userLikeComments.DefaultIfEmpty()
-                         join lcu in context.Users on ulc.UserId equals lcu.Id into userLikeCommentAccounts
-                         from lcu in userLikeCommentAccounts.DefaultIfEmpty()
-                         join uilc in context.UserInfos on lcu.Id equals uilc.UserId into userLikeCommentInfo
-                         from uilc in userLikeCommentInfo.DefaultIfEmpty()
-                         join rc in context.ReplyComments on c.Id equals rc.CommentId into replyComments
-                         from rc in replyComments.DefaultIfEmpty()
-                         join rcu in context.Users on rc.AuthorId equals rcu.Id into authorReplyComments
-                         from rcu in authorReplyComments.DefaultIfEmpty()
-                         join rcui in context.UserInfos on rcu.Id equals rcui.UserId into replyCommentInfo
-                         from rcui in replyCommentInfo.DefaultIfEmpty()
                          select new
                          {
                              Id = p.Id,
@@ -148,29 +139,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              Content = p.Content,
                              UpdatedDate = p.UpdatedDate,
                              Image = p.Image,
-                             UserLikeId = lui.UserId,
-                             UserLikeName = lui.FullName,
-                             UserLikeUserName = lu.UserName,
-                             LikeStatus = ulp.Status,
-                             UserLikeAvatar = lui.Avatar,
-                             CommentId = c.Id,
-                             CommentContent = c.Content,
-                             CommentCreateTime = c.UpdatedAt,
-                             CommentUpdateAt = c.UpdatedAt,
-                             AuthorCommentName = cui.FullName,
-                             AuthorCommentUserName = cu.UserName,
-                             AuthorCommentAvatar = cui.Avatar,
-                             UserLikeCommentName = uilc.FullName,
-                             UserLikeCommentUserName = lcu.UserName,
-                             UserLikeCommentStatus = ulc.Status,
-                             UserLikeCommentAvatar = uilc.Avatar,
-                             RepLyCommentId = rc.Id,
-                             ReplyCommentContent = rc.Content,
-                             ReplyCommentCreateAt = rc.CreatedAt,
-                             ReplyCommentUpdateAt = rc.UpdatedAt,
-                             AuthorReplyCommentName = rcui.FullName,
-                             AuthorReplyCommentUserName = rcu.UserName,
-                             AuthorReplyCommentAvatar = rcui.Avatar,
+                             UserLikePosts = ulp.Id,
+                             Comments = c.Id,
                          }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar })
                         .Select(x => new PostDTO
                         {
@@ -183,50 +153,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             UpdatedDate = x.Key.UpdatedDate,
                             Image = x.Key.Image,
                             AuthorAvatar = x.Key.AuthorAvatar,
-                            UserLikePosts = x.Select(y => new
-                            {
-                                Name = y.UserLikeName,
-                                UserName = y.UserLikeUserName,
-                                PostId = y.Id,
-                                Status = y.LikeStatus,
-                                Avatar = y.UserLikeAvatar
-                            }),
-                            Comments = x.GroupBy(z => new
-                            {
-                                Id = z.CommentId,
-                                Content = z.CommentContent,
-                                CreateAt = z.CommentCreateTime,
-                                UpdateAt = z.CommentUpdateAt,
-                                AuthorName = z.AuthorCommentName,
-                                AuthorUserName = z.AuthorCommentUserName,
-                                Avatar = z.AuthorCommentAvatar,
-                            }).Select(z => new
-                            {
-                                Id = z.Key.Id,
-                                Content = z.Key.Content,
-                                CreateAt = z.Key.CreateAt,
-                                UpdateAt = z.Key.UpdateAt,
-                                AuthorName = z.Key.AuthorName,
-                                AuthorUserName = z.Key.AuthorUserName,
-                                Avatar = z.Key.Avatar,
-                                UserLikeComments = z.Select(a => new
-                                {
-                                    Name = a.UserLikeCommentName,
-                                    UserName = a.UserLikeCommentUserName,
-                                    Status = a.UserLikeCommentStatus,
-                                    Avatar = a.UserLikeCommentAvatar,
-                                }),
-                                ReplyComments = z.Select(b => new
-                                {
-                                    Id = b.RepLyCommentId,
-                                    Content = b.ReplyCommentContent,
-                                    CreateAt = b.ReplyCommentCreateAt,
-                                    UpdateAt = b.ReplyCommentUpdateAt,
-                                    AuthorName = b.AuthorReplyCommentName,
-                                    AuthorUserName = b.AuthorReplyCommentUserName,
-                                    AuthorAvatar = b.AuthorReplyCommentAvatar,
-                                })
-                            }),
+                            UserLikePostsCount = x.Select(y => y.UserLikePosts).Distinct().Count(),
+                            CommentCount = x.Select(z => z.Comments).Distinct().Count(),
                         });
             
             if (id != null)
@@ -235,6 +163,139 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             }
 
             return posts;
+        }
+
+        public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq)
+        {
+            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var userId = user.Id;
+            var post = GetPostDetail(userLikePostReq.Id).FirstOrDefault();
+            var userLikPostDb = context.UserLikePosts.FirstOrDefault(x => x.PostId == userLikePostReq.Id && x.UserId.Equals(userId));
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+
+            if (userLikPostDb == null)
+            {
+                var userLikePost = new UserLikePost
+                {
+                    PostId = userLikePostReq.Id,
+                    UserId = userId,
+                    Status = userLikePostReq.Status,
+                };
+                context.UserLikePosts.Add(userLikePost);
+
+                if (!post.AuthorId.Equals(userId))
+                {
+                    var notification = new Notification
+                    {
+                        Title = userInfo.FullName + " has given reaction to your post",
+                        AuthorId = userId,
+                        PostId = userLikePostReq.Id,
+                        Status = userLikePostReq.Status,
+                        Link = NotificationLinks.PostDetail + userLikePostReq.Id,
+                        Type = NotificationTypes.LikePost
+                    };
+                    notificationRepository.AddNotification(notification);
+                }
+            }
+                else if (userLikePostReq.Status != null && userLikPostDb.Status != userLikePostReq.Status)
+            {
+                context.UserLikePosts.Remove(userLikPostDb);
+                var userLikePost = new UserLikePost
+                {
+                    PostId = userLikePostReq.Id,
+                    UserId = userId,
+                    Status = userLikePostReq.Status,
+                };
+                context.UserLikePosts.Add(userLikePost);
+            }
+            else
+            {
+                context.UserLikePosts.Remove(userLikPostDb);
+
+                var notification = context.Notifications.FirstOrDefault(x => x.AuthorId.Equals(userId) 
+                    && x.PostId == post.Id && x.Status == userLikePostReq.Status 
+                    && x.Link.Equals(NotificationLinks.PostDetail + post.Id));
+
+                notificationRepository.RemoveNotification(notification);
+            }
+            var status = context.SaveChanges();
+
+            return status == 0 || status == 1 || status == 2 ? true : false;
+        }
+
+        public IQueryable<dynamic> GetAllUserLikePost(int postId)
+        {
+            var userLikePosts = from p in context.Posts
+                                join ulp in context.UserLikePosts on p.Id equals ulp.PostId
+                                join u in context.Users on ulp.UserId equals u.Id
+                                join ui in context.UserInfos on u.Id equals ui.UserId
+                                where p.Id == postId
+                                select new
+                                {
+                                    PostId = p.Id,
+                                    UserName = u.UserName,
+                                    UserFullName = ui.FullName,
+                                    FullName = ui.FullName,
+                                    Status = ulp.Status,
+                                };
+            return userLikePosts;
+        }
+
+        public IQueryable<dynamic> GetAllComments(int postId)
+        {
+            var comments = (from c in context.Comments
+                            join ui in context.UserInfos on c.AuthorId equals ui.UserId
+                            join ulc in context.UserLikeComments on c.Id equals ulc.CommentId into userLikeComment
+                            from ulc in userLikeComment.DefaultIfEmpty()
+                            join uilc in context.UserInfos on ulc.UserId equals uilc.UserId into userLikeCommentInfor
+                            from uilc in userLikeCommentInfor.DefaultIfEmpty()
+                            join rc in context.ReplyComments on c.Id equals rc.CommentId into replyComments
+                            from rc in replyComments.DefaultIfEmpty()
+                            join rcui in context.UserInfos on rc.AuthorId equals rcui.UserId into replyCommentInfor
+                            from rcui in replyCommentInfor.DefaultIfEmpty()
+                            where c.PostId == postId
+                            select new
+                            {
+                                Id = c.Id,
+                                Content = c.Content,
+                                PostId = c.PostId,
+                                CreateAt = c.CreatedAt,
+                                UpdateAt = c.UpdatedAt,
+                                AuthorName = ui.FullName,
+                                AuthorUserName = ui.CustomUser.UserName,
+                                AuthorAvatar = ui.Avatar,
+                                //ReplyCommentId = rc.Id,
+                                ReplyCommentContent = rc.Content,
+                                ReplyCreateAt = rc.CreatedAt,
+                                ReplyUpdateAt = rc.UpdatedAt,
+                                ReplyAuthorName = rcui.FullName,
+                                ReplyAuthorUserName = rcui.CustomUser.UserName,
+                                ReplyAuthorAvatar = rcui.Avatar,
+                                UserLikeComments = ulc.Id,
+                            }).GroupBy(x => new { x.Id, x.PostId, x.Content, x.CreateAt, x.UpdateAt, x.AuthorName, x.AuthorUserName, x.AuthorAvatar })
+                            .Select(x => new
+                            {
+                                Id = x.Key.Id,
+                                PostId = x.Key.PostId,
+                                Content = x.Key.Content,
+                                CreateAt = x.Key.CreateAt,
+                                UpdateAt = x.Key.UpdateAt,
+                                AuthorName = x.Key.AuthorName,
+                                AuthorUserName = x.Key.AuthorUserName,
+                                AuthorAvatar = x.Key.AuthorAvatar,
+                                ReplyComments = x.Select(y => new
+                                {
+                                    //Id = y.ReplyCommentId,
+                                    Content = y.ReplyCommentContent,
+                                    CreateAt = y.ReplyCreateAt,
+                                    UpdateAt = y.ReplyUpdateAt,
+                                    AuthorName = y.ReplyAuthorName,
+                                    AuthorUserName = y.ReplyAuthorUserName,
+                                    AuhthorAvatar = y.ReplyAuthorAvatar,
+                                }).Distinct(),
+                                UserLikeComments = x.Select(z => z.UserLikeComments).Distinct().Count()
+                            });
+            return comments;
         }
     }
 }

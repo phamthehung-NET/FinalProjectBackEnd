@@ -17,5 +17,7 @@ namespace FinalProjectBackEnd.Models
         public DateTime? UpdatedDate { get; set; }
 
         public string Image { get; set; }
+
+        public bool? Visibility { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using FinalProjectBackEnd.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalProjectBackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220706054756_v3")]
+    partial class v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,14 +93,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d6770d41-e5cb-4fcd-b671-db0ed5788aa8",
+                            ConcurrencyStamp = "d58d9783-b1e2-46c5-be40-977f68fd15af",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAECJVeoa2qI3vv+OoV1/adlsKQ0Shyryhu/MBJ2HeO83y818qDy+nYGlXjwzH5TRRZw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENQA1AjXWz869Evt9rMW9By7ULMKDhk+c4sBd4B61WQke6XRLbWCWDIo+0pD4yj0/Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e468d2e7-b681-46be-93c0-e6685257642d",
+                            SecurityStamp = "8ca6c483-1d53-4c5a-99db-3ed933e4308a",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -106,14 +108,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "aa16f29a-c90d-494b-a3ed-098c04bddc52",
+                            ConcurrencyStamp = "ac7c8450-4c3f-4353-9000-d88b9175ab1a",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBV1bb7rFpcMQYOQgiZpTW8JLX5QNQSOYdoLgkRjrn3u3fmGyYs63aD8c9uNICRYtg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEI2lxmXVS4hkX037RflmJzvbBQaMvvIVFts1w33CKZiYGsJM/3v2xyXnYaNFfol53w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9384120b-29e9-4d71-9be8-f95a2329a302",
+                            SecurityStamp = "8c1d01e1-844d-4842-971e-720a1d17c900",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -261,12 +263,6 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<int?>("ClassId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal?>("Mark")
                         .HasColumnType("decimal(18,2)");
 
@@ -275,12 +271,6 @@ namespace FinalProjectBackEnd.Migrations
 
                     b.Property<int?>("SchoolYear")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -341,9 +331,6 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Type")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Notifications");
@@ -371,9 +358,6 @@ namespace FinalProjectBackEnd.Migrations
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool?>("Visibility")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -556,13 +540,11 @@ namespace FinalProjectBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            FullName = "Principal",
                             UserId = "1"
                         },
                         new
                         {
                             Id = 2,
-                            FullName = "Vice-principal",
                             UserId = "2"
                         });
                 });
