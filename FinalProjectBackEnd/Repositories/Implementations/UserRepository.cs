@@ -117,7 +117,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     student.PhoneNumber = userDTO.PhoneNumber;
                     studentInfo.DoB = userDTO.DoB;
                     studentInfo.GraduateYear = userDTO.GraduateYear;
-                    studentInfo.Status = userDTO.Status;
+                    studentInfo.Status = StudentStatus.Learning;
                     studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student);
                     context.SaveChanges();
                     return true;
