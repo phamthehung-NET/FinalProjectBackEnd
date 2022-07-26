@@ -1,14 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinalProjectBackEnd.Models
+namespace FinalProjectBackEnd.Models.DTO
 {
-    public class Message
+    public class MessageDTO
     {
         public int Id { get; set; }
 
         public string Content { get; set; }
 
         public string AuthorId { get; set; }
+
+        public string AuthorName { get; set; }
+
+        public string AuthorUserName { get; set; }
+
+        public string AuthorAvatar { get; set; }
 
         public int? GroupChatId { get; set; }
 

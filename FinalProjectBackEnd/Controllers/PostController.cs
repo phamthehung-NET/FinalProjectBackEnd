@@ -26,7 +26,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var posts = postService.GetAllPosts(keyword, pageIndex, itemPerPage);
-                return Ok(posts);
+                return Ok(posts.Items);
             }
             catch (Exception ex)
             {

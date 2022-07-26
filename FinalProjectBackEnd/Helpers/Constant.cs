@@ -70,4 +70,19 @@
         
         public static bool Public = true;
     }
+
+    public class LikeStatus
+    {
+        public static int Like = 0;
+
+        public static int Love = 1;
+
+        public static int Haha = 2;
+
+        public static int Wow = 3;
+
+        public static int Sad = 4;
+
+        public static int Angry = 5;
+    }
 }

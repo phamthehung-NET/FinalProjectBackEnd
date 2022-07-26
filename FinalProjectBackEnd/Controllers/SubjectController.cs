@@ -27,7 +27,7 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var subjects = subjectService.GetAllSubjects(keyword, pageIndex, itemPerPage);
 
-                return Ok(subjects);
+                return Ok(subjects.Items);
             }
             catch (Exception ex)
             {
