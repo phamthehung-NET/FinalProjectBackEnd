@@ -24,7 +24,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var mark = markService.GetAllMarks(from, to, pageIndex, itemPerPage);
-                return Ok(mark);
+                return Ok(mark.Items);
             }
             catch(Exception e)
             {

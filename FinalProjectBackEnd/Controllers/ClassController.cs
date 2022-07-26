@@ -31,7 +31,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var classes = classService.GetAllClasses(keyword, pageIndex, itemPerPage, sy, grade);
-                return Ok(classes);
+                return Ok(classes.Items);
             }
             catch (Exception ex)
             {

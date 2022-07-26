@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinalProjectBackEnd.Models
+namespace FinalProjectBackEnd.Models.DTO
 {
-    public class GroupChat
+    public class GroupChatDTO
     {
         public int Id { get; set; }
 
@@ -12,5 +12,9 @@ namespace FinalProjectBackEnd.Models
         public DateTime? CreatedAt { get; set; }
 
         public string CreatedBy { get; set; }
+
+        public IEnumerable<dynamic> Users { get; set; }
+
+        public dynamic LastestMessage { get; set; }
     }
 }

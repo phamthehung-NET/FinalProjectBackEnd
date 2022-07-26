@@ -49,6 +49,8 @@ public class ApplicationDbContext : IdentityDbContext<CustomUser>
 
     public DbSet<UserFollow> UserFollows { get; set; }
 
+    public DbSet<Conversation> Conversations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

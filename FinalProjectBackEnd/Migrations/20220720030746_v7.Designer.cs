@@ -4,6 +4,7 @@ using FinalProjectBackEnd.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalProjectBackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220720030746_v7")]
+    partial class v7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,14 +93,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "79d6bdfe-a60d-43a6-b741-b9b61f9a7977",
+                            ConcurrencyStamp = "5641406e-27d3-4612-aae1-91a9c55e45a4",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE7zGKTiXDLzMnBpTBXLqYVkUJRk1p+43R6JxLJml684NmdpcVs9YHfp+o55W98AbA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOr1D0xkURYj+Me3pmtY2DZiwEHk1SGvTU5XdNBqAF9eYwosbYRwimDoZaKrO3fHbw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9a0ef694-06a1-4ad8-a258-9a151fbcf2b5",
+                            SecurityStamp = "ef8184d0-365d-4730-98db-7ba8ae61b085",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -106,14 +108,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "315ab927-a13d-4994-b58a-9e713ae06eb7",
+                            ConcurrencyStamp = "170f9288-5dff-4483-9d12-6108438c48bf",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEG6f3bBfoA53lUwTcMs4BbDD12MQehBg6gRN/i2GPJDy/12MjwGlYN5QMapgxtdP1A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEI+6JIymL9LHrgGHRwGY+co3wk2qzrlfGa11sAvd0S2e6Zshqnk7DDS4W766LbN4vg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "573fcb1b-8c37-4572-b85a-f0ab8eff37b7",
+                            SecurityStamp = "4d7883b4-b237-4437-b70d-6f0409b0f76d",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -260,9 +262,6 @@ namespace FinalProjectBackEnd.Migrations
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
