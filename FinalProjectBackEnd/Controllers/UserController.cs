@@ -28,7 +28,7 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var students = userService.GetAllStudents(keyword, filter, sy, pageIndex, itemPerPage);
 
-                return Ok(students.Items);
+                return Ok(students);
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var teachers = userService.GetAllTeachers(keyword, filter, pageIndex, itemPerPage);
 
-                return Ok(teachers.Items);
+                return Ok(teachers);
             }
             catch (Exception ex)
             {
