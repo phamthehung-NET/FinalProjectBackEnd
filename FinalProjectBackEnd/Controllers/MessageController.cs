@@ -47,7 +47,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetAllGroupMembers(int id)
         {
             try
@@ -61,7 +61,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetAllMessageOfGroupChat(int id)
         {
             try
@@ -75,7 +75,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{userId}")]
         public ActionResult GetAllMessagesOfConversation(string userId)
         {
             try

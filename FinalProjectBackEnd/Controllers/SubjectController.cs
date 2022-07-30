@@ -63,7 +63,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetSubjectDetail(int id)
         {
             try

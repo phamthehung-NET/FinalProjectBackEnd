@@ -64,7 +64,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetStudentDetail(string id)
         {
             try
@@ -140,7 +140,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetTeacherDetail(string id)
         {
             try

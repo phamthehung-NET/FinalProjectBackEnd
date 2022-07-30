@@ -2,10 +2,10 @@
 {
     public class HelperFuction
     {
-        public static string handleUserName(string fullName, int? schoolyear)
+        public static string handleUserName(string fullName, DateTime? DoB, int? schoolyear)
         {
             string name = fullName.Split(' ').Last().ToLower();
-            string userName = name + schoolyear.ToString().Substring(schoolyear.ToString().Length -2);
+            string userName = name + DoB.Value.Day + DoB.Value.Month + DoB.Value.Year + "_" + schoolyear.ToString().Substring(schoolyear.ToString().Length -2);
             return userName;
         }
 

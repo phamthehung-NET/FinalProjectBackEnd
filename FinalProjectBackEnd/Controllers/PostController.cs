@@ -76,7 +76,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetPostDetail(int id)
         {
             try
@@ -104,7 +104,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetUserLikePosts(int id)
         {
             try
@@ -118,7 +118,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetAllComments(int id)
         {
             try

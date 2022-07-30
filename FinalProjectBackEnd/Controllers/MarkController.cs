@@ -60,7 +60,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetMarkDetail(int id)
         {
             try
