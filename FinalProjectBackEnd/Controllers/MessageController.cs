@@ -25,7 +25,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var conversation = messageService.GetAllConversationAndGroupChat(pageIndex, itemPerPage);
-                return Ok(conversation.Items);
+                return Ok(conversation);
             }
             catch (Exception e)
             {

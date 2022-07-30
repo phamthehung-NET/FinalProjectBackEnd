@@ -177,7 +177,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var monitor = userService.GetAllMonitorStudents(pageIndex, itemPerPage);
-                return Ok(monitor.Items);
+                return Ok(monitor);
             }
             catch(Exception ex)
             {
@@ -194,7 +194,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var secretary = userService.GetAllSecretaryStudents(pageIndex, itemPerPage);
-                return Ok(secretary.Items);
+                return Ok(secretary);
             }
             catch (Exception ex)
             {
