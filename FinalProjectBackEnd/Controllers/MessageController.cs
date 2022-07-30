@@ -25,7 +25,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var conversation = messageService.GetAllConversationAndGroupChat(pageIndex, itemPerPage);
-                return Ok(conversation.Items);
+                return Ok(conversation);
             }
             catch (Exception e)
             {
@@ -47,7 +47,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetAllGroupMembers(int id)
         {
             try
@@ -61,7 +61,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetAllMessageOfGroupChat(int id)
         {
             try
@@ -75,7 +75,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{userId}")]
         public ActionResult GetAllMessagesOfConversation(string userId)
         {
             try

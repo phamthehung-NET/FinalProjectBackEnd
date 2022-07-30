@@ -27,7 +27,7 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var subjects = subjectService.GetAllSubjects(keyword, pageIndex, itemPerPage);
 
-                return Ok(subjects.Items);
+                return Ok(subjects);
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetSubjectDetail(int id)
         {
             try

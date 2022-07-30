@@ -22,7 +22,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public async Task<bool> AddStudent(UserDTO userDTO)
         {
-            string userName = HelperFuction.handleUserName(userDTO.FullName, userDTO.SchoolYear);
+            string userName = HelperFuction.handleUserName(userDTO.FullName, userDTO.DoB, userDTO.SchoolYear);
             var account = new CustomUser
             {
                 Email = userDTO.Email,
@@ -41,7 +41,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     SchoolYear = userDTO.SchoolYear,
                     GraduateYear = userDTO.GraduateYear,
                     Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student),
-                    Status = userDTO.Status,
+                    Status = StudentStatus.Learning,
                     StudentRole = StudentRole.Normal,
                 };
                 context.UserInfos.Add(userInfo);
@@ -117,7 +117,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     student.PhoneNumber = userDTO.PhoneNumber;
                     studentInfo.DoB = userDTO.DoB;
                     studentInfo.GraduateYear = userDTO.GraduateYear;
-                    studentInfo.Status = StudentStatus.Learning;
+                    studentInfo.Status = userDTO.Status;
                     studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student);
                     context.SaveChanges();
                     return true;

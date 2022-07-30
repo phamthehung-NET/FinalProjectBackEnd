@@ -26,7 +26,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var posts = postService.GetAllPosts(keyword, pageIndex, itemPerPage);
-                return Ok(posts.Items);
+                return Ok(posts);
             }
             catch (Exception ex)
             {
@@ -76,7 +76,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetPostDetail(int id)
         {
             try
@@ -104,7 +104,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetUserLikePosts(int id)
         {
             try
@@ -118,7 +118,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetAllComments(int id)
         {
             try

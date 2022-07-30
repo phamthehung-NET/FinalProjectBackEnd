@@ -28,7 +28,7 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var students = userService.GetAllStudents(keyword, filter, sy, pageIndex, itemPerPage);
 
-                return Ok(students.Items);
+                return Ok(students);
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetStudentDetail(string id)
         {
             try
@@ -104,7 +104,7 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var teachers = userService.GetAllTeachers(keyword, filter, pageIndex, itemPerPage);
 
-                return Ok(teachers.Items);
+                return Ok(teachers);
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetTeacherDetail(string id)
         {
             try
@@ -177,7 +177,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var monitor = userService.GetAllMonitorStudents(pageIndex, itemPerPage);
-                return Ok(monitor.Items);
+                return Ok(monitor);
             }
             catch(Exception ex)
             {
@@ -194,7 +194,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var secretary = userService.GetAllSecretaryStudents(pageIndex, itemPerPage);
-                return Ok(secretary.Items);
+                return Ok(secretary);
             }
             catch (Exception ex)
             {
