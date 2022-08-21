@@ -72,9 +72,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Subject Not Found");
         }
 
-        public IQueryable<UserDTO> GetTeacherForSubject()
+        public IQueryable<UserDTO> GetTeacherForSubject(int? id)
         {
-            var teacher = subjectRepository.GetTeacherForSubject();
+            var teacher = subjectRepository.GetTeacherForSubject(id);
             if(teacher.Any())
             {
                 return teacher;

@@ -150,12 +150,21 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return subject;
         }
 
-        public IQueryable<UserDTO> GetTeacherForSubject()
+        public IQueryable<UserDTO> GetTeacherForSubject(int? id)
         {
             var teacher = userRepository.GetUSerWithRole(Roles.Teacher, null, null);
             var teacherSubject = context.TeacherSubjects.Select(x => x.TeacherId).ToList();
+            var subjectTeacher = context.TeacherSubjects.Where(x => x.SubjectId == id).Select(x => x.TeacherId).ToList();
 
-            teacher = teacher.Where(x => !teacherSubject.Contains(x.Id));
+            if(id != null)
+            {
+                teacher = teacher.Where(x => !teacherSubject.Contains(x.Id) || subjectTeacher.Contains(x.Id));
+            }
+            else
+            {
+                teacher = teacher.Where(x => !teacherSubject.Contains(x.Id));
+            }
+
             return teacher;
         }
 

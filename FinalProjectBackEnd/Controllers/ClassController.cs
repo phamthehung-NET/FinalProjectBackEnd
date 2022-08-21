@@ -27,6 +27,7 @@ namespace FinalProjectBackEnd.Controllers
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
             sy = sy ?? DateTime.Now.Year;
+            grade = grade ?? 10;
 
             try
             {
