@@ -84,6 +84,8 @@ namespace FinalProjectBackEnd.Controllers
                 userName = currentUser.UserName,
                 fullName = currentUser.FullName,
                 email = currentUser.Email,
+                dob = currentUser.DoB,
+                address = currentUser.Address,
                 userRole = currentUser.Role,
                 avatar = currentUser.Avatar,
             });

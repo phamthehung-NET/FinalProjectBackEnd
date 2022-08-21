@@ -96,7 +96,21 @@ namespace FinalProjectBackEnd.Controllers
         {
             try
             {
-                var teacher = subjectService.GetTeacherForSubject();
+                var teacher = subjectService.GetTeacherForSubject(null);
+                return Ok(teacher);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult GetTeacherForSubject(int id)
+        {
+            try
+            {
+                var teacher = subjectService.GetTeacherForSubject(id);
                 return Ok(teacher);
             }
             catch (Exception e)
