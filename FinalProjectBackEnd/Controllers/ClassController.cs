@@ -95,5 +95,33 @@ namespace FinalProjectBackEnd.Controllers
                 return NotFound(e);
             }
         }
+
+        [HttpGet]
+        public ActionResult GetHomeRoomTeacher()
+        {
+            try
+            {
+                var teachers = classService.GetHomeRoomTeacher();
+                return Ok(teachers.ToList());
+            }
+            catch(Exception e)
+            {
+                return NotFound(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetStudentForClass()
+        {
+            try
+            {
+                var students = classService.GetStudentForClass();
+                return Ok(students.ToList());
+            }
+            catch (Exception e)
+            {
+                return NotFound(e);
+            }
+        }
     }
 }
