@@ -14,12 +14,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         private readonly ApplicationDbContext context;
         private readonly UserManager<CustomUser> userManager;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IUserRepository userRepository;
 
-        public ClassRepository(ApplicationDbContext _context, UserManager<CustomUser> _userManager, IHttpContextAccessor _httpContextAccessor)
+        public ClassRepository(ApplicationDbContext _context, UserManager<CustomUser> _userManager, IHttpContextAccessor _httpContextAccessor, IUserRepository _userRepository)
         {
             context = _context;
             userManager = _userManager;
             httpContextAccessor = _httpContextAccessor;
+            userRepository = _userRepository;
         }
 
         public bool AddClass(ClassDTO classReq)
@@ -133,6 +135,20 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return classData;
         }
 
+        public IQueryable<dynamic> GetStudentForClass(int? sy)
+        {
+            var studentInClass = context.StudentClasses.Select(x => x.StudentId);
+            var students = userRepository.GetUSerWithRole(Roles.Student, null, null)
+                .Where(x => x.SchoolYear == sy)
+                .Select(x => new {x.Id, x.FullName});
+            if (studentInClass.Any())
+            {
+                students = students.Where(x => !studentInClass.Contains(x.Id));
+
+            }
+            return students;
+        }
+
         public IQueryable<SubjectDTO> GetTeacherSubject()
         {
             var subjects = (from s in context.Subjects
@@ -166,6 +182,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 return true;
             }
             return false;
+        }
+
+        public IQueryable<dynamic> GetHoomeRoomTeacher()
+        {
+            var teacherInClass = context.Classrooms.Select(x => x.HomeroomTeacher);
+            var teacher = userRepository.GetUSerWithRole(Roles.Teacher, null, null).Where(x => !teacherInClass.Contains(x.Id)).Select(x => new {x.Id, x.FullName});
+
+            return teacher;
         }
 
         private IQueryable<ClassDTO> GetClassData(int? id)

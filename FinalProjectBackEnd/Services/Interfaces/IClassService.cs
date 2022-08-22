@@ -16,5 +16,9 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public bool DeleteClass(int id);
 
         public IQueryable<SubjectDTO> GetTeacherSubject();
+
+        public IQueryable<dynamic> GetHomeRoomTeacher();
+
+        public IQueryable<dynamic> GetStudentForClass(int? sy);
     }
 }
