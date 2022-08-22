@@ -87,9 +87,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("No Teacher");
         }
 
-        public IQueryable<dynamic> GetStudentForClass()
+        public IQueryable<dynamic> GetStudentForClass(int? sy)
         {
-            var students = classRepository.GetStudentForClass();
+            var students = classRepository.GetStudentForClass(sy);
             if (students.Any())
             {
                 return students;

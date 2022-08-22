@@ -111,11 +111,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetStudentForClass()
+        public ActionResult GetStudentForClass(int? sy)
         {
             try
             {
-                var students = classService.GetStudentForClass();
+                var students = classService.GetStudentForClass(sy);
                 return Ok(students.ToList());
             }
             catch (Exception e)

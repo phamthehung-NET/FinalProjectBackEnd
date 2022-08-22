@@ -135,10 +135,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return classData;
         }
 
-        public IQueryable<dynamic> GetStudentForClass()
+        public IQueryable<dynamic> GetStudentForClass(int? sy)
         {
             var studentInClass = context.StudentClasses.Select(x => x.StudentId);
             var students = userRepository.GetUSerWithRole(Roles.Student, null, null)
+                .Where(x => x.SchoolYear == sy)
                 .Select(x => new {x.Id, x.FullName});
             if (studentInClass.Any())
             {

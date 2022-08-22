@@ -21,6 +21,6 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public IQueryable<dynamic> GetHoomeRoomTeacher();
 
-        public IQueryable<dynamic> GetStudentForClass();
+        public IQueryable<dynamic> GetStudentForClass(int? sy);
     }
 }
