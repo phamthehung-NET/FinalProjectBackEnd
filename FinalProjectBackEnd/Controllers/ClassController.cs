@@ -97,11 +97,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetHomeRoomTeacher()
+        public ActionResult GetHomeRoomTeacher(int? id)
         {
             try
             {
-                var teachers = classService.GetHomeRoomTeacher();
+                var teachers = classService.GetHomeRoomTeacher(id);
                 return Ok(teachers.ToList());
             }
             catch(Exception e)
@@ -111,11 +111,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetStudentForClass(int? sy)
+        public ActionResult GetStudentForClass(int? sy, int? id)
         {
             try
             {
-                var students = classService.GetStudentForClass(sy);
+                var students = classService.GetStudentForClass(sy, id);
                 return Ok(students.ToList());
             }
             catch (Exception e)

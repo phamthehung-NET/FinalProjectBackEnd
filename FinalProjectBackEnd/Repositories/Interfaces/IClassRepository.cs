@@ -19,8 +19,8 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public bool IsClassExisted(ClassDTO classReq);
 
-        public IQueryable<dynamic> GetHoomeRoomTeacher();
+        public IQueryable<dynamic> GetHoomeRoomTeacher(int? id);
 
-        public IQueryable<dynamic> GetStudentForClass(int? sy);
+        public IQueryable<dynamic> GetStudentForClass(int? sy, int? id);
     }
 }

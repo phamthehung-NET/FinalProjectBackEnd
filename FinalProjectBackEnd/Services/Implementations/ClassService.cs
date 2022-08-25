@@ -77,9 +77,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Cannot get Teacher Subject");
         }
 
-        public IQueryable<dynamic> GetHomeRoomTeacher()
+        public IQueryable<dynamic> GetHomeRoomTeacher(int? id)
         {
-            var teacher = classRepository.GetHoomeRoomTeacher();
+            var teacher = classRepository.GetHoomeRoomTeacher(id);
             if (teacher.Any())
             {
                 return teacher;
@@ -87,9 +87,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("No Teacher");
         }
 
-        public IQueryable<dynamic> GetStudentForClass(int? sy)
+        public IQueryable<dynamic> GetStudentForClass(int? sy, int? id)
         {
-            var students = classRepository.GetStudentForClass(sy);
+            var students = classRepository.GetStudentForClass(sy, id);
             if (students.Any())
             {
                 return students;

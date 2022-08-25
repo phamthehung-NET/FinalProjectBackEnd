@@ -115,10 +115,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     student.Email = userDTO.Email;
                     student.PhoneNumber = userDTO.PhoneNumber;
-                    studentInfo.DoB = userDTO.DoB;
+                    studentInfo.DoB = userDTO.DoB != null ? userDTO.DoB : studentInfo.DoB;
                     studentInfo.GraduateYear = userDTO.GraduateYear;
                     studentInfo.Status = userDTO.Status;
-                    studentInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student);
+                    studentInfo.Avatar = studentInfo.Avatar != null ? HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student) : studentInfo.Avatar;
                     context.SaveChanges();
                     return true;
                 }
@@ -136,11 +136,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     teacher.Email = userDTO.Email;
                     teacher.PhoneNumber = userDTO.PhoneNumber;
-                    teacherInfo.DoB = userDTO.DoB;
+                    teacherInfo.DoB = userDTO.DoB != null ? userDTO.DoB : teacherInfo.DoB;
                     teacherInfo.Address = userDTO.Address;
-                    teacherInfo.StartDate = userDTO.StartDate;
-                    teacherInfo.EndDate = userDTO.EndDate;
-                    teacherInfo.Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher);
+                    teacherInfo.StartDate = userDTO.StartDate != null ? userDTO.StartDate : teacherInfo.StartDate;
+                    teacherInfo.EndDate = userDTO.EndDate != null ? userDTO.EndDate : teacherInfo.EndDate;
+                    teacherInfo.Avatar = userDTO.Avatar != null ? HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher): teacherInfo.Avatar;
+                    teacherInfo.IsDeleted = userDTO.IsDeleted != null ? userDTO.IsDeleted : false;
                     context.SaveChanges();
                     return true;
                 }
@@ -220,6 +221,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             UserName = u.UserName,
                             Email = u.Email,
                             FullName = ui.FullName,
+                            Address = ui.Address,
                             DoB = ui.DoB,
                             PhoneNumber = u.PhoneNumber,
                             SchoolYear = ui.SchoolYear,

@@ -17,8 +17,8 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public IQueryable<SubjectDTO> GetTeacherSubject();
 
-        public IQueryable<dynamic> GetHomeRoomTeacher();
+        public IQueryable<dynamic> GetHomeRoomTeacher(int? id);
 
-        public IQueryable<dynamic> GetStudentForClass(int? sy);
+        public IQueryable<dynamic> GetStudentForClass(int? sy, int? id);
     }
 }
