@@ -123,5 +123,19 @@ namespace FinalProjectBackEnd.Controllers
                 return NotFound(e);
             }
         }
+
+        [HttpDelete]
+        public ActionResult DeleteClass(int id)
+        {
+            try
+            {
+                classService.DeleteClass(id);
+                return Ok("Delete Class succeessfully");
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
     }
 }

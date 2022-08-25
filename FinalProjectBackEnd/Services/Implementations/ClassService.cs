@@ -29,7 +29,12 @@ namespace FinalProjectBackEnd.Services.Implementations
 
         public bool DeleteClass(int id)
         {
-            throw new NotImplementedException();
+            var result = classRepository.DeleteClass(id);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Cannot delete class");
         }
 
         public async Task<bool> EditClass(ClassDTO classReq)
