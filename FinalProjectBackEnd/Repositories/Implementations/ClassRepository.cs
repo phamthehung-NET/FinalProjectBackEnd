@@ -72,7 +72,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var editor = await userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name);
             var classDb = context.Classrooms.FirstOrDefault(x => x.Id == classReq.Id);
-            if(classDb != null)
+            if (classDb != null)
             {
                 var classTeacherSubjects = context.ClassTeacherSubjects.Where(x => x.ClassId == classReq.Id);
                 var studentClasses = context.StudentClasses.Where(x => x.ClassId == classReq.Id);
@@ -81,6 +81,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 classDb.Grade = classReq.Grade;
                 classDb.UpdatedAt = DateTime.Now;
                 classDb.UpdatedBy = editor.Id;
+                classDb.HomeroomTeacher = classReq.HomeRoomTeacherId;
                 context.ClassTeacherSubjects.RemoveRange(classTeacherSubjects);
                 context.StudentClasses.RemoveRange(studentClasses);
                 classReq.TeacherSubjects.ToList().ForEach(ts =>
@@ -115,11 +116,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             {
                 classes = classes.Where(x => x.ClassName.Contains(keyword));
             }
-            if(sy != null)
+            if (sy != null)
             {
                 classes = classes.Where(x => x.SchoolYear == sy);
             }
-            if(grade != null)
+            if (grade != null)
             {
                 classes = classes.Where(x => x.Grade == grade);
             }
@@ -135,16 +136,23 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return classData;
         }
 
-        public IQueryable<dynamic> GetStudentForClass(int? sy)
+        public IQueryable<dynamic> GetStudentForClass(int? sy, int? id)
         {
             var studentInClass = context.StudentClasses.Select(x => x.StudentId);
             var students = userRepository.GetUSerWithRole(Roles.Student, null, null)
                 .Where(x => x.SchoolYear == sy)
-                .Select(x => new {x.Id, x.FullName});
+                .Select(x => new { x.Id, x.FullName });
             if (studentInClass.Any())
             {
-                students = students.Where(x => !studentInClass.Contains(x.Id));
-
+                if (id != null)
+                {
+                    var classStudent = context.StudentClasses.Where(x => x.ClassId == id).Select(x => x.StudentId).ToList();
+                    students = students.Where(x => !studentInClass.Contains(x.Id) || classStudent.Contains(x.Id));
+                }
+                else
+                {
+                    students = students.Where(x => !studentInClass.Contains(x.Id));
+                }
             }
             return students;
         }
@@ -152,15 +160,15 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public IQueryable<SubjectDTO> GetTeacherSubject()
         {
             var subjects = (from s in context.Subjects
-                           join ts in context.TeacherSubjects on s.Id equals ts.SubjectId
-                           join t in context.UserInfos on ts.TeacherId equals t.UserId
-                           select new
-                           {
-                               SubjectId = ts.SubjectId,
-                               SubjectName = s.Name,
-                               TeacherName = t.FullName,
-                               TeacherId = t.UserId,
-                           }).GroupBy(x => new { x.SubjectId, x.SubjectName })
+                            join ts in context.TeacherSubjects on s.Id equals ts.SubjectId
+                            join t in context.UserInfos on ts.TeacherId equals t.UserId
+                            select new
+                            {
+                                SubjectId = ts.SubjectId,
+                                SubjectName = s.Name,
+                                TeacherName = t.FullName,
+                                TeacherId = t.UserId,
+                            }).GroupBy(x => new { x.SubjectId, x.SubjectName })
                           .Select(x => new SubjectDTO
                           {
                               Id = x.Key.SubjectId,
@@ -184,10 +192,24 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return false;
         }
 
-        public IQueryable<dynamic> GetHoomeRoomTeacher()
+        public IQueryable<dynamic> GetHoomeRoomTeacher(int? id)
         {
+            IQueryable<dynamic> teacher;
             var teacherInClass = context.Classrooms.Select(x => x.HomeroomTeacher);
-            var teacher = userRepository.GetUSerWithRole(Roles.Teacher, null, null).Where(x => !teacherInClass.Contains(x.Id)).Select(x => new {x.Id, x.FullName});
+            if (id != null)
+            {
+                var classTeacher = context.Classrooms.Select(x => new { Id = x.Id, HomeRoomTeacher = x.HomeroomTeacher })
+                    .FirstOrDefault(x => x.Id == id);
+                teacher = userRepository.GetUSerWithRole(Roles.Teacher, null, null)
+                    .Where(x => !teacherInClass.Contains(x.Id) || x.Id == classTeacher.HomeRoomTeacher)
+                    .Select(x => new { x.Id, x.FullName });
+            }
+            else
+            {
+                teacher = userRepository.GetUSerWithRole(Roles.Teacher, null, null)
+                    .Where(x => !teacherInClass.Contains(x.Id))
+                    .Select(x => new { x.Id, x.FullName });
+            }
 
             return teacher;
         }
@@ -258,7 +280,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     FullName = j.StudentName
                                 }).Distinct()
                             });
-            if(id != null)
+            if (id != null)
             {
                 classes = classes.Where(x => x.Id == id);
             }
