@@ -16,6 +16,6 @@
 
         public DateTime? CreatedDate { get; set; }
 
-        public decimal? ReducedMark { get; set; }
+        public double? ReducedMark { get; set; }
     }
 }

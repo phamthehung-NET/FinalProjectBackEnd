@@ -14,9 +14,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             markRepository = _markRepository;
         }
 
-        public bool AddMark(MarkDTO markReq)
+        public bool AddMark()
         {
-            var result = markRepository.AddMark(markReq);
+            var result = markRepository.AddMark();
             if (result)
             {
                 return true;

@@ -85,4 +85,11 @@
 
         public static int Angry = 5;
     }
+
+    public class Priority
+    {
+        public static int Bad = 0;
+
+        public static int VeryBad = 1;
+    }
 }

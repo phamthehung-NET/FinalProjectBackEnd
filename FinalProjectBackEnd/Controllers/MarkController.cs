@@ -33,11 +33,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddMark(MarkDTO markReq)
+        public ActionResult AddMark()
         {
             try
             {
-                markService.AddMark(markReq);
+                markService.AddMark();
                 return Ok("Add mark successfully");
             }
             catch(Exception e)

@@ -7,7 +7,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
     {
         public Pagination<MarkDTO> GetAllMarks(int? from, int? to, int? pageIndex, int? pageSize);
 
-        public bool AddMark(MarkDTO markReq);
+        public bool AddMark();
 
         public bool EditMark(MarkDTO markReq);
 
