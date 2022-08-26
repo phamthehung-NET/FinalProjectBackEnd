@@ -26,7 +26,7 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public int? SchoolYear { get; set; }
 
-        public string GraduateYear { get; set; }
+        public int? GraduateYear { get; set; }
 
         public string Avatar { get; set; }
 
