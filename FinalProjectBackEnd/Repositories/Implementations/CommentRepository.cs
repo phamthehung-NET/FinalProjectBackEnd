@@ -141,9 +141,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                   Avatar = a.UserLikeCommentAvatar,
                                   AuthorId = a.UserLikeCommentAuthorId
                               }),
-                              ReplyComments = x.Select(b => new
+                              ReplyComments = x.Where(x => x.ReplyCommentId > 0).Select(b => new
                               {
-                                  //Id = b.ReplyCommentId,
+                                  Id = b.ReplyCommentId,
                                   Content = b.ReplyCommentContent,
                                   CreateAt = b.ReplyCommentCreateAt,
                                   UpdateAt = b.ReplyCommentUpdatedAt,

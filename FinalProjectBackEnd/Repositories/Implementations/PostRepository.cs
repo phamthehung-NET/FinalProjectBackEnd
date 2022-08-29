@@ -264,7 +264,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 AuthorName = ui.FullName,
                                 AuthorUserName = ui.CustomUser.UserName,
                                 AuthorAvatar = ui.Avatar,
-                                //ReplyCommentId = rc.Id,
+                                ReplyCommentId = rc.Id,
                                 ReplyCommentContent = rc.Content,
                                 ReplyCreateAt = rc.CreatedAt,
                                 ReplyUpdateAt = rc.UpdatedAt,
@@ -283,9 +283,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 AuthorName = x.Key.AuthorName,
                                 AuthorUserName = x.Key.AuthorUserName,
                                 AuthorAvatar = x.Key.AuthorAvatar,
-                                ReplyComments = x.Select(y => new
+                                ReplyComments = x.Where(x => x.ReplyCommentId > 0).Select(y => new
                                 {
-                                    //Id = y.ReplyCommentId,
+                                    Id = y.ReplyCommentId,
                                     Content = y.ReplyCommentContent,
                                     CreateAt = y.ReplyCreateAt,
                                     UpdateAt = y.ReplyUpdateAt,

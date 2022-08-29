@@ -28,23 +28,28 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
 
             var classrooms = context.Classrooms.Where(x => x.SchoolYear == DateTime.Now.Year).ToList();
-            
-            var mark = new Marks();
 
             classrooms.ForEach(x =>
             {
-                mark.Mark = 10;
-                mark.Month = DateTime.Now.Month;
-                mark.SchoolYear = x.SchoolYear;
-                mark.ClassId = x.Id;
-                mark.CreatedAt = DateTime.Now;
-                mark.CreatedBy = userId;
-                context.Marks.Add(mark);
+                var markDb = context.Marks.Where(y => y.SchoolYear == DateTime.Now.Year && y.Month == DateTime.Now.Month && y.ClassId == x.Id);
+                if(!markDb.Any())
+                {
+                    var mark = new Marks
+                    {
+                        Mark = 10,
+                        Month = DateTime.Now.Month,
+                        SchoolYear = x.SchoolYear,
+                        ClassId = x.Id,
+                        CreatedAt = DateTime.Now,
+                        CreatedBy = userId
+                    };
+                    context.Marks.Add(mark);
+                }
             });
 
-            context.SaveChanges();
+            var status = context.SaveChanges();
 
-            return mark.Id > 0 ? true : false;
+            return true;
         }
 
         public bool WarningPost(PostMarkDTO req)
@@ -171,7 +176,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 marks = marks.Where(x => x.ClassId == classId);
             }
 
-            marks = marks.OrderByDescending(x => x.CreatedAt);
+            marks = marks.OrderByDescending(x => x.Mark);
 
             var paginateItems = HelperFuction.GetPaging(pageIndex, pageSize, marks.ToList());
 
@@ -240,7 +245,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              CreatorUserName = x.Key.CreatorUserName,
                              EditorName = x.Key.EditorName,
                              EditorUserName = x.Key.EditorUserName,
-                             MarkHistories = x.Select(y => new
+                             MarkHistories = x.Where(x => x.HistoryId > 0).OrderByDescending(y => y.HistoryCreatedDate).Select(y => new
                              {
                                  Id = y.HistoryId,
                                  CreatedDate = y.HistoryCreatedDate,
@@ -249,7 +254,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                  Title = y.HistoryTitle,
                                  ReducedMark = y.HistoryReducedMark,
                                  CreatorName = y.HistoryCreatorName,
-                                 CreaterUserName = y.HistoryCreatorUserName
+                                 CreatorUserName = y.HistoryCreatorUserName
                              })
                          });
 

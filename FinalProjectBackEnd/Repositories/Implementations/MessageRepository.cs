@@ -110,6 +110,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 MemberId = gm.UserId,
                                 MemberUserName = gm.CustomUser.UserName,
                                 MemberName = gm.FullName,
+                                MessageId = m.Id,
                                 MessageContent = m.Content,
                                 MessageCreateAt = m.CreatedAt,
                                 MessageAuthorName = mui.FullName,
@@ -121,14 +122,15 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 Title = x.Key.Title,
                                 CreatedAt = x.Key.CreatedAt,
                                 CreatedBy = x.Key.CreatedUserId,
-                                Users = x.Select( y => new
+                                Users = x.Where(x => !String.IsNullOrEmpty(x.MemberId)).Select(y => new
                                 {
                                     Id = y.MemberId,
                                     UserName = y.MemberUserName,
                                     FullName = y.MemberName,
                                 }).Distinct(),
-                                LastestMessage = x.Select(z => new
+                                LastestMessage = x.Where(x => x.MessageId > 0).Select(z => new
                                 {
+                                    Id = z.MessageId,
                                     Content = z.MessageContent,
                                     CreatedAt = z.MessageCreateAt,
                                     AuthorName = z.MessageAuthorName,
@@ -184,7 +186,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                               Title = x.Key.Title,
                               CreatedBy = x.Key.AuthorId,
                               CreatedAt = x.Key.CreatedAt,
-                              Users = x.Select(y => new
+                              Users = x.Where(x => !String.IsNullOrEmpty(x.MemberId)).Select(y => new
                               {
                                   Id = y.MemberId,
                                   Name = y.MemberName,
