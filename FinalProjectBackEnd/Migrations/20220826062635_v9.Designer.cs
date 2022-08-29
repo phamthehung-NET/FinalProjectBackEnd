@@ -4,6 +4,7 @@ using FinalProjectBackEnd.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalProjectBackEnd.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220826062635_v9")]
+    partial class v9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,14 +93,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "61baf01f-ea54-4781-9daa-28944ad1085a",
+                            ConcurrencyStamp = "c897615c-34d0-4b19-a4bd-ca86c344678b",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOgqx+K/lmiTwdOd9K86KftYzZqunDPUpifKB9IUfhHkowANY4J5bQuZ/COU/B+Yfw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOpb8bJLKarnGAwawZhl5VaVip364WByZTZWqthNmfA4qyPxgbFqPJak6XkPqhbYhg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d5953552-370a-432f-aedf-e8d134120ff5",
+                            SecurityStamp = "68ec687d-0329-40fe-8614-af9c2fc0383c",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -106,14 +108,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "89f55e06-5a30-4f19-a058-94fad47fc544",
+                            ConcurrencyStamp = "12471d38-4229-4608-a537-6e4669d703bc",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFNUgAwbJfEJUdxPEtryH2QS6YuSKg+WINyhgfNEmUge5AO7bdwKIjkhWOsKPOEV+w==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENmKCf1XjSrXfqskyuUBreN2X6P6E4lcsxEQDFh84v3INrWT7GK7u/XyNijxjwGREA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7fd7a640-73c0-481b-9e74-a8e3e6037be4",
+                            SecurityStamp = "5ed154fd-a29b-4436-ba33-b8ec4d657b4a",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -295,8 +297,8 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<int?>("Priority")
                         .HasColumnType("int");
 
-                    b.Property<double?>("ReducedMark")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("ReducedMark")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -323,8 +325,8 @@ namespace FinalProjectBackEnd.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Mark")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("Mark")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("Month")
                         .HasColumnType("int");

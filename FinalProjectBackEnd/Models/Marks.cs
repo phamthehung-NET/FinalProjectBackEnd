@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public decimal? Mark { get; set; }
+        public double? Mark { get; set; }
 
         public int? Month { get; set; }
 

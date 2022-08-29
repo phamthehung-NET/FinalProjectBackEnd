@@ -14,14 +14,24 @@ namespace FinalProjectBackEnd.Services.Implementations
             markRepository = _markRepository;
         }
 
-        public bool AddMark(MarkDTO markReq)
+        public bool AddMark()
         {
-            var result = markRepository.AddMark(markReq);
+            var result = markRepository.AddMark();
             if (result)
             {
                 return true;
             }
             throw new Exception("Add Mark fail");
+        }
+
+        public bool DeleteMarkHistory(int id)
+        {
+            var result = markRepository.DeleteMarkHistory(id);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Delete Mark History fail");
         }
 
         public bool EditMark(MarkDTO markReq)
@@ -34,9 +44,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Mark not found");
         }
 
-        public Pagination<MarkDTO> GetAllMarks(int? from, int? to, int? pageIndex, int? pageSize)
+        public Pagination<MarkDTO> GetAllMarks(int? sy, int? month, int? classId, int? pageIndex, int? pageSize)
         {
-            var marks = markRepository.GetAllMarks(from, to, pageIndex, pageSize);
+            var marks = markRepository.GetAllMarks(sy, month, classId, pageIndex, pageSize);
             if(marks != null)
             {
                 return marks;
@@ -52,6 +62,26 @@ namespace FinalProjectBackEnd.Services.Implementations
                 return mark;
             }
             throw new Exception("Mark not found");
+        }
+
+        public bool WarningPost(PostMarkDTO req)
+        {
+            var result = markRepository.WarningPost(req);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Warning Post fail");
+        }
+
+        public IQueryable<dynamic> GetClassBySchoolYear(int? sy)
+        {
+            var classroom = markRepository.GetClassBySchoolYear(sy);
+            if (classroom.Any())
+            {
+                return classroom;
+            }
+            throw new Exception("No class");
         }
     }
 }

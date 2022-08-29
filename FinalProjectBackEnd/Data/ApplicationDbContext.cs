@@ -51,6 +51,8 @@ public class ApplicationDbContext : IdentityDbContext<CustomUser>
 
     public DbSet<Conversation> Conversations { get; set; }
 
+    public DbSet<MarkHistory> MarkHistories { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public decimal? Mark { get; set; }
+        public double? Mark { get; set; }
 
         public int? Month { get; set; }
 
@@ -29,5 +29,7 @@
         public string EditorUserName { get; set; }
 
         public string ClassName { get; set; }
+
+        public IEnumerable<dynamic> MarkHistories { get; set; }
     }
 }

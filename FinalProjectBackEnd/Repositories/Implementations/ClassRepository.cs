@@ -65,7 +65,18 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public bool DeleteClass(int id)
         {
-            throw new NotImplementedException();
+            var classroom = context.Classrooms.FirstOrDefault(x => x.Id == id);
+            var studentClass = context.StudentClasses.Where(x => x.ClassId == id);
+            var teacherSubject = context.ClassTeacherSubjects.Where(x => x.ClassId == id);
+            if (classroom != null)
+            {
+                context.Classrooms.Remove(classroom);
+                context.RemoveRange(studentClass);
+                context.RemoveRange(teacherSubject);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> EditClass(ClassDTO classReq)
@@ -173,7 +184,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                           {
                               Id = x.Key.SubjectId,
                               Name = x.Key.SubjectName,
-                              Teacher = x.Select(x => new { Id = x.TeacherId, FullName = x.TeacherName })
+                              Teacher = x.Where(x => !String.IsNullOrEmpty(x.TeacherId)).Select(x => new { Id = x.TeacherId, FullName = x.TeacherName })
                           });
             return subjects;
         }
@@ -249,7 +260,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                SubjectId = s.Id,
                                SubjectName = s.Name,
                                StudentName = ui.FullName,
-                               UseName = u,
+                               User = u,
                                Dob = ui.DoB,
                                Status = ui.Status,
                            }).GroupBy(x => new { x.Id, x.ClassName, x.HomeRomeTeacherName, x.HomeRoomTeacherId, x.Grade, x.CreatedAt, x.SchoolYear, x.UpdatedAt, x.UpdatedBy })
@@ -271,10 +282,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     TeacherId = j.TeacherId,
                                     TeacherName = j.TeacherName
                                 }).Distinct(),
-                                Students = x.Select(j => new UserDTO
+                                Students = x.Where(x => !String.IsNullOrEmpty(x.User.Id)).Select(j => new UserDTO
                                 {
-                                    Id = j.UseName.Id,
-                                    UserName = j.UseName.UserName,
+                                    Id = j.User.Id,
+                                    UserName = j.User.UserName,
                                     DoB = j.Dob,
                                     Status = j.Status,
                                     FullName = j.StudentName

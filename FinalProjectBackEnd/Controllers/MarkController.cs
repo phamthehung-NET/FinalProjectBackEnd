@@ -17,13 +17,16 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetAllMarks(int? from, int? to, int? pageIndex, int? itemPerPage)
+        public ActionResult GetAllMarks(int? sy, int? month, int? classId, int? pageIndex, int? itemPerPage)
         {
             pageIndex = pageIndex ?? 1;
             itemPerPage = itemPerPage ?? 10;
+            sy = sy ?? DateTime.Now.Year;
+            month = month ?? DateTime.Now.Month;
+
             try
             {
-                var mark = markService.GetAllMarks(from, to, pageIndex, itemPerPage);
+                var mark = markService.GetAllMarks(sy, month, classId, pageIndex, itemPerPage);
                 return Ok(mark);
             }
             catch(Exception e)
@@ -33,11 +36,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddMark(MarkDTO markReq)
+        public ActionResult AddMark()
         {
             try
             {
-                markService.AddMark(markReq);
+                markService.AddMark();
                 return Ok("Add mark successfully");
             }
             catch(Exception e)
@@ -69,6 +72,49 @@ namespace FinalProjectBackEnd.Controllers
                 return Ok(mark.FirstOrDefault());
             }
             catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult WarningPost(PostMarkDTO req)
+        {
+            try
+            {
+                var mark = markService.WarningPost(req);
+                return Ok("Warning Post success");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteMarkHistory(int id)
+        {
+            try
+            {
+                var mark = markService.DeleteMarkHistory(id);
+                return Ok("Delete Mark History success");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetClassBySchoolYear(int? sy)
+        {
+            sy = sy ?? DateTime.Now.Year;
+            try
+            {
+                var classrooms = markService.GetClassBySchoolYear(sy);
+                return Ok(classrooms.ToList());
+            }
+            catch(Exception e)
             {
                 return BadRequest(e);
             }
