@@ -29,5 +29,7 @@
         public string EditorUserName { get; set; }
 
         public string ClassName { get; set; }
+
+        public IEnumerable<dynamic> MarkHistories { get; set; }
     }
 }
