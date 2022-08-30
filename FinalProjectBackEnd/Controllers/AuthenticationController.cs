@@ -78,17 +78,7 @@ namespace FinalProjectBackEnd.Controllers
         {
             var userId = httpContextAccessor.HttpContext.User.Claims.ElementAt(1).Value;
             var currentUser = userService.GetCurrentUser(userId).FirstOrDefault();
-            return Ok(new
-            {
-                userId = userId,
-                userName = currentUser.UserName,
-                fullName = currentUser.FullName,
-                email = currentUser.Email,
-                dob = currentUser.DoB,
-                address = currentUser.Address,
-                userRole = currentUser.Role,
-                avatar = currentUser.Avatar,
-            });
+            return Ok(currentUser);
         }
     }
 }

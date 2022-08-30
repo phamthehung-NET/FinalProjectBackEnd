@@ -13,11 +13,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
     {
         private readonly UserManager<CustomUser> userManager;
         private readonly ApplicationDbContext context;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public UserRepository(UserManager<CustomUser> _userManager, ApplicationDbContext _context)
+        public UserRepository(UserManager<CustomUser> _userManager, ApplicationDbContext _context, IHttpContextAccessor _httpContextAccessor)
         {
             userManager = _userManager;
             context = _context;
+            httpContextAccessor = _httpContextAccessor;
         }
 
         public async Task<bool> AddStudent(UserDTO userDTO)
@@ -290,6 +292,18 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var user = context.UserRoles.Where(x => x.UserId.Equals(userId) && x.RoleId == roleId.ToString());
             return user.Any();
+        }
+
+        public bool UserUpdateProfile(UserDTO req)
+        {
+            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId == user.Id);
+            user.PhoneNumber = req.PhoneNumber != null ? req.PhoneNumber : user.PhoneNumber;
+            userInfo.FullName = req.FullName != null ? req.FullName : userInfo.FullName;
+            userInfo.Address = req.Address != null ? req.Address : userInfo.Address;
+            userInfo.DoB = req.DoB != null ? req.DoB : userInfo.DoB;
+            var status = context.SaveChanges();
+            return status > 0;
         }
     }
 }
