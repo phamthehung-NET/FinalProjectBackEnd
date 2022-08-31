@@ -161,5 +161,34 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("Cannot Get current UserInfo");
         }
+
+        public bool UserUpdateProfile(UserDTO req)
+        {
+            var result = userRepository.UserUpdateProfile(req);
+            if (result)
+            {
+                return result;
+            }
+            throw new Exception("Cannot Update your profile");
+        }
+
+        public bool ChangeFirstLoginPassword(ChangePasswordModel req)
+        {
+            var result = userRepository.ChangeFirstLoginPassword(req);
+            if (result)
+            {
+                return result;
+            }
+            throw new Exception("Cannot change your password");
+        }
+        public bool ChangeUserAvatar(UserDTO req)
+        {
+            var result = userRepository.ChangeUserAvatar(req);
+            if (result)
+            {
+                return result;
+            }
+            throw new Exception("Cannot update avatar");
+        }
     }
 }

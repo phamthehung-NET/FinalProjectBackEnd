@@ -32,5 +32,11 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public bool UpdateStudentRole(StudentRoleDTO req);
 
         public IQueryable<UserDTO> GetCurrentUser(string id);
+
+        public bool UserUpdateProfile(UserDTO req);
+
+        public bool ChangeFirstLoginPassword(ChangePasswordModel req);
+
+        public bool ChangeUserAvatar(UserDTO req);
     }
 }

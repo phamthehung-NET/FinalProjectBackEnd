@@ -238,7 +238,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             EndDate = ui.EndDate,
                             IsDeleted = ui.IsDeleted,
                             ClassName = c.Name,
-                            Role = r.Name
+                            Role = r.Name,
+                            IsFirstLogin = ui.IsFirstLogin,
                         };
             if (!String.IsNullOrEmpty(role))
             {
@@ -303,6 +304,46 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             userInfo.Address = req.Address != null ? req.Address : userInfo.Address;
             userInfo.DoB = req.DoB != null ? req.DoB : userInfo.DoB;
             var status = context.SaveChanges();
+            return status > 0;
+        }
+
+        public bool ChangeFirstLoginPassword(ChangePasswordModel req)
+        {
+            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var token = userManager.GeneratePasswordResetTokenAsync(user).Result;
+            var result = userManager.ResetPasswordAsync(user, token, req.Password).Result;
+            if (result.Succeeded)
+            {
+                var userInfo = context.UserInfos.FirstOrDefault(x => user.Id.Equals(x.UserId));
+                userInfo.IsFirstLogin = false;
+                context.SaveChanges();
+                return true;
+            }
+            throw new Exception(result.Errors.First().Description);
+        }
+
+        public bool ChangeUserAvatar(UserDTO req)
+        {
+            var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
+            var userInfo = context.UserInfos.FirstOrDefault(x => user.Id.Equals(x.UserId));
+            string Directory = "";
+            switch (req.Role)
+            {
+                case "Teacher":
+                    Directory = ImageDirectories.Teacher;
+                    break;
+                case "Student":
+                    Directory = ImageDirectories.Teacher;
+                    break;
+                case "Admin":
+                    Directory = ImageDirectories.Admin;
+                    break;
+                default:
+                    break;
+            }
+            userInfo.Avatar = HelperFuction.UploadBase64File(req.Avatar, req.FileName, Directory);
+            var status = context.SaveChanges();
+
             return status > 0;
         }
     }

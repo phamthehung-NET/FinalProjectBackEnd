@@ -10,6 +10,9 @@
 
         public static int TeacherRoleId = 2;
 
+        public static string Admin = "Admin";
+
+        public static int AdminRoleId = 1;
     }
 
     public class Account
@@ -40,6 +43,8 @@
         public static string Student = "Images/StudentAvatars";
 
         public static string Teacher = "Images/TeacherAvatars";
+
+        public static string Admin = "Images/AdminAvatars";
 
         public static string Post = "Images/Posts";
     }

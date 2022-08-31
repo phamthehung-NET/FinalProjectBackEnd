@@ -34,6 +34,8 @@ namespace FinalProjectBackEnd.Models
 
         public int? StudentRole { get; set; }
 
+        public bool? IsFirstLogin { get; set; }
+
         public CustomUser CustomUser { get; set; }
     }
 }

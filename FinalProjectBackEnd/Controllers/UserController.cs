@@ -215,5 +215,47 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpPost]
+        public ActionResult UserUpdateProfile(UserDTO req)
+        {
+            try
+            {
+                var result = userService.UserUpdateProfile(req);
+                return Ok("Update successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ChangeFirstLoginPassword(ChangePasswordModel req)
+        {
+            try
+            {
+                var result = userService.ChangeFirstLoginPassword(req);
+                return Ok("Update successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ChangeUserAvatar(UserDTO req)
+        {
+            try
+            {
+                var result = userService.ChangeUserAvatar(req);
+                return Ok("Update successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

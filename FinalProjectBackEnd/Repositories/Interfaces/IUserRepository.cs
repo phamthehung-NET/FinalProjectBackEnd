@@ -37,5 +37,10 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public bool CheckUserRole(string userId, int roleId);
 
+        public bool UserUpdateProfile(UserDTO req);
+
+        public bool ChangeFirstLoginPassword(ChangePasswordModel req);
+
+        public bool ChangeUserAvatar(UserDTO req);
     }
 }

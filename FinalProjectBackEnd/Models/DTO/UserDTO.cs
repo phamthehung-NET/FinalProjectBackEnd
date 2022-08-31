@@ -42,11 +42,13 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string Role { get; set; }
 
-        public int FollowerCount { get; set; }
+        public int? FollowerCount { get; set; }
 
-        public int FolloweeCount { get; set; }
+        public int? FolloweeCount { get; set; }
 
-        public int PostCount { get; set; }
+        public int? PostCount { get; set; }
+
+        public bool? IsFirstLogin { get; set; }
 
     }
 }
