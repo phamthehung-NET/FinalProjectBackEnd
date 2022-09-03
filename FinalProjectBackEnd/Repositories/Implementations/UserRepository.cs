@@ -45,6 +45,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student),
                     Status = StudentStatus.Learning,
                     StudentRole = StudentRole.Normal,
+                    IsFirstLogin = true
                 };
                 context.UserInfos.Add(userInfo);
                 context.SaveChanges();
@@ -75,6 +76,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     EndDate = userDTO.EndDate,
                     Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher),
                     IsDeleted = false,
+                    IsFirstLogin = true
                 };
                 context.UserInfos.Add(userInfo);
                 context.SaveChanges();
