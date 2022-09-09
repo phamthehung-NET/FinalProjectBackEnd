@@ -93,5 +93,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("This post has no Comment");
         }
+
+        public IQueryable<dynamic> GetLikedPostByUser()
+        {
+            var userLikePost = postRepository.GetLikedPostByUser();
+            if (userLikePost.Any())
+            {
+                return userLikePost;
+            }
+            throw new Exception("User hasn't like any post");
+        }
     }
 }

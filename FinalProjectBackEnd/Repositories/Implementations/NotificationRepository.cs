@@ -85,6 +85,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     Title = n.Title,
                                     Link = n.Link,
                                     Status = n.Status,
+                                    Type = n.Type,
+                                    PostId = n.PostId,
+                                    CommentId = n.CommentId,
+                                    AuthorId = n.AuthorId,
                                 }).Distinct();
             return notification;
         }

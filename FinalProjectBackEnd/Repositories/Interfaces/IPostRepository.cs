@@ -20,5 +20,7 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
         public IQueryable<dynamic> GetAllUserLikePost(int postId);
 
         public IQueryable<dynamic> GetAllComments(int postId);
+
+        public IQueryable<dynamic> GetLikedPostByUser();
     }
 }

@@ -131,5 +131,19 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(e);
             }
         }
+
+        [HttpGet]
+        public ActionResult GetLikedPostByUser()
+        {
+            try
+            {
+                var userLikePost = postService.GetLikedPostByUser();
+                return Ok(userLikePost);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
     }
 }

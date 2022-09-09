@@ -45,6 +45,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     AuthorId = userId,
                     Title = userInfo.FullName + " has commented to your post",
+                    CommentId= comment.Id,
                     PostId = commentReq.PostId,
                     Link = NotificationLinks.CommentDetail + comment.Id,
                     Type = NotificationTypes.CommentPost

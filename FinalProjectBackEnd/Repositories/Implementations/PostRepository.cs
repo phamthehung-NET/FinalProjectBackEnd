@@ -100,10 +100,17 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public Pagination<PostDTO> GetAllPosts(string keyword, int? pageIndex, int? pageSize)
         {
             var posts = GetPosts(null);
+
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+
+            var userFollow = context.UserFollows.Where(x => x.FollowerId == userId).Select(x => x.FolloweeId);
             if (!String.IsNullOrEmpty(keyword))
             {
                 posts = posts.Where(x => x.AuthorName.Contains(keyword));
             }
+
+            posts = posts.Where(x => x.Visibility == PostVisibility.Public || (x.Visibility == PostVisibility.Private && userFollow.Contains(x.AuthorId)) || x.AuthorId == userId);
+
             posts = posts.OrderByDescending(x => x.CreatedAt);
 
             var paginateItems = HelperFuction.GetPaging(pageIndex, pageSize, posts.ToList());
@@ -139,9 +146,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              Content = p.Content,
                              UpdatedDate = p.UpdatedDate,
                              Image = p.Image,
+                             Visibility = p.Visibility,
                              UserLikePosts = ulp.Id,
                              Comments = c.Id,
-                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar })
+                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar, x.Visibility })
                         .Select(x => new PostDTO
                         {
                             Id = x.Key.Id,
@@ -153,6 +161,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             UpdatedDate = x.Key.UpdatedDate,
                             Image = x.Key.Image,
                             AuthorAvatar = x.Key.AuthorAvatar,
+                            Visibility = x.Key.Visibility,
                             UserLikePostsCount = x.Select(y => y.UserLikePosts).Distinct().Count(),
                             CommentCount = x.Select(z => z.Comments).Distinct().Count(),
                         });
@@ -163,6 +172,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             }
 
             return posts;
+        }
+
+        public IQueryable<dynamic> GetLikedPostByUser()
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+
+            return context.UserLikePosts.Where(x => x.UserId == userId).Select(x => new { PostId = x.PostId, Status = x.Status }); ;
         }
 
         public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq)
@@ -197,9 +213,16 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     notificationRepository.AddNotification(notification);
                 }
             }
-                else if (userLikePostReq.Status != null && userLikPostDb.Status != userLikePostReq.Status)
+            else if (userLikePostReq.Status != null && userLikPostDb.Status != userLikePostReq.Status)
             {
                 context.UserLikePosts.Remove(userLikPostDb);
+
+                var notificationDb = context.Notifications.FirstOrDefault(x => x.AuthorId.Equals(userId)
+                    && x.PostId == post.Id && x.Status == userLikePostReq.Status
+                    && x.Link.Equals(NotificationLinks.PostDetail + post.Id));
+
+                notificationRepository.RemoveNotification(notificationDb);
+
                 var userLikePost = new UserLikePost
                 {
                     PostId = userLikePostReq.Id,
@@ -207,6 +230,20 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Status = userLikePostReq.Status,
                 };
                 context.UserLikePosts.Add(userLikePost);
+
+                if (!post.AuthorId.Equals(userId))
+                {
+                    var notification = new Notification
+                    {
+                        Title = userInfo.FullName + " has given reaction to your post",
+                        AuthorId = userId,
+                        PostId = userLikePostReq.Id,
+                        Status = userLikePostReq.Status,
+                        Link = NotificationLinks.PostDetail + userLikePostReq.Id,
+                        Type = NotificationTypes.LikePost
+                    };
+                    notificationRepository.AddNotification(notification);
+                }
             }
             else
             {
@@ -220,7 +257,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             }
             var status = context.SaveChanges();
 
-            return status == 0 || status == 1 || status == 2 ? true : false;
+            return status > 0;
         }
 
         public IQueryable<dynamic> GetAllUserLikePost(int postId)

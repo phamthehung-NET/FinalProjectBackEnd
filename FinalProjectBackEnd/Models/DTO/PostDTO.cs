@@ -33,5 +33,7 @@ namespace FinalProjectBackEnd.Models.DTO
         public int? UserLikePostsCount { get; set; }
 
         public int? CommentCount { get; set; }
+
+        public bool? Visibility { get; set; }
     }
 }
