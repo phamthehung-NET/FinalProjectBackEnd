@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace FinalProjectBackEnd.Models
 {
@@ -6,6 +7,7 @@ namespace FinalProjectBackEnd.Models
     {
         public int Id { get; set; }
 
+        [AllowHtml]
         public string Content { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]

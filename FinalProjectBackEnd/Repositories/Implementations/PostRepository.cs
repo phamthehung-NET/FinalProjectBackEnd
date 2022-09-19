@@ -37,6 +37,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     AuthorId = userId,
                     CreatedAt = DateTime.Now,
                     Image = HelperFuction.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post),
+                    Visibility = postReq.Visibility,
                 };
 
                 context.Posts.Add(post);
@@ -270,6 +271,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 select new
                                 {
                                     PostId = p.Id,
+                                    userId = ui.UserId,
                                     UserName = u.UserName,
                                     UserFullName = ui.FullName,
                                     FullName = ui.FullName,
