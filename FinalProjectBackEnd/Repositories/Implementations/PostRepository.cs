@@ -317,7 +317,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 Id = x.Key.Id,
                                 PostId = x.Key.PostId,
                                 Content = x.Key.Content,
-                                CreateAt = x.Key.CreateAt,
+                                CreatedAt = x.Key.CreateAt,
                                 UpdateAt = x.Key.UpdateAt,
                                 AuthorName = x.Key.AuthorName,
                                 AuthorUserName = x.Key.AuthorUserName,
@@ -334,7 +334,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 }).Distinct(),
                                 UserLikeComments = x.Select(z => z.UserLikeComments).Distinct().Count()
                             });
-            return comments;
+            return comments.OrderByDescending(x => x.CreatedAt);
         }
     }
 }

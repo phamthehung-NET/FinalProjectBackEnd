@@ -109,6 +109,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<SignalR>("/chathub");
+app.MapHub<SignalR>("/SignalR");
 
 app.Run();
