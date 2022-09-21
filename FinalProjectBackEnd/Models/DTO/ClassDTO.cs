@@ -10,7 +10,7 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string HomeRoomTeacherId { get; set; }
 
-        public string HomeRomeTeacherName { get; set; }
+        public string HomeRoomTeacherName { get; set; }
 
         public int? SchoolYear { get; set; }
 

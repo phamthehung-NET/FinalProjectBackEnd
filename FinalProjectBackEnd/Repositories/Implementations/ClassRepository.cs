@@ -248,7 +248,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                            {
                                Id = c.Id,
                                ClassName = c.Name,
-                               HomeRomeTeacherName = ui.FullName,
+                               HomeRoomTeacherName = ui.FullName,
                                HomeRoomTeacherId = ui.UserId,
                                Grade = c.Grade,
                                CreatedAt = c.CreatedAt,
@@ -263,12 +263,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                User = u,
                                Dob = ui.DoB,
                                Status = ui.Status,
-                           }).GroupBy(x => new { x.Id, x.ClassName, x.HomeRomeTeacherName, x.HomeRoomTeacherId, x.Grade, x.CreatedAt, x.SchoolYear, x.UpdatedAt, x.UpdatedBy })
+                           }).GroupBy(x => new { x.Id, x.ClassName, x.HomeRoomTeacherName, x.HomeRoomTeacherId, x.Grade, x.CreatedAt, x.SchoolYear, x.UpdatedAt, x.UpdatedBy })
                             .Select(x => new ClassDTO
                             {
                                 Id = x.Key.Id,
                                 ClassName = x.Key.ClassName,
-                                HomeRomeTeacherName = x.Key.HomeRomeTeacherName,
+                                HomeRoomTeacherName = x.Key.HomeRoomTeacherName,
                                 HomeRoomTeacherId = x.Key.HomeRoomTeacherId,
                                 Grade = x.Key.Grade,
                                 CreatedAt = x.Key.CreatedAt,
