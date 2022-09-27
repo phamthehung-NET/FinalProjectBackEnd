@@ -84,10 +84,5 @@
                 return null;
             }
         }
-
-        internal static string UploadBase64File(string image, string fileName, object imageDirectory)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

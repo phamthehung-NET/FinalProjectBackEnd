@@ -182,6 +182,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return context.UserLikePosts.Where(x => x.UserId == userId).Select(x => new { PostId = x.PostId, Status = x.Status }); ;
         }
 
+        public IQueryable<dynamic> GetLikedCommentByUser()
+        {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+
+            return context.UserLikeComments.Where(x => x.UserId == userId).Select(x => new { CommentId = x.CommentId, Status = x.Status }); ;
+        }
+
         public bool UserLikeAndDisLike(UserLikePostDTO userLikePostReq)
         {
             var user = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result;
@@ -300,6 +307,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 PostId = c.PostId,
                                 CreateAt = c.CreatedAt,
                                 UpdateAt = c.UpdatedAt,
+                                AuthorId = c.AuthorId,
                                 AuthorName = ui.FullName,
                                 AuthorUserName = ui.CustomUser.UserName,
                                 AuthorAvatar = ui.Avatar,
@@ -311,17 +319,32 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 ReplyAuthorUserName = rcui.CustomUser.UserName,
                                 ReplyAuthorAvatar = rcui.Avatar,
                                 UserLikeComments = ulc.Id,
-                            }).GroupBy(x => new { x.Id, x.PostId, x.Content, x.CreateAt, x.UpdateAt, x.AuthorName, x.AuthorUserName, x.AuthorAvatar })
+                                UserLikeCommentId = ulc.Id,
+                                UserLikeCommentAuthorId = uilc.UserId,
+                                UserLikeCommentAuthorName = uilc.FullName,
+                                UserLikeCommentAuthorUserName = uilc.CustomUser.UserName,
+                                UserLikeCommentAvatar = uilc.Avatar,
+                                UserLikeCommentStatus = ulc.Status,
+                            }).GroupBy(x => new { x.Id, x.AuthorId, x.PostId, x.Content, x.CreateAt, x.UpdateAt, x.AuthorName, x.AuthorUserName, x.AuthorAvatar })
                             .Select(x => new
                             {
                                 Id = x.Key.Id,
                                 PostId = x.Key.PostId,
                                 Content = x.Key.Content,
                                 CreatedAt = x.Key.CreateAt,
-                                UpdateAt = x.Key.UpdateAt,
+                                UpdatedAt = x.Key.UpdateAt,
+                                AuthorId = x.Key.AuthorId,
                                 AuthorName = x.Key.AuthorName,
                                 AuthorUserName = x.Key.AuthorUserName,
                                 AuthorAvatar = x.Key.AuthorAvatar,
+                                UserLikeComments = x.Where(x => x.UserLikeCommentId > 0).Select(a => new
+                                {
+                                    Name = a.UserLikeCommentAuthorName,
+                                    UserName = a.UserLikeCommentAuthorUserName,
+                                    Status = a.UserLikeCommentStatus,
+                                    Avatar = a.UserLikeCommentAvatar,
+                                    AuthorId = a.UserLikeCommentAuthorId
+                                }),
                                 ReplyComments = x.Where(x => x.ReplyCommentId > 0).Select(y => new
                                 {
                                     Id = y.ReplyCommentId,
@@ -332,7 +355,6 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     AuthorUserName = y.ReplyAuthorUserName,
                                     AuhthorAvatar = y.ReplyAuthorAvatar,
                                 }).Distinct(),
-                                UserLikeComments = x.Select(z => z.UserLikeComments).Distinct().Count()
                             });
             return comments.OrderByDescending(x => x.CreatedAt);
         }

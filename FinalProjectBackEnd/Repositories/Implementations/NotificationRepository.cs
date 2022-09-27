@@ -130,9 +130,19 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             if(notification != null)
             {
                 context.Notifications.Remove(notification);
+                context.SaveChanges();
                 return true;
             }
             return false;
+        }
+
+        public void EditNotification(Notification notification, int? status)
+        {
+            if (notification != null)
+            {
+                notification.Status = status;
+                context.SaveChanges();
+            }
         }
     }
 }

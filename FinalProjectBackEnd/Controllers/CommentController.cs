@@ -16,11 +16,11 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpPost]
-        public ActionResult CommentPost(CommentDTO commentReq)
+        public async Task<ActionResult> CommentPost(CommentDTO commentReq)
         {
             try
             {
-                commentService.CommentPost(commentReq);
+                await commentService.CommentPost(commentReq);
                 return Ok("Comment post successfully");
             }
             catch (Exception ex)
@@ -58,12 +58,12 @@ namespace FinalProjectBackEnd.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult GetCommentDetail(int id)
+        public async Task<ActionResult> GetCommentDetail(int id)
         {
             try
             {
-                var comment = commentService.GetCommentDetail(id);
-                return Ok(comment.FirstOrDefault());
+                var comment = await commentService.GetCommentDetail(id);
+                return Ok(comment);
             }
             catch (Exception ex)
             {

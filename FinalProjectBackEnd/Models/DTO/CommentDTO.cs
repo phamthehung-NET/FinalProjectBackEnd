@@ -17,6 +17,8 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string AuthorAvatar { get; set; }
 
+        public string AuthorUserName { get; set; }
+
         public string Content { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
@@ -25,5 +27,7 @@ namespace FinalProjectBackEnd.Models.DTO
         public IEnumerable<dynamic> ReplyComments { get; set; }
 
         public IEnumerable<dynamic> UserLikeComments { get; set; }
+
+        public bool? IsWebSocketObject { get; set; }
     }
 }

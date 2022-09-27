@@ -4,7 +4,10 @@ using FinalProjectBackEnd.Helpers;
 using FinalProjectBackEnd.Models;
 using FinalProjectBackEnd.Models.DTO;
 using FinalProjectBackEnd.Repositories.Interfaces;
+using FinalProjectBackEnd.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalProjectBackEnd.Repositories.Implementations
 {
@@ -14,16 +17,22 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         private readonly ApplicationDbContext context;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly INotificationRepository notificationRepository;
+        private readonly IHubContext<SignalR> hubContext;
 
-        public CommentRepository(UserManager<CustomUser> _userManager, ApplicationDbContext _context, IHttpContextAccessor _httpContextAccessor, INotificationRepository _notificationRepository)
+        public CommentRepository(UserManager<CustomUser> _userManager, 
+            ApplicationDbContext _context, 
+            IHttpContextAccessor _httpContextAccessor, 
+            INotificationRepository _notificationRepository, 
+            IHubContext<SignalR> _hubContext)
         {
             userManager = _userManager;
             context = _context;
             httpContextAccessor = _httpContextAccessor;
             notificationRepository = _notificationRepository;
+            hubContext = _hubContext;
         }
 
-        public bool CommentPost(CommentDTO commentReq)
+        public async Task<bool> CommentPost(CommentDTO commentReq)
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
@@ -39,6 +48,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             context.Comments.Add(comment);
             context.SaveChanges();
 
+            var commentReturned = await GetCommentDetail(comment.Id);
+
             if (!post.AuthorId.Equals(userId))
             {
                 var notification = new Notification
@@ -53,7 +64,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 notificationRepository.AddNotification(notification);
             }
 
+            await ReturnComment(commentReturned);
+
             return comment.Id > 0 ? true : false;
+        }
+
+        private async Task ReturnComment(CommentDTO comment)
+        {
+            await hubContext.Clients.All.SendAsync("ReceiveComment", comment);
         }
 
         public bool EditComment(CommentDTO commentReq)
@@ -83,7 +101,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return false;
         }
 
-        public IQueryable<CommentDTO> GetCommentDetail(int? id)
+        public async Task<CommentDTO> GetCommentDetail(int? id)
         {
             var comment = (from c in context.Comments
                            join ui in context.UserInfos on c.AuthorId equals ui.UserId
@@ -100,10 +118,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                            from ulcui in userlikeInfo.DefaultIfEmpty()
                            join ulcu in context.Users on ulcui.UserId equals ulcu.Id into userlikeUser
                            from ulcu in userlikeUser.DefaultIfEmpty()
-                           select new
+                           select new 
                            {
                                Id = c.Id,
                                Content = c.Content,
+                               PostId = c.PostId,
                                AuthorName = ui.FullName,
                                AuthorId = ui.UserId,
                                AuthorUserName = u.UserName,
@@ -124,17 +143,19 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                UserLikeCommentAuthorUserName = ulcu.UserName,
                                UserLikeCommentAvatar = ulcui.Avatar,
                                UserLikeCommentStatus = ulc.Status,
-                           }).GroupBy(x => new { x.Id, x.Content, x.AuthorUserName, x.AuthorName, x.CreateDate, x.UpdatedAt, x.AuthorAvatar, x.AuthorId })
+                           }).GroupBy(x => new { x.Id, x.Content, x.PostId, x.AuthorUserName, x.AuthorName, x.CreateDate, x.UpdatedAt, x.AuthorAvatar, x.AuthorId })
                           .Select(x => new CommentDTO
                           {
                               Id = x.Key.Id,
+                              PostId = x.Key.PostId,
                               Content = x.Key.Content,
-                              AuthorName = x.Key.AuthorName,
                               CreatedAt = x.Key.CreateDate,
-                              AuthorId = x.Key.AuthorId,
                               UpdatedAt = x.Key.UpdatedAt,
+                              AuthorId = x.Key.AuthorId,
+                              AuthorName = x.Key.AuthorName,
+                              AuthorUserName = x.Key.AuthorUserName,
                               AuthorAvatar = x.Key.AuthorAvatar,
-                              UserLikeComments = x.Select(a => new
+                              UserLikeComments = x.Where(x => x.UserLikeCommentId > 0).Select(a => new
                               {
                                   Name = a.UserLikeCommentAuthorName,
                                   UserName = a.UserLikeCommentAuthorUserName,
@@ -154,23 +175,24 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                   AuthorId = b.ReplyCommentAuthorId,
                               })
                           });
-            comment = comment.Where(x => x.Id == id);
+            var reslut = await comment.FirstOrDefaultAsync(x => x.Id == id);
 
-            return comment;
+            return reslut;
         }
 
         public bool UserLikeAndDisLikeComment(UserLikeCommentDTO userLikeCommentReq)
         {
+            var date = userLikeCommentReq.CreatedAt.Value.ToLocalTime();
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-            var comment = GetCommentDetail(userLikeCommentReq.CommentId).FirstOrDefault();
-            var userLikCommentDb = context.UserLikeComments.FirstOrDefault(x => x.CommentId == userLikeCommentReq.CommentId && x.UserId.Equals(userId));
+            var comment = context.Comments.FirstOrDefault(x => x.Id == userLikeCommentReq.CommentId);
+            var userLikCommentDb = context.UserLikeComments.FirstOrDefault(x => x.CommentId == comment.Id && x.UserId.Equals(userId));
             var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
 
             if (userLikCommentDb == null)
             {
                 var userLikeComment = new UserLikeComment
                 {
-                    CommentId = userLikeCommentReq.CommentId,
+                    CommentId = comment.Id,
                     UserId = userId,
                     Status = userLikeCommentReq.Status,
                 };
@@ -182,9 +204,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     {
                         Title = userInfo.FullName + " has given reaction to your comment",
                         AuthorId = userId,
-                        CommentId = userLikeCommentReq.CommentId,
+                        CommentId = comment.Id,
                         Status = userLikeCommentReq.Status,
-                        Link = NotificationLinks.CommentDetail + userLikeCommentReq.CommentId,
+                        Link = NotificationLinks.CommentDetail + comment.Id,
                         Type = NotificationTypes.LikeComment
                     };
                     notificationRepository.AddNotification(notification);
@@ -195,10 +217,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 context.UserLikeComments.Remove(userLikCommentDb);
                 var userLikeComment = new UserLikeComment
                 {
-                    CommentId = userLikeCommentReq.CommentId,
+                    CommentId = comment.Id,
                     UserId = userId,
                     Status = userLikeCommentReq.Status,
                 };
+                var notification = context.Notifications.FirstOrDefault(x => x.AuthorId.Equals(userId)
+                    && x.CommentId == comment.Id && x.Status == userLikCommentDb.Status
+                    && x.Link.Equals(NotificationLinks.CommentDetail + comment.Id));
+                notification.Status = userLikeCommentReq.Status;
                 context.UserLikeComments.Add(userLikeComment);
             }
             else

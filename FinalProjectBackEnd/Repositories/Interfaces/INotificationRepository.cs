@@ -9,5 +9,7 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
         public bool AddNotification(Notification notification);
 
         public bool RemoveNotification(Notification notification);
+
+        public void EditNotification(Notification notification, int? status);
     }
 }

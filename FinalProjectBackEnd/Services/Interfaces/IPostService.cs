@@ -22,5 +22,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public IQueryable<dynamic> GetAllComments(int postId);
 
         public IQueryable<dynamic> GetLikedPostByUser();
+
+        public IQueryable<dynamic> GetLikedCommentByUser();
     }
 }

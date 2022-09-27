@@ -1,6 +1,7 @@
 ﻿using FinalProjectBackEnd.Models.DTO;
 using FinalProjectBackEnd.Repositories.Interfaces;
 using FinalProjectBackEnd.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FinalProjectBackEnd.Services.Implementations
 {
@@ -13,9 +14,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             commentRepository = _commentRepository;
         }
 
-        public bool CommentPost(CommentDTO commentReq)
+        public async Task<bool> CommentPost(CommentDTO commentReq)
         {
-            var result = commentRepository.CommentPost(commentReq);
+            var result = await commentRepository.CommentPost(commentReq);
             if (result)
             {
                 return true;
@@ -73,10 +74,10 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Comment has no reaction");
         }
 
-        public IQueryable<CommentDTO> GetCommentDetail(int id)
+        public async Task<CommentDTO> GetCommentDetail(int id)
         {
-            var comment = commentRepository.GetCommentDetail(id);
-            if (comment.Any())
+            var comment = await commentRepository.GetCommentDetail(id);
+            if (comment != null)
             {
                 return comment;
             }

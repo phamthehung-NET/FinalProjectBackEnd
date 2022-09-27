@@ -4,13 +4,13 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 {
     public interface ICommentRepository
     {
-        public bool CommentPost(CommentDTO commentReq);
+        public Task<bool> CommentPost(CommentDTO commentReq);
 
         public bool EditComment(CommentDTO commentReq);
 
         public bool DeleteComment(int id);
 
-        public IQueryable<CommentDTO> GetCommentDetail(int? id);
+        public Task<CommentDTO> GetCommentDetail(int? id);
 
         public bool UserLikeAndDisLikeComment(UserLikeCommentDTO userLikeCommentReq);
 
