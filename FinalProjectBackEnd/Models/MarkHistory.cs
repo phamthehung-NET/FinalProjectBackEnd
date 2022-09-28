@@ -17,5 +17,9 @@
         public DateTime? CreatedDate { get; set; }
 
         public double? ReducedMark { get; set; }
+
+        public int? RelatedId { get; set; }
+
+        public int? RelatedType { get; set; }
     }
 }

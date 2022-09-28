@@ -97,4 +97,13 @@
 
         public static int VeryBad = 1;
     }
+
+    public class MarkRelatedType
+    {
+        public static int Post = 0;
+
+        public static int Comment = 1;
+
+        public static int ReplyComment = 2;
+    }
 }

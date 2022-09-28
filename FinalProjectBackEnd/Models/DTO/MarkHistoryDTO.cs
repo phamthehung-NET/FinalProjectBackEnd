@@ -17,5 +17,19 @@
         public string AuthorUserName { get; set; }
 
         public DateTime? CreatedDate { get; set; }
+
+        public string StudentName { get; set; }
+
+        public int? RelatedId { get; set; }
+
+        public string Content { get; set; }
+
+        public string StudentId { get; set; }
+
+        public int? ClassId { get; set; }
+
+        public string ClassName { get; set; }
+
+        public int? SchoolYear { get; set; }
     }
 }

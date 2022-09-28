@@ -55,46 +55,96 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public bool WarningPost(PostMarkDTO req)
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-
-            var post = (from p in context.Posts
-                       join ui in context.UserInfos on p.AuthorId equals ui.UserId
-                       join sc in context.StudentClasses on ui.UserId equals sc.StudentId into studentClass
-                       from sc in studentClass.DefaultIfEmpty()
-                       join c in context.Classrooms on sc.ClassId equals c.Id
-                       where p.Id == req.PostId
-                       select new
-                       {
-                           PostId = p.Id,
-                           Content = p.Content,
-                           StudentId = ui.UserId,
-                           StudentName = ui.FullName,
-                           ClassId = c.Id,
-                           ClassName = c.Name,
-                           SchoolYear = c.SchoolYear
-                       }).FirstOrDefault();
-            var mark = context.Marks.FirstOrDefault(x => x.ClassId == post.ClassId && x.Month == DateTime.Now.Month && x.SchoolYear == post.SchoolYear);
-            var markhisory = new MarkHistory();
-
-            if (req.Priority == Priority.Bad)
+            var markHistoryDb = context.MarkHistories.FirstOrDefault(x => x.RelatedId == req.RelatedId && x.RelatedType == req.RelatedType);
+            if(markHistoryDb == null)
             {
-                markhisory.ReducedMark = 0.1;
-                mark.Mark -= 0.1;
-                markhisory.Title = "Bad behavior of student " + post.StudentName;
+                MarkHistoryDTO related;
+
+                if (req.RelatedType == MarkRelatedType.Post)
+                {
+                    related = (from p in context.Posts
+                               join ui in context.UserInfos on p.AuthorId equals ui.UserId
+                               join sc in context.StudentClasses on ui.UserId equals sc.StudentId into studentClass
+                               from sc in studentClass.DefaultIfEmpty()
+                               join c in context.Classrooms on sc.ClassId equals c.Id
+                               where p.Id == req.RelatedId
+                               select new MarkHistoryDTO
+                               {
+                                   RelatedId = p.Id,
+                                   Content = p.Content,
+                                   StudentId = ui.UserId,
+                                   StudentName = ui.FullName,
+                                   ClassId = c.Id,
+                                   ClassName = c.Name,
+                                   SchoolYear = c.SchoolYear
+                               }).FirstOrDefault();
+                }
+                else if (req.RelatedType == MarkRelatedType.Comment)
+                {
+                    related = (from c in context.Comments
+                               join ui in context.UserInfos on c.AuthorId equals ui.UserId
+                               join sc in context.StudentClasses on ui.UserId equals sc.StudentId into studentClass
+                               from sc in studentClass.DefaultIfEmpty()
+                               join cl in context.Classrooms on sc.ClassId equals cl.Id
+                               where c.Id == req.RelatedId
+                               select new MarkHistoryDTO
+                               {
+                                   RelatedId = c.Id,
+                                   Content = c.Content,
+                                   StudentId = ui.UserId,
+                                   StudentName = ui.FullName,
+                                   ClassId = cl.Id,
+                                   ClassName = cl.Name,
+                                   SchoolYear = cl.SchoolYear
+                               }).FirstOrDefault();
+                }
+                else
+                {
+                    related = (from rc in context.ReplyComments
+                               join ui in context.UserInfos on rc.AuthorId equals ui.UserId
+                               join sc in context.StudentClasses on ui.UserId equals sc.StudentId into studentClass
+                               from sc in studentClass.DefaultIfEmpty()
+                               join cl in context.Classrooms on sc.ClassId equals cl.Id
+                               where rc.Id == req.RelatedId
+                               select new MarkHistoryDTO
+                               {
+                                   RelatedId = rc.Id,
+                                   Content = rc.Content,
+                                   StudentId = ui.UserId,
+                                   StudentName = ui.FullName,
+                                   ClassId = cl.Id,
+                                   ClassName = cl.Name,
+                                   SchoolYear = cl.SchoolYear
+                               }).FirstOrDefault();
+                }
+
+                var mark = context.Marks.FirstOrDefault(x => x.ClassId == related.ClassId && x.Month == DateTime.Now.Month && x.SchoolYear == related.SchoolYear);
+                var markhisory = new MarkHistory();
+
+                if (req.Priority == Priority.Bad)
+                {
+                    markhisory.ReducedMark = 0.1;
+                    mark.Mark -= 0.1;
+                    markhisory.Title = "Bad behavior of student " + related.StudentName;
+                }
+                if (req.Priority == Priority.VeryBad)
+                {
+                    markhisory.ReducedMark = 0.3;
+                    mark.Mark -= 0.3;
+                    markhisory.Title = "Very Bad behavior of student " + related.StudentName;
+                }
+                markhisory.MarkId = mark.Id;
+                markhisory.Priority = req.Priority;
+                markhisory.CreatedBy = userId;
+                markhisory.CreatedDate = DateTime.Now;
+                markhisory.Description = related.Content;
+                markhisory.RelatedId = req.RelatedId;
+                markhisory.RelatedType = req.RelatedType;
+                context.MarkHistories.Add(markhisory);
+                context.SaveChanges();
+                return markhisory.Id > 0 ? true : false;
             }
-            if (req.Priority == Priority.VeryBad)
-            {
-                markhisory.ReducedMark = 0.3;
-                mark.Mark -= 0.3;
-                markhisory.Title = "Very Bad behavior of student " + post.StudentName;
-            }
-            markhisory.MarkId = mark.Id;
-            markhisory.Priority = req.Priority;
-            markhisory.CreatedBy = userId;
-            markhisory.CreatedDate = DateTime.Now;
-            markhisory.Description = post.Content;
-            context.MarkHistories.Add(markhisory);
-            context.SaveChanges();
-            return markhisory.Id > 0 ? true : false;
+            return false;
         }
 
         public bool DeleteMarkHistory(int id)
