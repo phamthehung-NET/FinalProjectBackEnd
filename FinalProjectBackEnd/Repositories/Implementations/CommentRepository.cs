@@ -48,8 +48,6 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             context.Comments.Add(comment);
             context.SaveChanges();
 
-            var commentReturned = await GetCommentDetail(comment.Id);
-
             if (!post.AuthorId.Equals(userId))
             {
                 var notification = new Notification
@@ -64,14 +62,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 notificationRepository.AddNotification(notification);
             }
 
-            await ReturnComment(commentReturned);
+            var commentReturned = await GetCommentDetail(comment.Id);
+
+            await hubContext.Clients.All.SendAsync("ReceiveComment", commentReturned);
 
             return comment.Id > 0 ? true : false;
-        }
-
-        private async Task ReturnComment(CommentDTO comment)
-        {
-            await hubContext.Clients.All.SendAsync("ReceiveComment", comment);
         }
 
         public bool EditComment(CommentDTO commentReq)
@@ -163,26 +158,47 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                   Avatar = a.UserLikeCommentAvatar,
                                   AuthorId = a.UserLikeCommentAuthorId
                               }),
-                              ReplyComments = x.Where(x => x.ReplyCommentId > 0).Select(b => new
+                              ReplyComments = x.Where(x => x.ReplyCommentId > 0).Select(b => new ReplyCommentDTO
                               {
                                   Id = b.ReplyCommentId,
                                   Content = b.ReplyCommentContent,
-                                  CreateAt = b.ReplyCommentCreateAt,
-                                  UpdateAt = b.ReplyCommentUpdatedAt,
+                                  PostId = b.PostId,
+                                  CreatedAt = b.ReplyCommentCreateAt,
+                                  UpdatedAt = b.ReplyCommentUpdatedAt,
                                   AuthorName = b.ReplyCommentAuthorName,
                                   AuthorUserName = b.ReplyCommentUserName,
-                                  Avatar = b.ReplyCommentAuthorAvatar,
+                                  AuthorAvatar = b.ReplyCommentAuthorAvatar,
                                   AuthorId = b.ReplyCommentAuthorId,
-                              })
+                                  CommentId = b.Id,
+                              }).Distinct()
                           });
             var reslut = await comment.FirstOrDefaultAsync(x => x.Id == id);
 
             return reslut;
         }
 
+        private async Task<ReplyCommentDTO> GetReplyCommentDetail(int? id)
+        {
+            var replyComment = await (from rc in context.ReplyComments
+                                      join c in context.Comments on rc.CommentId equals c.Id
+                                      join rcui in context.UserInfos on rc.AuthorId equals rcui.UserId
+                                      select new ReplyCommentDTO
+                                      {
+                                          Id = rc.Id,
+                                          Content = rc.Content,
+                                          CreatedAt = rc.CreatedAt,
+                                          UpdatedAt = rc.UpdatedAt,
+                                          AuthorName = rcui.FullName,
+                                          AuthorUserName = rcui.CustomUser.UserName,
+                                          AuthorAvatar = rcui.Avatar,
+                                          AuthorId = rc.AuthorId,
+                                          CommentId = c.Id,
+                                      }).FirstOrDefaultAsync(x => x.Id == id);
+            return replyComment;
+        }
+
         public bool UserLikeAndDisLikeComment(UserLikeCommentDTO userLikeCommentReq)
         {
-            var date = userLikeCommentReq.CreatedAt.Value.ToLocalTime();
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var comment = context.Comments.FirstOrDefault(x => x.Id == userLikeCommentReq.CommentId);
             var userLikCommentDb = context.UserLikeComments.FirstOrDefault(x => x.CommentId == comment.Id && x.UserId.Equals(userId));
@@ -242,10 +258,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return status == 0 || status == 1 || status == 2 ? true : false;
         }
 
-        public bool ReplyComment(ReplyCommentDTO replyCommentReq)
+        public async Task<bool> ReplyComment(ReplyCommentDTO replyCommentReq)
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+            var comment = context.Comments.FirstOrDefault(x => x.Id == replyCommentReq.CommentId);
 
             var replyComment = new ReplyComment
             {
@@ -257,15 +274,23 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             context.ReplyComments.Add(replyComment);
             context.SaveChanges();
 
-            var notification = new Notification
+
+            if (!comment.AuthorId.Equals(userId))
             {
-                AuthorId = userId,
-                Title = userInfo.FullName + " has replied to your comment",
-                CommentId = replyCommentReq.CommentId,
-                Link = NotificationLinks.CommentDetail + replyCommentReq.CommentId,
-                Type = NotificationTypes.ReplyComment
-            };
-            notificationRepository.AddNotification(notification);
+                var notification = new Notification
+                {
+                    AuthorId = userId,
+                    Title = userInfo.FullName + " has replied to your comment",
+                    CommentId = replyCommentReq.CommentId,
+                    Link = NotificationLinks.CommentDetail + replyCommentReq.CommentId,
+                    Type = NotificationTypes.ReplyComment
+                };
+                notificationRepository.AddNotification(notification);
+            }
+
+            var replyReturned = GetReplyCommentDetail(replyComment.Id).Result;
+
+            await hubContext.Clients.All.SendAsync("ReceiveReplyComment", replyReturned);
 
             return replyComment.Id > 0 ? true : false;
         }
@@ -313,6 +338,27 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                        Avatar = ui.Avatar,
                                    };
             return userLikeComments;
+        }
+        
+        public IQueryable<ReplyCommentDTO> GetAllReplyComment(int commentId)
+        {
+            var replyComment = from rc in context.ReplyComments
+                               join c in context.Comments on rc.CommentId equals c.Id
+                               join rcui in context.UserInfos on rc.AuthorId equals rcui.UserId
+                               where c.Id == commentId
+                               select new ReplyCommentDTO
+                               {
+                                   Id = rc.Id,
+                                   Content = rc.Content,
+                                   CreatedAt = rc.CreatedAt,
+                                   UpdatedAt = rc.UpdatedAt,
+                                   AuthorName = rcui.FullName,
+                                   AuthorUserName = rcui.CustomUser.UserName,
+                                   AuthorAvatar = rcui.Avatar,
+                                   AuthorId = rc.AuthorId,
+                                   CommentId = c.Id,
+                               };
+            return replyComment.OrderByDescending(x => x.CreatedAt);
         }
     }
 }

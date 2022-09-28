@@ -30,9 +30,9 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string AuthorAvatar { get; set; }
 
-        public int? UserLikePostsCount { get; set; }
+        public IEnumerable<int> UserLikePosts { get; set; }
 
-        public int? CommentCount { get; set; }
+        public IEnumerable<int> Comments { get; set; }
 
         public bool? Visibility { get; set; }
     }

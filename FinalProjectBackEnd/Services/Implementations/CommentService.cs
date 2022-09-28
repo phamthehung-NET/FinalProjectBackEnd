@@ -84,9 +84,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Cannot get comment detail");
         }
 
-        public bool ReplyComment(ReplyCommentDTO replyCommentReq)
+        public async Task<bool> ReplyComment(ReplyCommentDTO replyCommentReq)
         {
-            var result = commentRepository.ReplyComment(replyCommentReq);
+            var result = await commentRepository.ReplyComment(replyCommentReq);
             if (result)
             {
                 return true;
@@ -102,6 +102,16 @@ namespace FinalProjectBackEnd.Services.Implementations
                 return true;
             }
             throw new Exception("Cannot Like Post");
+        }
+
+        public IQueryable<ReplyCommentDTO> GetAllReplyComment(int commentId)
+        {
+            var replies = commentRepository.GetAllReplyComment(commentId);
+            if (replies.Any())
+            {
+                return replies;
+            }
+            throw new Exception("No reply comment");
         }
     }
 }

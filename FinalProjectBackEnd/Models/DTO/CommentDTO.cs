@@ -27,7 +27,5 @@ namespace FinalProjectBackEnd.Models.DTO
         public IEnumerable<dynamic> ReplyComments { get; set; }
 
         public IEnumerable<dynamic> UserLikeComments { get; set; }
-
-        public bool? IsWebSocketObject { get; set; }
     }
 }

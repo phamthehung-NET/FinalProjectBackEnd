@@ -17,6 +17,10 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string AuthorAvatar { get; set; }
 
+        public string AuthorUserName { get; set; }
+        
+        public int? PostId { get; set; }
+
         public string Content { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]

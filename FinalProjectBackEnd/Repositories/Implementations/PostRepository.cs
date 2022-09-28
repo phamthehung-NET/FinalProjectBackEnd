@@ -163,8 +163,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             Image = x.Key.Image,
                             AuthorAvatar = x.Key.AuthorAvatar,
                             Visibility = x.Key.Visibility,
-                            UserLikePostsCount = x.Select(y => y.UserLikePosts).Distinct().Count(),
-                            CommentCount = x.Select(z => z.Comments).Distinct().Count(),
+                            UserLikePosts = x.Select(y => y.UserLikePosts).Distinct(),
+                            Comments = x.Select(z => z.Comments).Distinct(),
                         });
             
             if (id != null)
@@ -315,6 +315,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 ReplyCommentContent = rc.Content,
                                 ReplyCreateAt = rc.CreatedAt,
                                 ReplyUpdateAt = rc.UpdatedAt,
+                                ReplyAuthorId = rc.AuthorId,
                                 ReplyAuthorName = rcui.FullName,
                                 ReplyAuthorUserName = rcui.CustomUser.UserName,
                                 ReplyAuthorAvatar = rcui.Avatar,
@@ -347,13 +348,15 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 }),
                                 ReplyComments = x.Where(x => x.ReplyCommentId > 0).Select(y => new
                                 {
-                                    Id = y.ReplyCommentId,
+                                    Id = y.ReplyCommentId,  
                                     Content = y.ReplyCommentContent,
-                                    CreateAt = y.ReplyCreateAt,
-                                    UpdateAt = y.ReplyUpdateAt,
+                                    CreatedAt = y.ReplyCreateAt,
+                                    UpdatedAt = y.ReplyUpdateAt,
                                     AuthorName = y.ReplyAuthorName,
                                     AuthorUserName = y.ReplyAuthorUserName,
                                     AuhthorAvatar = y.ReplyAuthorAvatar,
+                                    AuthorId = y.ReplyAuthorId,
+                                    CommentId = y.Id,
                                 }).Distinct(),
                             });
             return comments.OrderByDescending(x => x.CreatedAt);

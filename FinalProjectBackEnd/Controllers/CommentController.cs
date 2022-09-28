@@ -140,5 +140,19 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("{id}")]
+        public ActionResult GetAllReplyComments(int id)
+        {
+            try
+            {
+                var replies = commentService.GetAllReplyComment(id);
+                return Ok(replies.ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
