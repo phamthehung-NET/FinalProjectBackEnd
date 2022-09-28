@@ -31,5 +31,7 @@
         public string ClassName { get; set; }
 
         public int? SchoolYear { get; set; }
+
+        public int? RelatedType { get; set; }
     }
 }

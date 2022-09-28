@@ -182,7 +182,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                               Priority = h.Priority,
                               AuthorName = ui.FullName,
                               AuthorUserName = ui.CustomUser.UserName,
-                              CreatedDate = h.CreatedDate
+                              CreatedDate = h.CreatedDate,
                           }).ToList();
             var pagination = HelperFuction.GetPaging(pageIndex, pageSize, history);
 
