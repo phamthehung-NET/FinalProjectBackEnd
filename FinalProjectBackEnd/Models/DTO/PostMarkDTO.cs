@@ -13,5 +13,9 @@
         public int? RelatedId { get; set; }
 
         public int? RelatedType { get; set; }
+
+        public string Base64 { get; set; }
+
+        public string FileName { get; set; }
     }
 }

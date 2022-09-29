@@ -21,5 +21,7 @@
         public int? RelatedId { get; set; }
 
         public int? RelatedType { get; set; }
+
+        public string EvidenceLink { get; set; }
     }
 }

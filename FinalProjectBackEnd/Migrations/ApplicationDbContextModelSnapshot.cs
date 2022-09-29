@@ -91,14 +91,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "37a866dc-b887-472d-9c60-03e5c1f39108",
+                            ConcurrencyStamp = "26ece6c4-73b8-42ac-8328-97595d48bd01",
                             Email = "principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKcnX1rYOauogFm0mCfu+/oAwQKlN7KOU7JCQDR2yb2vg0Iclwc4BDTZJK/5jBHLGQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM/Ap+RUmES1Es8QglXUd7BnWsJuaWlPsKkreGywnQNMuQryVMmrXelPem7uzBUeVw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "75357a44-6d09-485b-a76d-21430d1f3625",
+                            SecurityStamp = "3a837f60-335b-45b6-a937-d3a9318b121a",
                             TwoFactorEnabled = false,
                             UserName = "Principal"
                         },
@@ -106,14 +106,14 @@ namespace FinalProjectBackEnd.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "710ae7c7-909f-463b-ad41-621c0980af4c",
+                            ConcurrencyStamp = "1b30ee58-7a4f-485c-843a-194fe89df762",
                             Email = "vice-principal@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = true,
                             NormalizedUserName = "vice-principal",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJI6NYYf1dJra2t6fNu7PTf2MWrKWHhsJwN+mWwJytg6qcYGGL6mqK99nWAOd1OK5g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEABZ2wk1S1R+Lc69HqKovgCjlo/GyDRnUdHBxMWVJtKcKmaAbaARAUe5XLBMXwKHQw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "68ec1f6e-c7bc-4b6a-845b-6c9c377f4a31",
+                            SecurityStamp = "7b693878-8c00-4ce6-b057-a341cd1bf0bf",
                             TwoFactorEnabled = false,
                             UserName = "Vice-Principal"
                         });
@@ -287,6 +287,9 @@ namespace FinalProjectBackEnd.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EvidenceLink")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("MarkId")

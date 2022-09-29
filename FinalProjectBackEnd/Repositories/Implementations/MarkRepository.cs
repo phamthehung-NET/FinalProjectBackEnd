@@ -140,6 +140,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 markhisory.Description = related.Content;
                 markhisory.RelatedId = req.RelatedId;
                 markhisory.RelatedType = req.RelatedType;
+                markhisory.EvidenceLink = HelperFuction.UploadBase64File(req.Base64, req.FileName, ImageDirectories.MarkEvidence);
                 context.MarkHistories.Add(markhisory);
                 context.SaveChanges();
                 return markhisory.Id > 0 ? true : false;
@@ -183,6 +184,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                               AuthorName = ui.FullName,
                               AuthorUserName = ui.CustomUser.UserName,
                               CreatedDate = h.CreatedDate,
+                              Evidence = h.EvidenceLink,
                           }).ToList();
             var pagination = HelperFuction.GetPaging(pageIndex, pageSize, history);
 
@@ -274,7 +276,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              HistoryCreatedDate = h.CreatedDate,
                              HistoryCreatorName = hui.FullName,
                              HistoryCreatorUserName = hui.CustomUser.UserName,
-                             HistoryReducedMark = h.ReducedMark
+                             HistoryReducedMark = h.ReducedMark,
+                             EvidenceLink = h.EvidenceLink,
                          }).GroupBy(x => new { x.Id, x.Mark, x.ClassId, x.Month, 
                              x.SchoolYear, x.ClassName, x.CreatedAt, x.CreatedBy, 
                              x.UpdatedBy, x.UpdatedAt, x.CreatorName, x.CreatorUserName, 
@@ -304,7 +307,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                  Title = y.HistoryTitle,
                                  ReducedMark = y.HistoryReducedMark,
                                  CreatorName = y.HistoryCreatorName,
-                                 CreatorUserName = y.HistoryCreatorUserName
+                                 CreatorUserName = y.HistoryCreatorUserName,
+                                 Evidence = y.EvidenceLink,
                              })
                          });
 

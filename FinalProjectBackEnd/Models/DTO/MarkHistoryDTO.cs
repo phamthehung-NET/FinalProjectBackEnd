@@ -33,5 +33,7 @@
         public int? SchoolYear { get; set; }
 
         public int? RelatedType { get; set; }
+
+        public string Evidence { get; set; }
     }
 }

@@ -47,6 +47,8 @@
         public static string Admin = "Images/AdminAvatars";
 
         public static string Post = "Images/Posts";
+
+        public static string MarkEvidence = "Images/Evidences";
     }
 
     public class NotificationLinks
