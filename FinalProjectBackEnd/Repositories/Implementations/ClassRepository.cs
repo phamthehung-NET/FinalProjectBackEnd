@@ -242,8 +242,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                            from sc in studentClasses.DefaultIfEmpty()
                            join st in context.UserInfos on sc.StudentId equals st.UserId into students
                            from st in students.DefaultIfEmpty()
-                           join u in context.Users on sc.StudentId equals u.Id into studentAccounts
-                           from u in studentAccounts.DefaultIfEmpty()
+                           join su in context.Users on sc.StudentId equals su.Id into studentAccounts
+                           from su in studentAccounts.DefaultIfEmpty()
+                           join sui in context.UserInfos on su.Id equals sui.UserId
                            select new
                            {
                                Id = c.Id,
@@ -259,8 +260,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                TeacherName = tc.FullName,
                                SubjectId = s.Id,
                                SubjectName = s.Name,
-                               StudentName = ui.FullName,
-                               User = u,
+                               StudentName = sui.FullName,
+                               User = su,
                                Dob = ui.DoB,
                                Status = ui.Status,
                            }).GroupBy(x => new { x.Id, x.ClassName, x.HomeRoomTeacherName, x.HomeRoomTeacherId, x.Grade, x.CreatedAt, x.SchoolYear, x.UpdatedAt, x.UpdatedBy })

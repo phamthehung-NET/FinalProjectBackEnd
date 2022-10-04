@@ -240,7 +240,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 var notification = context.Notifications.FirstOrDefault(x => x.AuthorId.Equals(userId)
                     && x.CommentId == comment.Id && x.Status == userLikCommentDb.Status
                     && x.Link.Equals(NotificationLinks.CommentDetail + comment.Id));
-                notification.Status = userLikeCommentReq.Status;
+                if(notification != null)
+                {
+                    notification.Status = userLikeCommentReq.Status;
+
+                }
                 context.UserLikeComments.Add(userLikeComment);
             }
             else
