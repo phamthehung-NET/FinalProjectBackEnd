@@ -23,5 +23,7 @@
         public int? RelatedType { get; set; }
 
         public string EvidenceLink { get; set; }
+
+        public bool? IsDeleted { get; set; }
     }
 }

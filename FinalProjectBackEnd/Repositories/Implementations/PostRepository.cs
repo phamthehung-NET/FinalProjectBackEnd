@@ -90,7 +90,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             if(post != null)
             {
                 post.Content = postReq.Content;
-                post.Image = HelperFuction.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post);
+                post.Image = !String.IsNullOrEmpty(postReq.Image) ? HelperFuction.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post) : post.Image;
+                post.Visibility = postReq.Visibility;
                 post.UpdatedDate = DateTime.Now;
                 context.SaveChanges();
                 return true;
@@ -132,6 +133,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                          from u in postAuthor.DefaultIfEmpty()
                          join ui in context.UserInfos on u.Id equals ui.UserId into postAuthorInfo
                          from ui in postAuthorInfo.DefaultIfEmpty()
+                         join ur in context.UserRoles on u.Id equals ur.UserId into postAuthorUserRoles
+                         from ur in postAuthorUserRoles.DefaultIfEmpty()
+                         join r in context.Roles on ur.RoleId equals r.Id into postAuthorRoles
+                         from r in postAuthorRoles.DefaultIfEmpty()
                          join ulp in context.UserLikePosts on p.Id equals ulp.PostId into userLikePosts
                          from ulp in userLikePosts.DefaultIfEmpty()
                          join c in context.Comments on p.Id equals c.PostId into postComments
@@ -143,6 +148,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              AuthorName = ui.FullName,
                              AuthorUserName = u.UserName,
                              AuthorAvatar = ui.Avatar,
+                             AuthorRole = r.Name,
                              CreatedAt = p.CreatedAt,
                              Content = p.Content,
                              UpdatedDate = p.UpdatedDate,
@@ -150,13 +156,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              Visibility = p.Visibility,
                              UserLikePosts = ulp.Id,
                              Comments = c.Id,
-                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar, x.Visibility })
+                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.AuthorRole, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar, x.Visibility })
                         .Select(x => new PostDTO
                         {
                             Id = x.Key.Id,
                             AuthorId = x.Key.AuthorId,
                             AuthorName = x.Key.AuthorName,
                             AuthorUserName = x.Key.AuthorUserName,
+                            AuthorRole = x.Key.AuthorRole,
                             CreatedAt = x.Key.CreatedAt,
                             Content = x.Key.Content,
                             UpdatedDate = x.Key.UpdatedDate,

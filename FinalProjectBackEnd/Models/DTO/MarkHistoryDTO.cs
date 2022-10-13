@@ -35,5 +35,7 @@
         public int? RelatedType { get; set; }
 
         public string Evidence { get; set; }
+
+        public bool? IsDeleted { get; set; }
     }
 }

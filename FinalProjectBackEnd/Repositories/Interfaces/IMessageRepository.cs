@@ -8,15 +8,15 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public IQueryable<MessageDTO> GetMessageOfGroupChat(int id);
 
-        public IQueryable<ConversationDTO> GetConversation();
+        public IQueryable<dynamic> GetConversation();
 
-        public IQueryable<GroupChatDTO> GetGroupChat();
+        public IQueryable<dynamic> GetGroupChat();
 
         public void CreateGroupChat(GroupChatDTO groupChatReq);
 
         public IQueryable<GroupChatDTO> GetAllGroupMembers(int id);
 
-        public bool AddMessage(MessageDTO msgReq);
+        public Task<bool> AddMessage(MessageDTO msgReq);
 
         public bool EditMessage(MessageDTO msgReq);
 

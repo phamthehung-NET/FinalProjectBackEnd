@@ -162,7 +162,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     mark.Mark += 0.3;
                 }
-                context.MarkHistories.Remove(history);
+                history.IsDeleted = true;
                 context.SaveChanges();
                 return true;
             }
@@ -185,6 +185,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                               AuthorUserName = ui.CustomUser.UserName,
                               CreatedDate = h.CreatedDate,
                               Evidence = h.EvidenceLink,
+                              IsDeleted = h.IsDeleted,
+                              
                           }).ToList();
             var pagination = HelperFuction.GetPaging(pageIndex, pageSize, history);
 
@@ -278,6 +280,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              HistoryCreatorUserName = hui.CustomUser.UserName,
                              HistoryReducedMark = h.ReducedMark,
                              EvidenceLink = h.EvidenceLink,
+                             IsDeleted = h.IsDeleted
                          }).GroupBy(x => new { x.Id, x.Mark, x.ClassId, x.Month, 
                              x.SchoolYear, x.ClassName, x.CreatedAt, x.CreatedBy, 
                              x.UpdatedBy, x.UpdatedAt, x.CreatorName, x.CreatorUserName, 
@@ -309,6 +312,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                  CreatorName = y.HistoryCreatorName,
                                  CreatorUserName = y.HistoryCreatorUserName,
                                  Evidence = y.EvidenceLink,
+                                 IsDeleted = y.IsDeleted,
                              })
                          });
 

@@ -16,5 +16,7 @@ namespace FinalProjectBackEnd.Models.DTO
         public IEnumerable<dynamic> Users { get; set; }
 
         public dynamic LastestMessage { get; set; }
+
+        public string Type { get; set; }
     }
 }

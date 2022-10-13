@@ -14,9 +14,9 @@ namespace FinalProjectBackEnd.Services.Implementations
             messageRepository = _messageRepository;
         }
 
-        public bool AddMessage(MessageDTO msgReq)
+        public async Task<bool> AddMessage(MessageDTO msgReq)
         {
-            var result = messageRepository.AddMessage(msgReq);
+            var result = await messageRepository.AddMessage(msgReq);
             if (result)
             {
                 return true;

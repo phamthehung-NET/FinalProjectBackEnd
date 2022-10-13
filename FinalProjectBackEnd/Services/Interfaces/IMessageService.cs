@@ -15,7 +15,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public IQueryable<GroupChatDTO> GetAllGroupMembers(int id);
 
-        public bool AddMessage(MessageDTO msgReq);
+        public Task<bool> AddMessage(MessageDTO msgReq);
 
         public bool EditMessage(MessageDTO msgReq);
 

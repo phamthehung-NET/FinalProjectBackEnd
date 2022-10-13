@@ -9,5 +9,7 @@
         public string User2Id { get; set; }
         
         public dynamic LastestMessage { get; set; }
+
+        public string Type { get; set; }
     }
 }

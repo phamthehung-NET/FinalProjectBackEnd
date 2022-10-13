@@ -6,11 +6,6 @@ namespace FinalProjectBackEnd.Services
 {
     public class SignalR : Hub
     {
-        private readonly ICommentRepository commentRepository;
-        public SignalR(ICommentRepository _commentRepository)
-        {
-            commentRepository = _commentRepository;
-        }
         public async Task SendMsg(MessageDTO message)
         {
             await Clients.All.SendAsync("ReceiveMsg", message);

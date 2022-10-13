@@ -17,6 +17,8 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public string AuthorUserName { get; set; }
 
+        public string AuthorRole { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime? UpdatedDate { get; set; }
 
