@@ -150,7 +150,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 markhisory.Description = related.Content;
                 markhisory.RelatedId = req.RelatedId;
                 markhisory.RelatedType = req.RelatedType;
-                markhisory.EvidenceLink = HelperFuctions.UploadBase64File(req.Base64, req.FileName, ImageDirectories.MarkEvidence);
+                markhisory.EvidenceLink = HelperFunctions.UploadBase64File(req.Base64, req.FileName, ImageDirectories.MarkEvidence);
                 context.MarkHistories.Add(markhisory);
                 context.SaveChanges();
                 emails.Add(related.StudentEmail);
@@ -170,7 +170,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 Subject = "Your " + emailType + " is warned.",
                 Body = "Your " + emailType + " is <strong>warned</strong> by " + user.FullName + " follow <a href=" + BaseUrl.ClientBaseUrl + "/" + ">link</a> to view more detail"
             };
-            HelperFuctions.SendMail(mail);
+            HelperFunctions.SendMail(mail);
         }
 
         public bool DeleteMarkHistory(int id)
@@ -213,7 +213,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                               IsDeleted = h.IsDeleted,
                               
                           }).ToList();
-            var pagination = HelperFuctions.GetPaging(pageIndex, pageSize, history);
+            var pagination = HelperFunctions.GetPaging(pageIndex, pageSize, history);
 
             return pagination;
         }
@@ -257,7 +257,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             marks = marks.OrderByDescending(x => x.Mark);
 
-            var paginateItems = HelperFuctions.GetPaging(pageIndex, pageSize, marks.ToList());
+            var paginateItems = HelperFunctions.GetPaging(pageIndex, pageSize, marks.ToList());
 
             return paginateItems;
         }
