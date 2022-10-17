@@ -36,7 +36,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Content = postReq.Content,
                     AuthorId = userId,
                     CreatedAt = DateTime.Now,
-                    Image = HelperFuction.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post),
+                    Image = HelperFunctions.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post),
                     Visibility = postReq.Visibility,
                 };
 
@@ -90,7 +90,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             if(post != null)
             {
                 post.Content = postReq.Content;
-                post.Image = !String.IsNullOrEmpty(postReq.Image) ? HelperFuction.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post) : post.Image;
+                post.Image = !String.IsNullOrEmpty(postReq.Image) ? HelperFunctions.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post) : post.Image;
                 post.Visibility = postReq.Visibility;
                 post.UpdatedDate = DateTime.Now;
                 context.SaveChanges();
@@ -115,7 +115,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             posts = posts.OrderByDescending(x => x.CreatedAt);
 
-            var paginateItems = HelperFuction.GetPaging(pageIndex, pageSize, posts.ToList());
+            var paginateItems = HelperFunctions.GetPaging(pageIndex, pageSize, posts.ToList());
 
             return paginateItems;
         }

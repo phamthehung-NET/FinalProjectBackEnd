@@ -2,6 +2,7 @@
 using FinalProjectBackEnd.Data;
 using FinalProjectBackEnd.Helpers;
 using FinalProjectBackEnd.Models;
+using FinalProjectBackEnd.Models.CommonModel;
 using FinalProjectBackEnd.Models.DTO;
 using FinalProjectBackEnd.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -56,6 +57,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var markHistoryDb = context.MarkHistories.FirstOrDefault(x => x.RelatedId == req.RelatedId && x.RelatedType == req.RelatedType);
+            string emailType = String.Empty;
+            List<string> emails = new List<string>();
+
             if(markHistoryDb == null)
             {
                 MarkHistoryDTO related;
@@ -74,10 +78,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                    Content = p.Content,
                                    StudentId = ui.UserId,
                                    StudentName = ui.FullName,
+                                   StudentEmail = ui.CustomUser.Email,
                                    ClassId = c.Id,
                                    ClassName = c.Name,
                                    SchoolYear = c.SchoolYear
                                }).FirstOrDefault();
+                    emailType = "post";
                 }
                 else if (req.RelatedType == MarkRelatedType.Comment)
                 {
@@ -93,10 +99,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                    Content = c.Content,
                                    StudentId = ui.UserId,
                                    StudentName = ui.FullName,
+                                   StudentEmail = ui.CustomUser.Email,
                                    ClassId = cl.Id,
                                    ClassName = cl.Name,
                                    SchoolYear = cl.SchoolYear
                                }).FirstOrDefault();
+                    emailType = "comment";
                 }
                 else
                 {
@@ -112,10 +120,12 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                    Content = rc.Content,
                                    StudentId = ui.UserId,
                                    StudentName = ui.FullName,
+                                   StudentEmail = ui.CustomUser.Email,
                                    ClassId = cl.Id,
                                    ClassName = cl.Name,
                                    SchoolYear = cl.SchoolYear
                                }).FirstOrDefault();
+                    emailType = "reply comment";
                 }
 
                 var mark = context.Marks.FirstOrDefault(x => x.ClassId == related.ClassId && x.Month == DateTime.Now.Month && x.SchoolYear == related.SchoolYear);
@@ -140,12 +150,27 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 markhisory.Description = related.Content;
                 markhisory.RelatedId = req.RelatedId;
                 markhisory.RelatedType = req.RelatedType;
-                markhisory.EvidenceLink = HelperFuction.UploadBase64File(req.Base64, req.FileName, ImageDirectories.MarkEvidence);
+                markhisory.EvidenceLink = HelperFuctions.UploadBase64File(req.Base64, req.FileName, ImageDirectories.MarkEvidence);
                 context.MarkHistories.Add(markhisory);
                 context.SaveChanges();
+                emails.Add(related.StudentEmail);
+                HandleWarningPost(userId, emailType, emails);
                 return markhisory.Id > 0 ? true : false;
             }
             return false;
+        }
+
+        private void HandleWarningPost(string userId, string emailType, List<string> emailList)
+        {
+            var user = userRepository.GetUSerWithRole(null, userId, null).FirstOrDefault();
+
+            MailModel mail = new MailModel()
+            {
+                ArrivalEmails = emailList,
+                Subject = "Your " + emailType + " is warned.",
+                Body = "Your " + emailType + " is <strong>warned</strong> by " + user.FullName + " follow <a href=" + BaseUrl.ClientBaseUrl + "/" + ">link</a> to view more detail"
+            };
+            HelperFuctions.SendMail(mail);
         }
 
         public bool DeleteMarkHistory(int id)
@@ -188,7 +213,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                               IsDeleted = h.IsDeleted,
                               
                           }).ToList();
-            var pagination = HelperFuction.GetPaging(pageIndex, pageSize, history);
+            var pagination = HelperFuctions.GetPaging(pageIndex, pageSize, history);
 
             return pagination;
         }
@@ -232,7 +257,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             marks = marks.OrderByDescending(x => x.Mark);
 
-            var paginateItems = HelperFuction.GetPaging(pageIndex, pageSize, marks.ToList());
+            var paginateItems = HelperFuctions.GetPaging(pageIndex, pageSize, marks.ToList());
 
             return paginateItems;
         }

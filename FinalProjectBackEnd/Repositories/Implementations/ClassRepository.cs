@@ -136,7 +136,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 classes = classes.Where(x => x.Grade == grade);
             }
 
-            var pagination = HelperFuction.GetPaging<ClassDTO>(pageIndex, itemPerPage, classes.ToList());
+            var pagination = HelperFunctions.GetPaging<ClassDTO>(pageIndex, itemPerPage, classes.ToList());
 
             return pagination;
         }

@@ -54,7 +54,7 @@ namespace FinalProjectBackEnd.Services.Implementations
                 all.AddRange(groupChats);
             }
 
-            var pagination = HelperFuction.GetPaging<dynamic>(pageIndex, itemPerPage, all.OrderByDescending(x => x.LastestMessage.CreatedAt).ToList());
+            var pagination = HelperFunctions.GetPaging<dynamic>(pageIndex, itemPerPage, all.OrderByDescending(x => x.LastestMessage.CreatedAt).ToList());
 
             return pagination;
         }

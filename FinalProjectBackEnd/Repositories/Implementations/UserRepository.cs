@@ -24,7 +24,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public async Task<bool> AddStudent(UserDTO userDTO)
         {
-            string userName = HelperFuction.handleUserName(userDTO.FullName, userDTO.DoB, userDTO.SchoolYear);
+            string userName = HelperFunctions.handleUserName(userDTO.FullName, userDTO.DoB, userDTO.SchoolYear);
             var account = new CustomUser
             {
                 Email = userDTO.Email,
@@ -42,7 +42,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     DoB = userDTO.DoB,
                     SchoolYear = userDTO.SchoolYear,
                     GraduateYear = userDTO.GraduateYear,
-                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student),
+                    Avatar = HelperFunctions.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student),
                     Status = StudentStatus.Learning,
                     StudentRole = StudentRole.Normal,
                     IsFirstLogin = true
@@ -74,7 +74,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Address = userDTO.Address,
                     StartDate = userDTO.StartDate,
                     EndDate = userDTO.EndDate,
-                    Avatar = HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher),
+                    Avatar = HelperFunctions.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher),
                     IsDeleted = false,
                     IsFirstLogin = true
                 };
@@ -122,7 +122,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     studentInfo.DoB = userDTO.DoB != null ? userDTO.DoB : studentInfo.DoB;
                     studentInfo.GraduateYear = userDTO.GraduateYear;
                     studentInfo.Status = userDTO.Status;
-                    studentInfo.Avatar = userDTO.Avatar != null ? HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student) : studentInfo.Avatar;
+                    studentInfo.Avatar = userDTO.Avatar != null ? HelperFunctions.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Student) : studentInfo.Avatar;
                     context.SaveChanges();
                     return true;
                 }
@@ -144,7 +144,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     teacherInfo.Address = userDTO.Address;
                     teacherInfo.StartDate = userDTO.StartDate != null ? userDTO.StartDate : teacherInfo.StartDate;
                     teacherInfo.EndDate = userDTO.EndDate != null ? userDTO.EndDate : teacherInfo.EndDate;
-                    teacherInfo.Avatar = userDTO.Avatar != null ? HelperFuction.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher): teacherInfo.Avatar;
+                    teacherInfo.Avatar = userDTO.Avatar != null ? HelperFunctions.UploadBase64File(userDTO.Avatar, userDTO.FileName, ImageDirectories.Teacher): teacherInfo.Avatar;
                     teacherInfo.IsDeleted = userDTO.IsDeleted != null ? userDTO.IsDeleted : false;
                     context.SaveChanges();
                     return true;
@@ -169,7 +169,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 students = students.Where(x => x.Status == filter);
             }
 
-            var paginateItem = HelperFuction.GetPaging(padeIndex, itemPerPage, students.ToList());
+            var paginateItem = HelperFunctions.GetPaging(padeIndex, itemPerPage, students.ToList());
 
             return paginateItem;
         }
@@ -186,7 +186,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 teachers = teachers.Where(x => x.IsDeleted == filter);
             }
 
-            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, teachers.ToList());
+            var paginateItem = HelperFunctions.GetPaging<UserDTO>(padeIndex, itemPerPage, teachers.ToList());
 
             return paginateItem;
         }
@@ -262,7 +262,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var secretary = GetUSerWithRole(Roles.Student, null, StudentRole.Secretary);
 
-            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, secretary.ToList());
+            var paginateItem = HelperFunctions.GetPaging<UserDTO>(padeIndex, itemPerPage, secretary.ToList());
 
             return paginateItem;
         }
@@ -271,7 +271,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var monitor = GetUSerWithRole(Roles.Student, null, StudentRole.Monitor);
 
-            var paginateItem = HelperFuction.GetPaging<UserDTO>(padeIndex, itemPerPage, monitor.ToList());
+            var paginateItem = HelperFunctions.GetPaging<UserDTO>(padeIndex, itemPerPage, monitor.ToList());
 
             return paginateItem;
         }
@@ -343,7 +343,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 default:
                     break;
             }
-            userInfo.Avatar = HelperFuction.UploadBase64File(req.Avatar, req.FileName, Directory);
+            userInfo.Avatar = HelperFunctions.UploadBase64File(req.Avatar, req.FileName, Directory);
             var status = context.SaveChanges();
 
             return status > 0;

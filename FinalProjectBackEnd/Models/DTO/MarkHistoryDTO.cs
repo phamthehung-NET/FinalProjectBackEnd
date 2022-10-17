@@ -37,5 +37,7 @@
         public string Evidence { get; set; }
 
         public bool? IsDeleted { get; set; }
+
+        public string StudentEmail { get; set; }
     }
 }

@@ -126,7 +126,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 subjects = subjects.Where(x => x.Name.Contains(keyword));
             }
 
-            var paginationItems = HelperFuction.GetPaging<SubjectDTO>(pageIndex, itemPerPage, subjects.ToList());
+            var paginationItems = HelperFunctions.GetPaging<SubjectDTO>(pageIndex, itemPerPage, subjects.ToList());
 
             return paginationItems;
         }

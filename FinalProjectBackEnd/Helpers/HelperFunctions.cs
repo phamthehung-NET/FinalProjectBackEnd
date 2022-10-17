@@ -1,6 +1,12 @@
-﻿namespace FinalProjectBackEnd.Helpers
+﻿using FinalProjectBackEnd.Models.CommonModel;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
+using MimeKit.Text;
+
+namespace FinalProjectBackEnd.Helpers
 {
-    public class HelperFuction
+    public class HelperFunctions
     {
         public static string handleUserName(string fullName, DateTime? DoB, int? schoolyear)
         {
@@ -83,6 +89,24 @@
             {
                 return null;
             }
+        }
+
+        public static void SendMail(MailModel mail)
+        {
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse(MailConfiguration.SystemEmail));
+            mail.ArrivalEmails.ForEach(mail =>
+            {
+                email.To.Add(MailboxAddress.Parse(mail));
+            });
+            email.Subject = mail.Subject;
+            email.Body = new TextPart(TextFormat.Html) { Text = mail.Body };
+
+            using var smtp = new SmtpClient();
+            smtp.Connect(MailConfiguration.StmpConfig, 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate(MailConfiguration.UserName, MailConfiguration.Password);
+            smtp.Send(email);
+            smtp.Disconnect(true);
         }
     }
 }

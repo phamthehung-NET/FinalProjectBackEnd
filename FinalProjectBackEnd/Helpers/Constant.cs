@@ -1,5 +1,10 @@
 ﻿namespace FinalProjectBackEnd.Helpers
 {
+    public class BaseUrl
+    {
+        public static string ClientBaseUrl = "http://localhost:3000";
+    }
+
     public class Roles
     {
         public static string Student = "Student";
@@ -107,5 +112,16 @@
         public static int Comment = 1;
 
         public static int ReplyComment = 2;
+    }
+
+    public class MailConfiguration
+    {
+        public static string SystemEmail = "schoolbook-social@outlook.com";
+
+        public static string StmpConfig = "smtp.office365.com";
+
+        public static string UserName = "schoolbook-social@outlook.com";
+
+        public static string Password = "SchoolbookSocial";
     }
 }
