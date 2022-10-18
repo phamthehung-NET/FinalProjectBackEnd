@@ -24,5 +24,7 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
         public IQueryable<dynamic> GetLikedPostByUser();
 
         public IQueryable<dynamic> GetLikedCommentByUser();
+
+        public Pagination<PostDTO> GetPostOfUser(string keyword, int? pageIndex, int? pageSize, string userId);
     }
 }

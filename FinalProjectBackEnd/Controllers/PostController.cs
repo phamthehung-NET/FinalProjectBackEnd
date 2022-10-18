@@ -159,5 +159,23 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(e);
             }
         }
+
+        [HttpGet]
+        public ActionResult GetPostsOfUser(string keyword, int? pageIndex, int? itemPerPage, string userId)
+        {
+            keyword = keyword ?? "";
+            pageIndex = pageIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
+            try
+            {
+                var posts = postService.GetPostsOfUser(keyword, pageIndex, itemPerPage, userId);
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

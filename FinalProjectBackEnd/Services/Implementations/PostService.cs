@@ -113,5 +113,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("User hasn't like any comment");
         }
+
+        public Pagination<PostDTO> GetPostsOfUser(string keyword, int? pageIndex, int? pageSize, string userId)
+        {
+            var pagination = postRepository.GetPostOfUser(keyword, pageIndex, pageSize, userId);
+            if (pagination != null)
+            {
+                return pagination;
+            }
+            throw new Exception("Post List is null");
+        }
     }
 }
