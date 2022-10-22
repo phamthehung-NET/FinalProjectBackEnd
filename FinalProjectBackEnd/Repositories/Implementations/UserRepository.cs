@@ -348,5 +348,23 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             return status > 0;
         }
+
+        public bool FollowUser(string userId)
+        {
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
+            if(userId != null)
+            {
+                var userFollow = new UserFollow()
+                {
+                    FolloweeId = userId,
+                    FollowerId = currentUserId,
+                };
+                context.UserFollows.Add(userFollow);
+                context.SaveChanges();
+                return userFollow.Id > 0 ? true : false;
+            }
+            return false;
+        }
     }
 }

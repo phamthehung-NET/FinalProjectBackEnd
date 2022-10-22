@@ -257,5 +257,19 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet("{id}")]
+        public ActionResult GetUserDetail(string id)
+        {
+            try
+            {
+                var user = userService.GetUserDetail(id);
+                return Ok(user.FirstOrDefault());
+            }
+            catch (Exception e)
+            {
+                return NotFound(e);
+            }
+        }
     }
 }

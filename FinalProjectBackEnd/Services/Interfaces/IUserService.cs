@@ -38,5 +38,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public bool ChangeFirstLoginPassword(ChangePasswordModel req);
 
         public bool ChangeUserAvatar(UserDTO req);
+
+        public IQueryable<UserDTO> GetUserDetail(string id);
     }
 }

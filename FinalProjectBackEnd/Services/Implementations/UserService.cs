@@ -162,6 +162,16 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Cannot Get current UserInfo");
         }
 
+        public IQueryable<UserDTO> GetUserDetail(string id)
+        {
+            var user = userRepository.GetUSerWithRole(null, id, null);
+            if (user.Any())
+            {
+                return user;
+            }
+            throw new Exception("Cannot Get User Info");
+        }
+
         public bool UserUpdateProfile(UserDTO req)
         {
             var result = userRepository.UserUpdateProfile(req);

@@ -352,7 +352,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     Status = a.UserLikeCommentStatus,
                                     Avatar = a.UserLikeCommentAvatar,
                                     AuthorId = a.UserLikeCommentAuthorId
-                                }),
+                                }).Distinct(),
                                 ReplyComments = x.Where(x => x.ReplyCommentId > 0).Select(y => new
                                 {
                                     Id = y.ReplyCommentId,  
@@ -422,7 +422,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             var userFollow = context.UserFollows.Where(x => x.FollowerId == currenttUserId).Select(x => x.FolloweeId);
 
-            posts = posts.Where(x => x.Visibility == PostVisibility.Public || (x.Visibility == PostVisibility.Private && userFollow.Contains(x.AuthorId)));
+            posts = posts.Where(x => x.Visibility == PostVisibility.Public || (x.Visibility == PostVisibility.Private && userFollow.Contains(x.AuthorId) || x.AuthorId == currenttUserId));
 
             posts = posts.OrderByDescending(x => x.CreatedAt);
 
