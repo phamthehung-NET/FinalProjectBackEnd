@@ -272,12 +272,12 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult FollowUser(string id)
+        [HttpPost]
+        public ActionResult FollowUser(UserDTO user)
         {
             try
             {
-                userService.FollowUser(id);
+                userService.FollowUser(user.Id);
                 return Ok("Follow user completely");
             }
             catch (Exception e)

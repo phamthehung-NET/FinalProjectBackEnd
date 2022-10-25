@@ -353,16 +353,25 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var userInfo = context.UserInfos.FirstOrDefault(x => x.UserId.Equals(userId));
-            if(userId != null)
+
+            if (userInfo != null)
             {
-                var userFollow = new UserFollow()
+                var followed = context.UserFollows.FirstOrDefault(x => x.FollowerId.Equals(currentUserId) && x.FolloweeId.Equals(userId));
+                if(followed != null)
                 {
-                    FolloweeId = userId,
-                    FollowerId = currentUserId,
-                };
-                context.UserFollows.Add(userFollow);
+                    context.UserFollows.Remove(followed);
+                }
+                else
+                {
+                    var userFollow = new UserFollow()
+                    {
+                        FolloweeId = userId,
+                        FollowerId = currentUserId,
+                    };
+                    context.UserFollows.Add(userFollow);
+                }
                 context.SaveChanges();
-                return userFollow.Id > 0 ? true : false;
+                return true;
             }
             return false;
         }
