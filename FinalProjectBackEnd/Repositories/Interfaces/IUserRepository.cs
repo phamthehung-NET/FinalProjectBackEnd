@@ -42,5 +42,9 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
         public bool ChangeFirstLoginPassword(ChangePasswordModel req);
 
         public bool ChangeUserAvatar(UserDTO req);
+
+        public bool FollowUser(string userId);
+
+        public IQueryable<string> GetFollowedUser();
     }
 }

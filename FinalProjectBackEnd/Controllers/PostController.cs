@@ -177,5 +177,19 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet]
+        public ActionResult GetWarnedPost()
+        {
+            try
+            {
+                var warnedPost = postService.GetWarnedPost();
+                return Ok(warnedPost.ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
     }
 }

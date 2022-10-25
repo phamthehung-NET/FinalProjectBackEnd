@@ -430,5 +430,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             return paginateItems;
         }
+
+        public IQueryable<int> GetWarnedPost()
+        {
+            return from p in context.Posts
+                          join mh in context.MarkHistories on p.Id equals mh.RelatedId into postMarkHistory
+                          from mh in postMarkHistory.DefaultIfEmpty()
+                          where mh.RelatedType == MarkRelatedType.Post
+                          select mh.RelatedId.Value;
+        }
     }
 }

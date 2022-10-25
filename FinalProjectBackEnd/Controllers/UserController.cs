@@ -271,5 +271,33 @@ namespace FinalProjectBackEnd.Controllers
                 return NotFound(e);
             }
         }
+
+        [HttpGet("{id}")]
+        public ActionResult FollowUser(string id)
+        {
+            try
+            {
+                userService.FollowUser(id);
+                return Ok("Follow user completely");
+            }
+            catch (Exception e)
+            {
+                return NotFound(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetFollowedUser()
+        {
+            try
+            {
+                var followed = userService.GetFollowedUser();
+                return Ok(followed.ToList());
+            }
+            catch (Exception e)
+            {
+                return NotFound(e);
+            }
+        }
     }
 }

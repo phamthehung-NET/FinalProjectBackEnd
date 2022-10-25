@@ -366,5 +366,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             }
             return false;
         }
+
+        public IQueryable<string> GetFollowedUser()
+        {
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            return context.UserFollows.Where(x => x.FollowerId.Equals(currentUserId)).Select(x => x.FolloweeId);
+        }
     }
 }

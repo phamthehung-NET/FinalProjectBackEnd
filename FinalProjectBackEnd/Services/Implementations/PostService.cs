@@ -123,5 +123,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("Post List is null");
         }
+
+        public IQueryable<int> GetWarnedPost()
+        {
+            var warned = postRepository.GetWarnedPost();
+            if (warned.Any())
+            {
+                return warned;
+            }
+            throw new Exception("Warned list is null");
+        }
     }
 }

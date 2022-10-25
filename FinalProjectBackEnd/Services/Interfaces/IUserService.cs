@@ -40,5 +40,9 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public bool ChangeUserAvatar(UserDTO req);
 
         public IQueryable<UserDTO> GetUserDetail(string id);
+
+        public bool FollowUser(string userId);
+
+        public IQueryable<string> GetFollowedUser();
     }
 }

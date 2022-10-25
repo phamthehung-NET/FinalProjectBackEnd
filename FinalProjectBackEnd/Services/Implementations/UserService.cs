@@ -200,5 +200,25 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("Cannot update avatar");
         }
+
+        public bool FollowUser(string userId)
+        {
+            var result = userRepository.FollowUser(userId);
+            if (result)
+            {
+                return result;
+            }
+            throw new Exception("Cannot follow this user");
+        }
+
+        public IQueryable<string> GetFollowedUser()
+        {
+            var followed = userRepository.GetFollowedUser();
+            if (followed.Any())
+            {
+                return followed;
+            }
+            throw new Exception("Followed list is empty");
+        }
     }
 }
