@@ -154,5 +154,19 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet]
+        public ActionResult GetWarnedComment()
+        {
+            try
+            {
+                var warned = commentService.GetWarnedComment();
+                return Ok(warned.ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
     }
 }

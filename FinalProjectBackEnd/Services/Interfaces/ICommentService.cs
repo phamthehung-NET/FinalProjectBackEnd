@@ -23,5 +23,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public IQueryable<dynamic> GetAllCommentLike(int commentId);
 
         public IQueryable<ReplyCommentDTO> GetAllReplyComment(int commentId);
+
+        public IQueryable<int> GetWarnedComment();
     }
 }

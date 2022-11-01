@@ -364,5 +364,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                };
             return replyComment.OrderByDescending(x => x.CreatedAt);
         }
+
+        public IQueryable<int> GetWarnedComment()
+        {
+            return from c in context.Comments
+                   join mh in context.MarkHistories on c.Id equals mh.RelatedId into postMarkHistory
+                   from mh in postMarkHistory.DefaultIfEmpty()
+                   where mh.RelatedType == MarkRelatedType.Comment
+                   select mh.RelatedId.Value;
+        }
     }
 }

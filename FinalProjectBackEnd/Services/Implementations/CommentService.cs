@@ -113,5 +113,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("No reply comment");
         }
+
+        public IQueryable<int> GetWarnedComment()
+        {
+            var warned = commentRepository.GetWarnedComment();
+            if (warned.Any())
+            {
+                return warned;
+            }
+            throw new Exception("Warned list is null");
+        }
     }
 }
