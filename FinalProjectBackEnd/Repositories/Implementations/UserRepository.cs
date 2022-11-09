@@ -210,6 +210,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public IQueryable<UserDTO> GetUSerWithRole(string role, string id, int? studentRole)
         {
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
 
             var users = from u in context.Users
                         join ur in context.UserRoles on u.Id equals ur.UserId
@@ -242,6 +243,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             ClassName = c.Name,
                             Role = r.Name,
                             IsFirstLogin = ui.IsFirstLogin,
+                            ConversationId = context.Conversations.FirstOrDefault(x => (x.User1Id.Equals(currentUserId) && x.User2Id.Equals(u.Id)) || (x.User1Id.Equals(u.Id) && x.User2Id.Equals(currentUserId))).Id
                         };
             if (!String.IsNullOrEmpty(role))
             {

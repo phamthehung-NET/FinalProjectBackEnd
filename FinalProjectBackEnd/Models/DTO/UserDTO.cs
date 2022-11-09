@@ -50,5 +50,7 @@ namespace FinalProjectBackEnd.Models.DTO
 
         public bool? IsFirstLogin { get; set; }
 
+        public int? ConversationId { get; set; }
+
     }
 }

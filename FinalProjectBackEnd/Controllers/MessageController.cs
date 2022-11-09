@@ -89,6 +89,20 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
+        [HttpGet("{conversationId}")]
+        public ActionResult GetAllMessagesOfConversationById(int conversationId)
+        {
+            try
+            {
+                var messages = messageService.GetMessageOfConversation(conversationId);
+                return Ok(messages.ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
         [HttpPost]
         public ActionResult CreateMessage(MessageDTO message)
         {
@@ -124,6 +138,34 @@ namespace FinalProjectBackEnd.Controllers
             {
                 messageService.RemoveMessage(id);
                 return Ok("Remove message successfully");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("{userId}")]
+        public ActionResult AddConversation(string userId)
+        {
+            try
+            {
+                messageService.AddConversation(userId);
+                return Ok("Add conversation successfully");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetAllFriendForGroupChat()
+        {
+            try
+            {
+                var users = messageService.GetAllFriendForGroupChat();
+                return Ok(users.ToList());
             }
             catch (Exception e)
             {

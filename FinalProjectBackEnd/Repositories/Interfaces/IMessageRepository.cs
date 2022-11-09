@@ -6,6 +6,8 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
     {
         public IQueryable<MessageDTO> GetMessageOfConversation(string userId);
 
+        public IQueryable<MessageDTO> GetMessageOfConversation(int conversationId);
+
         public IQueryable<MessageDTO> GetMessageOfGroupChat(int id);
 
         public IQueryable<dynamic> GetConversation();
@@ -21,5 +23,9 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
         public bool EditMessage(MessageDTO msgReq);
 
         public bool RemoveMessage(int id);
+
+        public bool AddConversation(string userId);
+
+        public IQueryable<UserDTO> GetAllFriendForGroupChat();
     }
 }

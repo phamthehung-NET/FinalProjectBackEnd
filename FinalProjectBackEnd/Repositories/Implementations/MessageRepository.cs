@@ -15,15 +15,18 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         private readonly ApplicationDbContext context;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly UserManager<CustomUser> userManager;
+        private readonly IUserRepository userRepository;
         private readonly IHubContext<SignalR> hubContext;
 
         public MessageRepository(ApplicationDbContext _context,
-            IHttpContextAccessor _httpContextAccessor, UserManager<CustomUser> _userManager, IHubContext<SignalR> _hubContext)
+            IHttpContextAccessor _httpContextAccessor, UserManager<CustomUser> _userManager, IHubContext<SignalR> _hubContext,
+            IUserRepository _userRepository)
         {
             context = _context;
             httpContextAccessor = _httpContextAccessor;
             userManager = _userManager;
             hubContext = _hubContext;
+            userRepository = _userRepository;
         }
 
         public IQueryable<MessageDTO> GetMessageOfConversation(string userId)
@@ -50,12 +53,20 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                 }).OrderByDescending(x => x.CreatedAt);
                 return messages;
             }
-            else
+            return null;
+        }
+
+        public IQueryable<MessageDTO> GetMessageOfConversation(int conversationId)
+        {
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var conversation = context.Conversations
+                .Where(x => x.Id == conversationId)
+                .FirstOrDefault();
+            if (conversation != null)
             {
-                var id = AddConversation(userId, currentUserId);
                 var messages = (from m in context.Messages
                                 join ui in context.UserInfos on m.AuthorId equals ui.UserId
-                                where m.ConversationId == id
+                                where m.ConversationId == conversation.Id
                                 select new MessageDTO
                                 {
                                     Id = m.Id,
@@ -65,10 +76,11 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     AuthorUserName = ui.CustomUser.UserName,
                                     AuthorAvatar = ui.Avatar,
                                     CreatedAt = m.CreatedAt,
-                                    ConversationId = id,
+                                    ConversationId = conversation.Id,
                                 }).OrderByDescending(x => x.CreatedAt);
                 return messages;
             }
+            return null;
         }
 
         public IQueryable<MessageDTO> GetMessageOfGroupChat(int id)
@@ -169,10 +181,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public void CreateGroupChat(GroupChatDTO groupChatReq)
         {
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+
             var groupChat = new GroupChat
             {
                 Title = groupChatReq.Title,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                CreatedBy = currentUserId;
             };
             context.GroupChats.Add(groupChat);
             context.SaveChanges();
@@ -185,6 +200,17 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 };
                 context.UserGroupChats.Add(userGroupChat);
             });
+            context.SaveChanges();
+
+            var message = new Message
+            {
+                Content = $"Welcome to {groupChat.Title} group",
+                AuthorId = currentUserId,
+                ConversationId = null,
+                CreatedAt = DateTime.Now,
+                GroupChatId = groupChat.Id
+            };
+            context.Messages.Add(message);
             context.SaveChanges();
         }
 
@@ -307,16 +333,37 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return conversation.Where(x => x.LastestMessage != null);
         }
 
-        private int? AddConversation(string userId1, string userId2)
+        public bool AddConversation(string userId)
         {
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+
             var conversation = new Conversation()
             {
-                User1Id = userId1,
-                User2Id = userId2,
+                User1Id = currentUserId,
+                User2Id = userId,
             };
             context.Conversations.Add(conversation);
             context.SaveChanges();
-            return conversation.Id;
+            var message = new Message
+            {
+                Content = "Hi",
+                AuthorId = currentUserId,
+                ConversationId = conversation.Id,
+                CreatedAt = DateTime.Now,
+                GroupChatId = null
+            };
+            context.Messages.Add(message);
+            context.SaveChanges();
+            return conversation.Id > 0;
+        }
+
+        public IQueryable<UserDTO> GetAllFriendForGroupChat()
+        {
+            var users = userRepository.GetUSerWithRole("", "", null);
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var followedUser = context.UserFollows.Where(x => x.FollowerId.Equals(currentUserId)).Select(x => x.FolloweeId);
+            users = users.Where(x => followedUser.Contains(x.Id));
+            return users;
         }
     }
 }

@@ -79,6 +79,16 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Cannot get Message");
         }
 
+        public IQueryable<MessageDTO> GetMessageOfConversation(int conversationId)
+        {
+            var message = messageRepository.GetMessageOfConversation(conversationId);
+            if (message.Any())
+            {
+                return message;
+            }
+            throw new Exception("Cannot get Message");
+        }
+
         public IQueryable<MessageDTO> GetMessageOfGroupChat(int id)
         {
             var message = messageRepository.GetMessageOfGroupChat(id);
@@ -97,6 +107,26 @@ namespace FinalProjectBackEnd.Services.Implementations
                 return true;
             }
             throw new Exception("Cannot remove this Message");
+        }
+
+        public bool AddConversation(string userId)
+        {
+            var result = messageRepository.AddConversation(userId);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Cannot add conversation");
+        }
+
+        public IQueryable<UserDTO> GetAllFriendForGroupChat()
+        {
+            var users = messageRepository.GetAllFriendForGroupChat();
+            if (users.Any())
+            {
+                return users;
+            }
+            throw new Exception("User list is null");
         }
     }
 }

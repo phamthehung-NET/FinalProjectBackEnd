@@ -20,5 +20,11 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public bool EditMessage(MessageDTO msgReq);
 
         public bool RemoveMessage(int id);
+
+        public bool AddConversation(string userId);
+
+        public IQueryable<UserDTO> GetAllFriendForGroupChat();
+
+        public IQueryable<MessageDTO> GetMessageOfConversation(int conversationId);
     }
 }
