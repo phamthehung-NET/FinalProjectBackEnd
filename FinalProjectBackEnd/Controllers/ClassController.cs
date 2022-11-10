@@ -3,6 +3,7 @@ using FinalProjectBackEnd.Data;
 using FinalProjectBackEnd.Models;
 using FinalProjectBackEnd.Models.DTO;
 using FinalProjectBackEnd.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,6 +12,7 @@ namespace FinalProjectBackEnd.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class ClassController : ControllerBase
     {
         private readonly IClassService classService;

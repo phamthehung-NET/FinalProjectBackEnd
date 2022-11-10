@@ -7,6 +7,7 @@ namespace FinalProjectBackEnd.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly IPostService postService;

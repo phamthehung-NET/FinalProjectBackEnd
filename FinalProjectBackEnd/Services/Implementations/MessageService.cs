@@ -121,12 +121,42 @@ namespace FinalProjectBackEnd.Services.Implementations
 
         public IQueryable<UserDTO> GetAllFriendForGroupChat()
         {
-            var users = messageRepository.GetAllFriendForGroupChat();
+            var users = messageRepository.GetAllFriendForGroupChat(null);
             if (users.Any())
             {
                 return users;
             }
             throw new Exception("User list is null");
+        }
+
+        public IQueryable<UserDTO> GetAllFriendForAddMemberToGroupChat(int groupId)
+        {
+            var users = messageRepository.GetAllFriendForGroupChat(groupId);
+            if (users.Any())
+            {
+                return users;
+            }
+            throw new Exception("User list is null");
+        }
+
+        public bool OutGroup(int groupId)
+        {
+            var result = messageRepository.OutGroup(groupId);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Cannot out Group");
+        }
+
+        public bool AddUserToGroupChat(GroupChatDTO groupChat)
+        {
+            var result = messageRepository.AddUserToGroupChat(groupChat);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Cannot Add User To Group");
         }
     }
 }

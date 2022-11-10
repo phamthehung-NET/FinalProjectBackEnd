@@ -187,7 +187,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             {
                 Title = groupChatReq.Title,
                 CreatedAt = DateTime.Now,
-                CreatedBy = currentUserId;
+                CreatedBy = currentUserId
             };
             context.GroupChats.Add(groupChat);
             context.SaveChanges();
@@ -249,7 +249,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                           });
             return members;
         }
-
+         
         public async Task<bool> AddMessage(MessageDTO msgReq)
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
@@ -357,13 +357,51 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return conversation.Id > 0;
         }
 
-        public IQueryable<UserDTO> GetAllFriendForGroupChat()
+        public IQueryable<UserDTO> GetAllFriendForGroupChat(int? groupId)
         {
-            var users = userRepository.GetUSerWithRole("", "", null);
+            var users = userRepository.GetUSerWithRole(String.Empty, String.Empty, null);
             var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var followedUser = context.UserFollows.Where(x => x.FollowerId.Equals(currentUserId)).Select(x => x.FolloweeId);
             users = users.Where(x => followedUser.Contains(x.Id));
+            if(groupId != null)
+            {
+                var friendInGroup = context.UserGroupChats.Where(x => x.GroupChatId == groupId).Select(x => x.UserId);
+                users = users.Where(x => !friendInGroup.Contains(x.Id));
+            }
             return users;
+        }
+
+        public bool OutGroup(int groupId)
+        {
+            var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var groupByUser = context.UserGroupChats.FirstOrDefault(x => x.UserId.Equals(currentUserId) && x.GroupChatId == groupId);
+            if (groupByUser != null)
+            {
+                context.UserGroupChats.Remove(groupByUser);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddUserToGroupChat(GroupChatDTO groupChat)
+        {
+            var group = context.UserGroupChats.Where(x => x.GroupChatId == groupChat.Id);
+            if (group.Any())
+            {
+                foreach(var user in groupChat.Users)
+                {
+                    UserGroupChat userGroupChat = new()
+                    {
+                        UserId = user.Id,
+                        GroupChatId = groupChat.Id,
+                    };
+                    context.UserGroupChats.Add(userGroupChat);
+                }
+                context.SaveChanges();
+                return true;
+            }
+            return false;
         }
     }
 }

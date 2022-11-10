@@ -1,5 +1,6 @@
 ﻿using FinalProjectBackEnd.Models.DTO;
 using FinalProjectBackEnd.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace FinalProjectBackEnd.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class MessageController : ControllerBase
     {
         private readonly IMessageService messageService;
@@ -53,7 +55,7 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var member = messageService.GetAllGroupMembers(id);
-                return Ok(member.ToList());
+                return Ok(member.FirstOrDefault());
             }
             catch (Exception e)
             {
@@ -165,6 +167,48 @@ namespace FinalProjectBackEnd.Controllers
             try
             {
                 var users = messageService.GetAllFriendForGroupChat();
+                return Ok(users.ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("{groupId}")]
+        public ActionResult OutGroup(int groupId)
+        {
+            try
+            {
+                messageService.OutGroup(groupId);
+                return Ok("Out Group successfully");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AddUserToGroupChat(GroupChatDTO groupChat)
+        {
+            try
+            {
+                messageService.AddUserToGroupChat(groupChat);
+                return Ok("Add Users To Group successfully");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("{groupId}")]
+        public ActionResult GetAllFriendForAddMemberToGroupChat(int groupId)
+        {
+            try
+            {
+                var users = messageService.GetAllFriendForAddMemberToGroupChat(groupId);
                 return Ok(users.ToList());
             }
             catch (Exception e)

@@ -26,6 +26,10 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
 
         public bool AddConversation(string userId);
 
-        public IQueryable<UserDTO> GetAllFriendForGroupChat();
+        public IQueryable<UserDTO> GetAllFriendForGroupChat(int? groupId);
+
+        public bool OutGroup(int groupId);
+
+        public bool AddUserToGroupChat(GroupChatDTO groupChat);
     }
 }

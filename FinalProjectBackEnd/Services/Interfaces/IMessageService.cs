@@ -25,6 +25,12 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public IQueryable<UserDTO> GetAllFriendForGroupChat();
 
+        public IQueryable<UserDTO> GetAllFriendForAddMemberToGroupChat(int groupId);
+
         public IQueryable<MessageDTO> GetMessageOfConversation(int conversationId);
+
+        public bool OutGroup(int groupId);
+
+        public bool AddUserToGroupChat(GroupChatDTO groupChat);
     }
 }

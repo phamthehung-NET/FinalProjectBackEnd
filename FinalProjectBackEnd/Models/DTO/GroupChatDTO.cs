@@ -4,7 +4,7 @@ namespace FinalProjectBackEnd.Models.DTO
 {
     public class GroupChatDTO
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public string Title { get; set; }
 
