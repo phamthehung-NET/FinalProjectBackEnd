@@ -101,5 +101,15 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("No Student");
         }
+
+        public bool UpGradeClass(int classId)
+        {
+            var result = classRepository.UpGradeClass(classId);
+            if (result)
+            {
+                return true;
+            }
+            throw new Exception("Cannot upgrade class");
+        }
     }
 }

@@ -298,5 +298,69 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             }
             return classes;
         }
+
+        public bool UpGradeClass(int classId)
+        {
+            var classroom = context.Classrooms.FirstOrDefault(x => x.Id == classId);
+            var classNameArray = classroom.Name.ToCharArray();
+            string classExtension;
+            if (classNameArray.Length == 4)
+            {
+                classExtension = classNameArray[classNameArray.Length - 2].ToString() + classNameArray[classNameArray.Length - 1].ToString();
+            }
+            else
+            {
+                classExtension = classNameArray[classNameArray.Length - 3].ToString() + classNameArray[classNameArray.Length - 2].ToString() + classNameArray[classNameArray.Length - 1].ToString();
+            }
+            var newGrade = classroom.Grade + 1;
+            var newName = newGrade + classExtension;
+            var classTs = from cts in context.ClassTeacherSubjects
+                                where cts.ClassId == classroom.Id
+                                select new ClassTeacherSubject
+                                {
+                                    Id = cts.Id,
+                                    ClassId = cts.ClassId,
+                                    TeacherSubjectId = cts.TeacherSubjectId,
+                                };
+            var studentClass = context.StudentClasses.Where(x => x.ClassId == classroom.Id).Select(x => x.StudentId);
+            if (classTs != null || studentClass != null)
+            {
+                var newClass = new Classroom()
+                {
+                    Name = newName,
+                    Grade = newGrade,
+                    SchoolYear = classroom.SchoolYear + 1,
+                    HomeroomTeacher = classroom.HomeroomTeacher,
+                    CreatedAt = DateTime.Now,
+                };
+                var currentClass = context.Classrooms.Where(x => x.Name.Equals(newClass.Name) && x.SchoolYear == newClass.SchoolYear).FirstOrDefault();
+                if (classroom.Grade < 12 && classroom.SchoolYear < DateTime.Now.Year && currentClass == null)
+                {
+                    context.Classrooms.Add(newClass);
+                    context.SaveChanges();
+                    foreach (var student in studentClass)
+                    {
+                        var newStudentClass = new StudentClass()
+                        {
+                            ClassId = newClass.Id,
+                            StudentId = student,
+                        };
+                        context.StudentClasses.Add(newStudentClass);
+                    }
+                    foreach (var teacherSubject in classTs)
+                    {
+                        var newClassTeacherSubject = new ClassTeacherSubject()
+                        {
+                            ClassId = newClass.Id,
+                            TeacherSubjectId = teacherSubject.TeacherSubjectId,
+                        };
+                        context.ClassTeacherSubjects.Add(newClassTeacherSubject);
+                    }
+                    context.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

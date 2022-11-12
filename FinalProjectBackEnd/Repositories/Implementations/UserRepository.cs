@@ -383,5 +383,100 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             return context.UserFollows.Where(x => x.FollowerId.Equals(currentUserId)).Select(x => x.FolloweeId);
         }
+
+        readonly string[] DefaultName = new string[] { "Nguyen Thi Nga", "Nguyen Thi Van", "Hoang Dao Thuy", "Vo Thi Sau", "Nguyen Thi Mery Currie", "Nguyen Quang Hai", "Nguyen Tien Linh", "Nguyen Van Quyet", "Nguyen Trong Hoang" };
+        readonly string[] DefaultAddress = new string[] { "Ba Dinh", "Cau Giay", "Ha Dong", "Dong Da", "Hoang Mai", "Thanh Tri" };
+        Random random = new();
+        public void SeedData()
+        {
+            SeedStudent();
+            SeedTeacher();
+            SeedClass();
+        }
+
+        void SeedStudent()
+        {
+            var fullName = DefaultName.ElementAt(random.Next(0, DefaultName.Length));
+            var doB = new DateTime(random.Next(2005, 2008), random.Next(1, 13), random.Next(1, 31));
+            var schoolYear = random.Next(2020, 2023);
+
+            for (int i = 0; i < 600; i++)
+            {
+                CustomUser userAccount = new()
+                {
+                    UserName = HelperFunctions.handleUserName(fullName, doB, schoolYear),
+                    Email = $"student{i}@gmail.com",
+                    PhoneNumber = $"0978123{random.Next(0, 10)}{random.Next(0, 10)}{random.Next(0, 10)}",
+                };
+                var result = userManager.AddPasswordAsync(userAccount, Account.DefaultPassword).Result;
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(userAccount, Roles.Student).GetAwaiter();
+
+                    UserInfo userInfo = new()
+                    {
+                        UserId = userAccount.Id,
+                        FullName = fullName,
+                        DoB = doB,
+                        SchoolYear = schoolYear,
+                        Status = StudentStatus.Learning,
+                        StudentRole = StudentRole.Normal,
+                        IsFirstLogin = true
+                    };
+                    context.UserInfos.Add(userInfo);
+                }
+            }
+            context.SaveChanges();
+        }
+
+        void SeedTeacher()
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                var account = new CustomUser
+                {
+                    Email = $"teacher{i}@gmail.com",
+                    UserName = $"Teacher{i}",
+                    PhoneNumber = $"0978123{random.Next(0, 10)}{random.Next(0, 10)}{random.Next(0, 10)}",
+                };
+                var result = userManager.CreateAsync(account, Account.DefaultPassword).Result;
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(account, Roles.Teacher).GetAwaiter();
+                    var userInfo = new UserInfo
+                    {
+                        UserId = account.Id,
+                        FullName = $"Teacher {i}",
+                        DoB = new DateTime(random.Next(1975, 1996), random.Next(1, 13), random.Next(1, 31)),
+                        Address = DefaultAddress.ElementAt(random.Next(0, DefaultAddress.Length)),
+                        StartDate = new DateTime(random.Next(2008, 2022), random.Next(1, 13), random.Next(1, 31)),
+                        IsDeleted = false,
+                        IsFirstLogin = true
+                    };
+                    context.UserInfos.Add(userInfo);
+                }
+                context.SaveChanges();
+            }
+        }
+
+        void SeedClass()
+        {
+            for (int i = 1; i < 6; i++)
+            {
+                for (int j = 2020; j <= 2022; j++)
+                {
+                    Classroom classroom = new()
+                    {
+                        Name = $"10{i}",
+                        Grade = 10,
+                        SchoolYear = j,
+                        UpdatedBy = "1",
+                        CreatedAt = DateTime.Now,
+                    };
+                    context.Classrooms.Add(classroom);
+                }
+            }
+            context.SaveChanges();
+        }
     }
 }

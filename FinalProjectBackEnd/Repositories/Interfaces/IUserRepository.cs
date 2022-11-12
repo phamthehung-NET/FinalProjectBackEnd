@@ -46,5 +46,7 @@ namespace FinalProjectBackEnd.Repositories.Interfaces
         public bool FollowUser(string userId);
 
         public IQueryable<string> GetFollowedUser();
+
+        public void SeedData();
     }
 }

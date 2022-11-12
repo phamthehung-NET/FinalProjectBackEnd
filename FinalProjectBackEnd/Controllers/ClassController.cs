@@ -139,5 +139,19 @@ namespace FinalProjectBackEnd.Controllers
                 return BadRequest(e);
             }
         }
+
+        [HttpGet("{classId}")]
+        public ActionResult UpGradeClass(int classId)
+        {
+            try
+            {
+                classService.UpGradeClass(classId);
+                return Ok("Up grade Successfully");
+            }
+            catch (Exception e)
+            {
+                return NotFound(e);
+            }
+        }
     }
 }

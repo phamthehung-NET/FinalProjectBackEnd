@@ -220,5 +220,10 @@ namespace FinalProjectBackEnd.Services.Implementations
             }
             throw new Exception("Followed list is empty");
         }
+
+        public void SeedData()
+        {
+            userRepository.SeedData();
+        }
     }
 }

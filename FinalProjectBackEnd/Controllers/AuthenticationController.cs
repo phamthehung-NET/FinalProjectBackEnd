@@ -1,4 +1,5 @@
 ﻿using FinalProjectBackEnd.Areas.Identity.Data;
+using FinalProjectBackEnd.Services.Implementations;
 using FinalProjectBackEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -79,6 +80,13 @@ namespace FinalProjectBackEnd.Controllers
             var userId = httpContextAccessor.HttpContext.User.Claims.ElementAt(1).Value;
             var currentUser = userService.GetCurrentUser(userId).FirstOrDefault();
             return Ok(currentUser);
+        }
+
+        [HttpGet]
+        public IActionResult SeedData()
+        {
+            userService.SeedData();
+            return Ok();
         }
     }
 }

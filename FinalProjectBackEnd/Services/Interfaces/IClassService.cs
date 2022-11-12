@@ -20,5 +20,7 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public IQueryable<dynamic> GetHomeRoomTeacher(int? id);
 
         public IQueryable<dynamic> GetStudentForClass(int? sy, int? id);
+
+        public bool UpGradeClass(int classId);
     }
 }
