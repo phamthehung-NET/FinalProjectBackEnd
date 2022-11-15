@@ -301,5 +301,24 @@ namespace FinalProjectBackEnd.Controllers
                 return NotFound(e);
             }
         }
+
+        [HttpGet]
+        public ActionResult SearchUsers(string keyword, int? pageIndex, int? itemPerPage)
+        {
+            keyword = keyword ?? "";
+            pageIndex = pageIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
+            try
+            {
+                var users = userService.SearchUsers(keyword, pageIndex, itemPerPage);
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
     }
 }

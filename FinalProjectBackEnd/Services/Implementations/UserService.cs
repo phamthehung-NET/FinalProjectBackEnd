@@ -221,6 +221,16 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Followed list is empty");
         }
 
+        public Pagination<UserDTO> SearchUsers(string keyword, int? padeIndex, int? itemPerPage)
+        {
+            var users = userRepository.SearchUsers(keyword, padeIndex, itemPerPage);
+            if (users != null)
+            {
+                return users;
+            }
+            throw new Exception("Users List is null");
+        }
+
         public void SeedData()
         {
             userRepository.SeedData();

@@ -45,6 +45,8 @@ namespace FinalProjectBackEnd.Services.Interfaces
 
         public IQueryable<string> GetFollowedUser();
 
+        public Pagination<UserDTO> SearchUsers(string keyword, int? padeIndex, int? itemPerPage);
+
         public void SeedData();
     }
 }

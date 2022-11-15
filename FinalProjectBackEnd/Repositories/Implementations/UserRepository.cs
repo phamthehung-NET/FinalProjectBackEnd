@@ -384,6 +384,19 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return context.UserFollows.Where(x => x.FollowerId.Equals(currentUserId)).Select(x => x.FolloweeId);
         }
 
+        public Pagination<UserDTO> SearchUsers(string keyword, int? padeIndex, int? itemPerPage)
+        {
+            var users = GetUSerWithRole(string.Empty, string.Empty, null);
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                users = users.Where(x => x.FullName.Contains(keyword));
+            }
+
+            var paginateItem = HelperFunctions.GetPaging(padeIndex, itemPerPage, users.ToList());
+
+            return paginateItem;
+        }
+
         readonly string[] DefaultName = new string[] { "Nguyen Thi Nga", "Nguyen Thi Van", "Hoang Dao Thuy", "Vo Thi Sau", "Nguyen Thi Mery Currie", "Nguyen Quang Hai", "Nguyen Tien Linh", "Nguyen Van Quyet", "Nguyen Trong Hoang" };
         readonly string[] DefaultAddress = new string[] { "Ba Dinh", "Cau Giay", "Ha Dong", "Dong Da", "Hoang Mai", "Thanh Tri" };
         Random random = new();
