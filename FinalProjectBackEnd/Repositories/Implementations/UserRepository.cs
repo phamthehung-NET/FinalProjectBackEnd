@@ -403,25 +403,25 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public void SeedData()
         {
             SeedStudent();
-            SeedTeacher();
-            SeedClass();
+            //SeedTeacher();
+            //SeedClass();
         }
 
         void SeedStudent()
         {
-            var fullName = DefaultName.ElementAt(random.Next(0, DefaultName.Length));
-            var doB = new DateTime(random.Next(2005, 2008), random.Next(1, 13), random.Next(1, 31));
-            var schoolYear = random.Next(2020, 2023);
-
-            for (int i = 0; i < 600; i++)
+            for (int i = 1; i <= 60; i++)
             {
+                var fullName = DefaultName.ElementAt(random.Next(0, DefaultName.Length));
+                var doB = new DateTime(random.Next(2005, 2008), random.Next(1, 13), random.Next(1, 31));
+                var schoolYear = random.Next(2020, 2023);
+
                 CustomUser userAccount = new()
                 {
                     UserName = HelperFunctions.handleUserName(fullName, doB, schoolYear),
                     Email = $"student{i}@gmail.com",
                     PhoneNumber = $"0978123{random.Next(0, 10)}{random.Next(0, 10)}{random.Next(0, 10)}",
                 };
-                var result = userManager.AddPasswordAsync(userAccount, Account.DefaultPassword).Result;
+                var result = userManager.CreateAsync(userAccount, Account.DefaultPassword).Result;
                 if (result.Succeeded)
                 {
                     userManager.AddToRoleAsync(userAccount, Roles.Student).GetAwaiter();
@@ -438,13 +438,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     };
                     context.UserInfos.Add(userInfo);
                 }
+                context.SaveChanges();
             }
-            context.SaveChanges();
         }
 
         void SeedTeacher()
         {
-            for (int i = 0; i < 30; i++)
+            for (int i = 1; i <= 30; i++)
             {
                 var account = new CustomUser
                 {
@@ -480,7 +480,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     Classroom classroom = new()
                     {
-                        Name = $"10{i}",
+                        Name = $"10A{i}",
                         Grade = 10,
                         SchoolYear = j,
                         UpdatedBy = "1",

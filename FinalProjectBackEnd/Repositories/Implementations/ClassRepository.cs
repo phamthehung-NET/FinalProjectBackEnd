@@ -244,7 +244,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                            from st in students.DefaultIfEmpty()
                            join su in context.Users on sc.StudentId equals su.Id into studentAccounts
                            from su in studentAccounts.DefaultIfEmpty()
-                           join sui in context.UserInfos on su.Id equals sui.UserId
+                           join sui in context.UserInfos on su.Id equals sui.UserId into studentAccountsInfo
+                           from sui in studentAccountsInfo.DefaultIfEmpty()
                            select new
                            {
                                Id = c.Id,
