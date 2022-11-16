@@ -361,7 +361,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var users = userRepository.GetUSerWithRole(String.Empty, String.Empty, null);
             var currentUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-            var followedUser = context.UserFollows.Where(x => x.FollowerId.Equals(currentUserId)).Select(x => x.FolloweeId);
+            var followedUser = context.UserFollows.Where(x => x.FollowerId.Equals(currentUserId)).Select(x => x.FolloweeId).ToList();
             users = users.Where(x => followedUser.Contains(x.Id));
             if(groupId != null)
             {

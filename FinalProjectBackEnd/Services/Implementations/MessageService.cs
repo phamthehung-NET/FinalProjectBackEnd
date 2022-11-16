@@ -49,12 +49,16 @@ namespace FinalProjectBackEnd.Services.Implementations
             {
                 all.AddRange(conversations);
             }
-            if (groupChats.Any())
+            if (groupChats != null && groupChats.Any())
             {
                 all.AddRange(groupChats);
             }
 
-            var pagination = HelperFunctions.GetPaging<dynamic>(pageIndex, itemPerPage, all.OrderByDescending(x => x.LastestMessage.CreatedAt).ToList());
+            Pagination<dynamic> pagination = null;
+            if(all.Count() > 0)
+            {
+                pagination = HelperFunctions.GetPaging<dynamic>(pageIndex, itemPerPage, all.OrderByDescending(x => x.LastestMessage.CreatedAt).ToList());
+            }
 
             return pagination;
         }

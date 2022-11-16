@@ -243,7 +243,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             ClassName = c.Name,
                             Role = r.Name,
                             IsFirstLogin = ui.IsFirstLogin,
-                            ConversationId = context.Conversations.FirstOrDefault(x => (x.User1Id.Equals(currentUserId) && x.User2Id.Equals(u.Id)) || (x.User1Id.Equals(u.Id) && x.User2Id.Equals(currentUserId))).Id
+                            ConversationId = context.Conversations.FirstOrDefault(x => (x.User1Id.Equals(currentUserId) && x.User2Id.Equals(u.Id)) || (x.User1Id.Equals(u.Id) && x.User2Id.Equals(currentUserId))) != null?
+                            context.Conversations.FirstOrDefault(x => (x.User1Id.Equals(currentUserId) && x.User2Id.Equals(u.Id)) || (x.User1Id.Equals(u.Id) && x.User2Id.Equals(currentUserId))).Id : null
                         };
             if (!String.IsNullOrEmpty(role))
             {
