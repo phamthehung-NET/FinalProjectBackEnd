@@ -38,6 +38,28 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             context.SaveChanges();
             if (classroom.Id != 0)
             {
+                var groupChat = new GroupChat
+                {
+                    Title = "GroupChat " + classroom.Name,
+                    CreatedAt = DateTime.Now,
+                };
+                context.GroupChats.Add(groupChat);
+                context.SaveChanges();
+                var ugc = new UserGroupChat()
+                {
+                    UserId = classroom.HomeroomTeacher,
+                    GroupChatId = groupChat.Id
+                };
+                context.UserGroupChats.Add(ugc);
+                var message = new Message
+                {
+                    Content = $"Welcome to {groupChat.Title} group",
+                    AuthorId = classroom.HomeroomTeacher,
+                    ConversationId = null,
+                    CreatedAt = DateTime.Now,
+                    GroupChatId = groupChat.Id
+                };
+                context.Messages.Add(message);
                 classReq.TeacherSubjects.ToList().ForEach(ts =>
                 {
                     var tsdb = context.TeacherSubjects.FirstOrDefault(x => x.SubjectId == ts.SubjectId && x.TeacherId.Equals(ts.TeacherId));
@@ -55,8 +77,15 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                         StudentId = student.Id,
                         ClassId = classroom.Id,
                     };
+                    var userGroupChat = new UserGroupChat()
+                    {
+                        UserId = student.Id,
+                        GroupChatId = groupChat.Id
+                    };
                     context.StudentClasses.Add(sc);
+                    context.UserGroupChats.Add(userGroupChat);
                 });
+                
                 context.SaveChanges();
                 return true;
             }
@@ -149,7 +178,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public IQueryable<dynamic> GetStudentForClass(int? sy, int? id)
         {
-            var studentInClass = context.StudentClasses.Select(x => x.StudentId);
+            var studentInClass = context.StudentClasses.Select(x => x.StudentId).ToList();
             var students = userRepository.GetUSerWithRole(Roles.Student, null, null)
                 .Where(x => x.SchoolYear == sy)
                 .Select(x => new { x.Id, x.FullName });
@@ -206,7 +235,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public IQueryable<dynamic> GetHoomeRoomTeacher(int? id)
         {
             IQueryable<dynamic> teacher;
-            var teacherInClass = context.Classrooms.Select(x => x.HomeroomTeacher);
+            var teacherInClass = context.Classrooms.Select(x => x.HomeroomTeacher).ToList();
             if (id != null)
             {
                 var classTeacher = context.Classrooms.Select(x => new { Id = x.Id, HomeRoomTeacher = x.HomeroomTeacher })
