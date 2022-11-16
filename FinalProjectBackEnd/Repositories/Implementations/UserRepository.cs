@@ -403,14 +403,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         Random random = new();
         public void SeedData()
         {
-            SeedStudent();
-            //SeedTeacher();
+            Task.WaitAny(SeedStudent());
+            //Task.WaitAny(SeedTeacher());
             //SeedClass();
         }
 
-        void SeedStudent()
+        async Task SeedStudent()
         {
-            for (int i = 1; i <= 60; i++)
+            for (int i = 1; i <= 100; i++)
             {
                 var fullName = DefaultName.ElementAt(random.Next(0, DefaultName.Length));
                 var doB = new DateTime(random.Next(2005, 2008), random.Next(1, 13), random.Next(1, 31));
@@ -422,10 +422,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Email = $"student{i}@gmail.com",
                     PhoneNumber = $"0978123{random.Next(0, 10)}{random.Next(0, 10)}{random.Next(0, 10)}",
                 };
-                var result = userManager.CreateAsync(userAccount, Account.DefaultPassword).Result;
+                var result = await userManager.CreateAsync(userAccount, Account.DefaultPassword);
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(userAccount, Roles.Student).GetAwaiter();
+                    await userManager.AddToRoleAsync(userAccount, Roles.Student);
 
                     UserInfo userInfo = new()
                     {
@@ -437,13 +437,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                         StudentRole = StudentRole.Normal,
                         IsFirstLogin = true
                     };
-                    context.UserInfos.Add(userInfo);
+                    await context.UserInfos.AddAsync(userInfo);
                 }
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
-        void SeedTeacher()
+        async Task SeedTeacher()
         {
             for (int i = 1; i <= 30; i++)
             {
@@ -453,10 +453,10 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     UserName = $"Teacher{i}",
                     PhoneNumber = $"0978123{random.Next(0, 10)}{random.Next(0, 10)}{random.Next(0, 10)}",
                 };
-                var result = userManager.CreateAsync(account, Account.DefaultPassword).Result;
+                var result = await userManager.CreateAsync(account, Account.DefaultPassword);
                 if (result.Succeeded)
                 {
-                    userManager.AddToRoleAsync(account, Roles.Teacher).GetAwaiter();
+                    await userManager.AddToRoleAsync(account, Roles.Teacher);
                     var userInfo = new UserInfo
                     {
                         UserId = account.Id,
@@ -467,9 +467,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                         IsDeleted = false,
                         IsFirstLogin = true
                     };
-                    context.UserInfos.Add(userInfo);
+                    await context.UserInfos.AddAsync(userInfo);
                 }
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 

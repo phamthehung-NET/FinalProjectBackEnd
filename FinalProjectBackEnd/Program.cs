@@ -20,9 +20,8 @@ var connectionString = builder.Configuration.GetConnectionString("DbContextConne
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
-});
+}, ServiceLifetime.Transient);
 
-builder.Services.AddTransient<ApplicationDbContext>();
 
 builder.Services.AddIdentity<CustomUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();

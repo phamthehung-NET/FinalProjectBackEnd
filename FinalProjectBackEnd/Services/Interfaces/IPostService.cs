@@ -28,5 +28,9 @@ namespace FinalProjectBackEnd.Services.Interfaces
         public Pagination<PostDTO> GetPostsOfUser(string keyword, int? pageIndex, int? pageSize, string userId);
 
         public IQueryable<int> GetWarnedPost();
+
+        public Pagination<PostDTO> GetPostByGroup(int groupId, int? pageIndex, int? pageSize);
+
+        public IQueryable<GroupDTO> GetAllGroup();
     }
 }

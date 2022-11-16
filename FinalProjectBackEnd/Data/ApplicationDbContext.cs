@@ -53,6 +53,10 @@ public class ApplicationDbContext : IdentityDbContext<CustomUser>
 
     public DbSet<MarkHistory> MarkHistories { get; set; }
 
+    public DbSet<Group> Groups { get; set; }
+
+    public DbSet<UserAndGroup> UserAndGroups { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

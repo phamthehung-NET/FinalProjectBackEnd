@@ -43,23 +43,40 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     Title = "GroupChat " + classroom.Name,
                     CreatedAt = DateTime.Now,
                 };
+
+                var group = new Group()
+                {
+                    Name = "Group " + classroom.Name + " " + classroom.SchoolYear,
+                    ClassId= classroom.Id,
+                };
                 context.GroupChats.Add(groupChat);
+                context.Groups.Add(group);
                 context.SaveChanges();
+
                 var ugc = new UserGroupChat()
                 {
                     UserId = classroom.HomeroomTeacher,
                     GroupChatId = groupChat.Id
                 };
                 context.UserGroupChats.Add(ugc);
+
                 var message = new Message
                 {
-                    Content = $"Welcome to {groupChat.Title} group",
+                    Content = $"Welcome to {groupChat.Title}",
                     AuthorId = classroom.HomeroomTeacher,
                     ConversationId = null,
                     CreatedAt = DateTime.Now,
                     GroupChatId = groupChat.Id
                 };
                 context.Messages.Add(message);
+
+                var teacher = new UserAndGroup()
+                {
+                    UserId = classroom.HomeroomTeacher,
+                    GroupId = group.Id,
+                };
+                context.UserAndGroups.Add(teacher);
+
                 classReq.TeacherSubjects.ToList().ForEach(ts =>
                 {
                     var tsdb = context.TeacherSubjects.FirstOrDefault(x => x.SubjectId == ts.SubjectId && x.TeacherId.Equals(ts.TeacherId));
@@ -82,8 +99,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                         UserId = student.Id,
                         GroupChatId = groupChat.Id
                     };
+                    var userAndGroup = new UserAndGroup()
+                    {
+                        UserId = student.Id,
+                        GroupId = group.Id,
+                    };
                     context.StudentClasses.Add(sc);
                     context.UserGroupChats.Add(userGroupChat);
+                    context.UserAndGroups.Add(userAndGroup);
                 });
                 
                 context.SaveChanges();

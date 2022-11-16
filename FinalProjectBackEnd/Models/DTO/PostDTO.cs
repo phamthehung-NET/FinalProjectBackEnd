@@ -37,5 +37,7 @@ namespace FinalProjectBackEnd.Models.DTO
         public IEnumerable<int> Comments { get; set; }
 
         public bool? Visibility { get; set; }
+
+        public int? GroupId { get; set; }
     }
 }

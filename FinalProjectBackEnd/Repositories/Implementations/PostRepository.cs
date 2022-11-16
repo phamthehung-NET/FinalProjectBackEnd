@@ -103,6 +103,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var posts = GetPosts(null);
 
+            posts = posts.Where(x => x.GroupId == null);
+
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
 
             var userFollow = context.UserFollows.Where(x => x.FollowerId == userId).Select(x => x.FolloweeId);
@@ -117,6 +119,15 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
             var paginateItems = HelperFunctions.GetPaging(pageIndex, pageSize, posts.ToList());
 
+            return paginateItems;
+        }
+
+        public Pagination<PostDTO> GetPostByGroup(int groupId, int? pageIndex, int? pageSize)
+        {
+            var posts = GetPosts(null);
+            posts = posts.Where(x => x.GroupId == groupId).OrderByDescending(x => x.CreatedAt);
+
+            var paginateItems = HelperFunctions.GetPaging(pageIndex, pageSize, posts.ToList());
             return paginateItems;
         }
 
@@ -155,8 +166,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              Image = p.Image,
                              Visibility = p.Visibility,
                              UserLikePosts = ulp.Id,
+                             Group = p.GroupId,
                              Comments = c.Id,
-                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.AuthorRole, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar, x.Visibility })
+                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.AuthorRole, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar, x.Visibility, x.Group })
                         .Select(x => new PostDTO
                         {
                             Id = x.Key.Id,
@@ -170,6 +182,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             Image = x.Key.Image,
                             AuthorAvatar = x.Key.AuthorAvatar,
                             Visibility = x.Key.Visibility,
+                            GroupId = x.Key.Group,
                             UserLikePosts = x.Select(y => y.UserLikePosts).Distinct(),
                             Comments = x.Select(z => z.Comments).Distinct(),
                         });
@@ -398,8 +411,9 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                              Image = p.Image,
                              Visibility = p.Visibility,
                              UserLikePosts = ulp.Id,
+                             Group = p.GroupId,
                              Comments = c.Id,
-                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.AuthorRole, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar, x.Visibility })
+                         }).GroupBy(x => new { x.Id, x.AuthorId, x.AuthorName, x.AuthorUserName, x.AuthorRole, x.CreatedAt, x.Content, x.UpdatedDate, x.Image, x.AuthorAvatar, x.Visibility, x.Group })
                         .Select(x => new PostDTO
                         {
                             Id = x.Key.Id,
@@ -413,6 +427,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                             Image = x.Key.Image,
                             AuthorAvatar = x.Key.AuthorAvatar,
                             Visibility = x.Key.Visibility,
+                            GroupId = x.Key.Group,
                             UserLikePosts = x.Select(y => y.UserLikePosts).Distinct(),
                             Comments = x.Select(z => z.Comments).Distinct(),
                         });
@@ -438,6 +453,38 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                           from mh in postMarkHistory.DefaultIfEmpty()
                           where mh.RelatedType == MarkRelatedType.Post
                           select mh.RelatedId.Value;
+        }
+
+        public IQueryable<GroupDTO> GetAllGroup()
+        {
+            var currenttUserId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+            var group = (from ui in context.UserInfos
+                         join uag in context.UserAndGroups on ui.UserId equals uag.UserId into userAndGroup
+                         from uag in userAndGroup.DefaultIfEmpty()
+                         join g in context.Groups on uag.GroupId equals g.Id into Group
+                         from g in Group.DefaultIfEmpty()
+                         join c in context.Classrooms on g.ClassId equals c.Id into Classroom
+                         from c in Classroom.DefaultIfEmpty()
+                         join stcls in context.StudentClasses on c.Id equals stcls.ClassId into StudentClass
+                         from stcls in StudentClass.DefaultIfEmpty()
+                         where ui.UserId == currenttUserId
+                         select new
+                         {
+                             GroupId = g.Id,
+                             GroupTitle = g.Name,
+                             ClassId = c.Id,
+                             Student = stcls.StudentId,
+                             HomeRoomTeacher = c.HomeroomTeacher
+                         }).GroupBy(x => new { x.GroupId, x.GroupTitle, x.ClassId, x.HomeRoomTeacher })
+                            .Select(x => new GroupDTO
+                            {
+                                Id = x.Key.GroupId,
+                                Name = x.Key.GroupTitle,
+                                ClassId = x.Key.ClassId,
+                                HomeRoomTeacher = x.Key.HomeRoomTeacher,
+                                Students = x.Where(y => y.Student != "").Select(y => y.Student)
+                            });
+            return group;
         }
     }
 }

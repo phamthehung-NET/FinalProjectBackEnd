@@ -124,6 +124,16 @@ namespace FinalProjectBackEnd.Services.Implementations
             throw new Exception("Post List is null");
         }
 
+        public Pagination<PostDTO> GetPostByGroup(int groupId, int? pageIndex, int? pageSize)
+        {
+            var pagination = postRepository.GetPostByGroup(groupId, pageIndex, pageSize);
+            if (pagination != null)
+            {
+                return pagination;
+            }
+            throw new Exception("Post List is null");
+        }
+
         public IQueryable<int> GetWarnedPost()
         {
             var warned = postRepository.GetWarnedPost();
@@ -132,6 +142,16 @@ namespace FinalProjectBackEnd.Services.Implementations
                 return warned;
             }
             throw new Exception("Warned list is null");
+        }
+
+        public IQueryable<GroupDTO> GetAllGroup()
+        {
+            var group = postRepository.GetAllGroup();
+            if (group.Any())
+            {
+                return group;
+            }
+            throw new Exception("User has no group");
         }
     }
 }

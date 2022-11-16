@@ -21,5 +21,7 @@ namespace FinalProjectBackEnd.Models
         public string Image { get; set; }
 
         public bool? Visibility { get; set; }
+
+        public int? GroupId { get; set; }
     }
 }

@@ -35,6 +35,23 @@ namespace FinalProjectBackEnd.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult GetPostsByGroup(int groupId, int? pageIndex, int? itemPerPage)
+        {
+            pageIndex = pageIndex ?? 1;
+            itemPerPage = itemPerPage ?? 10;
+
+            try
+            {
+                var posts = postService.GetPostByGroup(groupId, pageIndex, itemPerPage);
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpPost]
         public ActionResult AddPost(PostDTO req)
         {
@@ -186,6 +203,20 @@ namespace FinalProjectBackEnd.Controllers
             {
                 var warnedPost = postService.GetWarnedPost();
                 return Ok(warnedPost.ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetAllGroup()
+        {
+            try
+            {
+                var groups = postService.GetAllGroup();
+                return Ok(groups.ToList());
             }
             catch (Exception e)
             {
