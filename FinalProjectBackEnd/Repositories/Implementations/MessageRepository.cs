@@ -174,7 +174,13 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                     CreatedAt = y.MessageCreateAt,
                                     AuthorId = y.MessageAuthorId,
                                     AuthorName = y.MessageAuthorName
-                                }).OrderBy(y => y.CreatedAt).LastOrDefault()
+                                }).Any() ? x.Where(y => y.MessageId > 0).Select(y => new
+                                {
+                                    Content = y.MessageContent,
+                                    CreatedAt = y.MessageCreateAt,
+                                    AuthorId = y.MessageAuthorId,
+                                    AuthorName = y.MessageAuthorName
+                                }).OrderBy(y => y.CreatedAt).LastOrDefault() : null
                             });
             return groupChat;
         }
@@ -328,7 +334,16 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                                          CreatedAt = m.CreatedAt,
                                                          AuthorId = m.AuthorId,
                                                          AuthorName = ui.FullName
-                                                     }).OrderBy(y => y.CreatedAt).LastOrDefault()
+                                                     }).Any() ? (from m in context.Messages
+                                                                 join ui in context.UserInfos on m.AuthorId equals ui.UserId
+                                                                 where m.ConversationId == c.Id
+                                                                 select new
+                                                                 {
+                                                                     Content = m.Content,
+                                                                     CreatedAt = m.CreatedAt,
+                                                                     AuthorId = m.AuthorId,
+                                                                     AuthorName = ui.FullName
+                                                                 }).OrderBy(y => y.CreatedAt).LastOrDefault() : null
                                };
             return conversation.Where(x => x.LastestMessage != null);
         }
