@@ -56,7 +56,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public bool WarningPost(PostMarkDTO req)
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-            var markHistoryDb = context.MarkHistories.FirstOrDefault(x => x.RelatedId == req.RelatedId && x.RelatedType == req.RelatedType);
+            var markHistoryDb = context.MarkHistories.FirstOrDefault(x => x.RelatedId == req.RelatedId && x.RelatedType == req.RelatedType && x.IsDeleted == false);
             string emailType = String.Empty;
             List<string> emails = new List<string>();
 

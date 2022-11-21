@@ -38,6 +38,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                     CreatedAt = DateTime.Now,
                     Image = HelperFunctions.UploadBase64File(postReq.Image, postReq.FileName, ImageDirectories.Post),
                     Visibility = postReq.Visibility,
+                    GroupId = postReq.GroupId,
                 };
 
                 context.Posts.Add(post);
@@ -451,7 +452,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             return from p in context.Posts
                           join mh in context.MarkHistories on p.Id equals mh.RelatedId into postMarkHistory
                           from mh in postMarkHistory.DefaultIfEmpty()
-                          where mh.RelatedType == MarkRelatedType.Post
+                          where mh.RelatedType == MarkRelatedType.Post && (mh.IsDeleted == false || mh.IsDeleted == null)
                           select mh.RelatedId.Value;
         }
 
