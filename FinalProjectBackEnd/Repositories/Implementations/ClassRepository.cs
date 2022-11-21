@@ -26,6 +26,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public bool AddClass(ClassDTO classReq)
         {
+            var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
+
             var classroom = new Classroom
             {
                 Name = classReq.ClassName,
@@ -42,12 +44,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                 {
                     Title = "GroupChat " + classroom.Name,
                     CreatedAt = DateTime.Now,
+                    CreatedBy = userId
                 };
 
                 var group = new Group()
                 {
                     Name = "Group " + classroom.Name + " " + classroom.SchoolYear,
                     ClassId= classroom.Id,
+                    CreatedBy = userId
                 };
                 context.GroupChats.Add(groupChat);
                 context.Groups.Add(group);

@@ -125,63 +125,37 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         public IQueryable<dynamic> GetGroupChat()
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
-            var groupChat = (from ui in context.UserInfos
-                             join ugc in context.UserGroupChats on ui.UserId equals ugc.UserId into userGroupChat
-                             from ugc in userGroupChat.DefaultIfEmpty()
-                             join gc in context.GroupChats on ugc.GroupChatId equals gc.Id into chatGroup
-                             from gc in chatGroup.DefaultIfEmpty()
-                             join m in context.Messages on gc.Id equals m.GroupChatId into messageGroupChat
-                             from m in messageGroupChat.DefaultIfEmpty()
-                             join mui in context.UserInfos on m.AuthorId equals mui.UserId into messageAuthor
-                             from mui in messageAuthor.DefaultIfEmpty()
-                             join ugmc in context.UserGroupChats on gc.Id equals ugmc.GroupChatId into userGroupChatMember
-                             from ugmc in userGroupChatMember.DefaultIfEmpty()
-                             join gm in context.UserInfos on ugmc.UserId equals gm.UserId into userGroupChatMemberMemberInfo
-                             from gm in userGroupChatMemberMemberInfo.DefaultIfEmpty()
-                             where ui.UserId.Equals(userId)
-                             select new
-                             {
-                                 Id = gc.Id,
-                                 CreatedAt = gc.CreatedAt,
-                                 Title = gc.Title,
-                                 CreatedUserId = gc.CreatedBy,
-                                 MemberId = gm.UserId,
-                                 MemberUserName = gm.CustomUser.UserName,
-                                 MemberName = gm.FullName,
-                                 MessageId = m.Id,
-                                 MessageContent = m.Content,
-                                 MessageCreateAt = m.CreatedAt,
-                                 MessageAuthorId = mui.UserId,
-                                 MessageAuthorName = mui.FullName,
-                                 MessageAuthorUserName = mui.CustomUser.UserName,
-                             }).GroupBy(x => new { x.Id, x.Title, x.CreatedAt, x.CreatedUserId })
-                            .Select(x => new
+            var groupChat = from gc in context.GroupChats
+                            join ui in context.UserInfos on gc.CreatedBy equals ui.UserId
+                            join ugc in context.UserGroupChats on gc.Id equals ugc.GroupChatId
+                            where ugc.UserId.Equals(userId)
+                            select new
                             {
-                                Id = x.Key.Id,
-                                Title = x.Key.Title,
-                                CreatedAt = x.Key.CreatedAt,
-                                CreatedBy = x.Key.CreatedUserId,
-                                Users = x.Where(y => !String.IsNullOrEmpty(y.MemberId)).Select(y => new
-                                {
-                                    Id = y.MemberId,
-                                    UserName = y.MemberUserName,
-                                    FullName = y.MemberName,
-                                }).Distinct(),
+                                Id = gc.Id,
+                                Title = gc.Title,
+                                CreatedAt = gc.CreatedAt,
+                                CreatedBy = gc.CreatedBy,
                                 Type = "groupChat",
-                                LastestMessage = x.Where(y => y.MessageId > 0).Select(y => new
-                                {
-                                    Content = y.MessageContent,
-                                    CreatedAt = y.MessageCreateAt,
-                                    AuthorId = y.MessageAuthorId,
-                                    AuthorName = y.MessageAuthorName
-                                }).Any() ? x.Where(y => y.MessageId > 0).Select(y => new
-                                {
-                                    Content = y.MessageContent,
-                                    CreatedAt = y.MessageCreateAt,
-                                    AuthorId = y.MessageAuthorId,
-                                    AuthorName = y.MessageAuthorName
-                                }).OrderBy(y => y.CreatedAt).LastOrDefault() : null
-                            });
+                                LastestMessage = (from m in context.Messages
+                                                  join ui in context.UserInfos on m.AuthorId equals ui.UserId
+                                                  where m.GroupChatId == gc.Id
+                                                  select new
+                                                  {
+                                                      Content = m.Content,
+                                                      CreatedAt = m.CreatedAt,
+                                                      AuthorId = m.AuthorId,
+                                                      AuthorName = ui.FullName
+                                                  }).Any() ? (from m in context.Messages
+                                                              join ui in context.UserInfos on m.AuthorId equals ui.UserId
+                                                              where m.GroupChatId == gc.Id
+                                                              select new
+                                                              {
+                                                                  Content = m.Content,
+                                                                  CreatedAt = m.CreatedAt,
+                                                                  AuthorId = m.AuthorId,
+                                                                  AuthorName = ui.FullName
+                                                              }).OrderBy(y => y.CreatedAt).LastOrDefault() : null
+                            };
             return groupChat;
         }
 
@@ -345,7 +319,7 @@ namespace FinalProjectBackEnd.Repositories.Implementations
                                                                      AuthorName = ui.FullName
                                                                  }).OrderBy(y => y.CreatedAt).LastOrDefault() : null
                                };
-            return conversation.Where(x => x.LastestMessage != null);
+            return conversation;
         }
 
         public bool AddConversation(string userId)
