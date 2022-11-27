@@ -126,7 +126,8 @@ namespace FinalProjectBackEnd.Repositories.Implementations
         {
             var userId = userManager.FindByNameAsync(httpContextAccessor.HttpContext.User.Identity.Name).Result.Id;
             var groupChat = from gc in context.GroupChats
-                            join ui in context.UserInfos on gc.CreatedBy equals ui.UserId
+                            join ui in context.UserInfos on gc.CreatedBy equals ui.UserId into creater
+                            from ui in creater.DefaultIfEmpty()
                             join ugc in context.UserGroupChats on gc.Id equals ugc.GroupChatId
                             where ugc.UserId.Equals(userId)
                             select new
