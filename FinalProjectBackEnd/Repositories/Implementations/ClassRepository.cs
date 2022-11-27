@@ -124,15 +124,15 @@ namespace FinalProjectBackEnd.Repositories.Implementations
             var classroom = context.Classrooms.FirstOrDefault(x => x.Id == id);
             var studentClass = context.StudentClasses.Where(x => x.ClassId == id);
             var teacherSubject = context.ClassTeacherSubjects.Where(x => x.ClassId == id);
-            var groupChat = context.GroupChats.Where(x => x.Title.Equals("GroupChat " + classroom.Name));
-            var group = context.Groups.Where(x => x.ClassId == id);
+            var groupChat = context.GroupChats.FirstOrDefault(x => x.Title.Equals("GroupChat " + classroom.Name));
+            var group = context.Groups.FirstOrDefault(x => x.ClassId == id);
             if (classroom != null)
             {
                 context.Classrooms.Remove(classroom);
-                context.RemoveRange(studentClass);
-                context.RemoveRange(teacherSubject);
-                context.Remove(group);
-                context.Remove(groupChat);
+                context.StudentClasses.RemoveRange(studentClass);
+                context.ClassTeacherSubjects.RemoveRange(teacherSubject);
+                context.Groups.Remove(group);
+                context.GroupChats.Remove(groupChat);
                 context.SaveChanges();
                 return true;
             }
