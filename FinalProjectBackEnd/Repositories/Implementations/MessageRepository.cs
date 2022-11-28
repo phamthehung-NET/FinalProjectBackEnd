@@ -376,14 +376,14 @@ namespace FinalProjectBackEnd.Repositories.Implementations
 
         public bool AddUserToGroupChat(GroupChatDTO groupChat)
         {
-            var group = context.UserGroupChats.Where(x => x.GroupChatId == groupChat.Id);
+            var group = context.GroupChats.Where(x => x.Id == groupChat.Id);
             if (group.Any())
             {
                 foreach(var user in groupChat.Users)
                 {
                     UserGroupChat userGroupChat = new()
                     {
-                        UserId = user.Id,
+                        UserId = user,
                         GroupChatId = groupChat.Id,
                     };
                     context.UserGroupChats.Add(userGroupChat);
